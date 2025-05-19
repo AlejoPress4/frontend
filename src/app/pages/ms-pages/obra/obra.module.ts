@@ -7,11 +7,11 @@ import { ManageComponent } from './manage/manage.component';
 import { ObraRoutingModule } from './obra-routing.module';
 
 
+
 @NgModule({
   declarations:[
     ListObraComponent,
-    ManageComponent
-
+    ManageComponent,
   ],
   imports:[CommonModule, FormsModule, ObraRoutingModule, ReactiveFormsModule]
 })

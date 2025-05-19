@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Obra } from 'src/app/models/obra.model';
 import { ObraService } from 'src/app/services/obraService/obra.service';
 import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-manage',
@@ -10,19 +12,20 @@ import Swal from 'sweetalert2';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-
-
+    theFormGroup: FormGroup
   mode: number; //1->View, 2->Create, 3-> Update
   obra: Obra;
 
+
   constructor(private activateRoute: ActivatedRoute,
     private someObra: ObraService,
-    private router: Router
+    private router: Router,
+    private theFormBuilder: FormBuilder
   ) {
     this.obra = {
       id: 0,
-      combo: 1, // Default value for paquete_id
-      municipios: { id: 0, nombre: '', departamento_id: 0 } // Default value for municipio
+      nombre: '',
+      combo_id: 1 
     };
   }
 
@@ -39,7 +42,20 @@ export class ManageComponent implements OnInit {
       this.obra.id = this.activateRoute.snapshot.params.id
       this.getObra(this.obra.id)
     }
+    this.configFormGroup();
   }
+
+  configFormGroup() {
+    this.theFormGroup = this.theFormBuilder.group({
+      nombre:['', [Validators.required, Validators.minLength(3)]],
+      combo_id: [0, [Validators.required]], // Default value for combo
+    });
+  }
+
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
+  }
+
   getObra(id: number) {
     this.someObra.view(id).subscribe({
       next: (obra) => {
@@ -54,7 +70,17 @@ export class ManageComponent implements OnInit {
   back() {
     this.router.navigate(['obra/list'])
   }
-  create() {
+
+  
+create() {
+  if (this.theFormGroup.invalid) {
+    Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+  } else {
+    // Actualiza this.obra con los valores del formulario
+    this.obra = {
+      ...this.obra,
+      ...this.theFormGroup.value
+    };
     this.someObra.create(this.obra).subscribe({
       next: (obra) => {
         console.log('obra created successfully:', obra);
@@ -70,22 +96,29 @@ export class ManageComponent implements OnInit {
       }
     });
   }
+}
+
   update() {
-    this.someObra.update(this.obra).subscribe({
-      next: (obra) => {
-        console.log('obra updated successfully:', obra);
-        Swal.fire({
-          title: 'Actualizado!',
-          text: 'Registro actualizado correctamente.',
-          icon: 'success',
-        })
-        this.router.navigate(['/obra/list']);
-      },
-      error: (error) => {
-        console.error('Error updating obra:', error);
-      }
-    });
+    if(this.theFormGroup.invalid) {
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+    }else{
+      this.someObra.update(this.obra).subscribe({
+        next: (obra) => {
+          console.log('obra updated successfully:', obra);
+          Swal.fire({
+            title: 'Actualizado!',
+            text: 'Registro actualizado correctamente.',
+            icon: 'success',
+          })
+          this.router.navigate(['/obra/list']);
+        },
+        error: (error) => {
+          console.error('Error updating obra:', error);
+        }
+      });
+    }
   }
+
   delete(id: number) {
     console.log("Delete obra with id:", id);
     Swal.fire({
