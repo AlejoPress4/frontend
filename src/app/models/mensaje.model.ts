@@ -4,7 +4,6 @@ export class Mensaje {
     id?: number;
     contenido?: string;
     fecha?: Date;
-    id_chat?: number;
-    id_usuario?: number;
-    chat?: Chat;
+    chat_id?: number;
+    usuario_id?: number;
 }

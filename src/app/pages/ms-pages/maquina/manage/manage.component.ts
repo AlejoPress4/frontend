@@ -19,10 +19,7 @@ export class ManageComponent implements OnInit {
     private router: Router
   ) {
     this.maquina = {
-      id: 0,
-      operarios: [], // Default value for operarios
-      mantenimientos: [], // Default value for mantenimientos
-      seguros: [] // Default value for seguros
+      id: 0
     };
   }
 
@@ -55,6 +52,7 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['maquina/list'])
   }
   create() {
+    console.log('Payload enviado al backend:', this.maquina); // Log para depuración
     this.someMaquina.create(this.maquina).subscribe({
       next: (maquina) => {
         console.log('maquina created successfully:', maquina);
@@ -62,11 +60,15 @@ export class ManageComponent implements OnInit {
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/maquina/list']);
+        }).then(() => {
+          this.router.navigate(['/maquina/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating maquina:', error);
+        if (error.status === 422) {
+          console.error('Errores de validación:', error.error.errors);
+        }
       }
     });
   }
@@ -78,8 +80,9 @@ export class ManageComponent implements OnInit {
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/maquina/list']);
+        }).then(() => {
+          this.router.navigate(['/maquina/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating maquina:', error);

@@ -7,6 +7,4 @@ export class Mantenimiento {
     estado?: string;
     maquina_id?: number;
     responsable?: string;
-    procedimientos?: Procedimiento[];
-    maquina?: Maquina;
 }

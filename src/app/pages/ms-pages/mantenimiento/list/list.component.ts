@@ -16,7 +16,7 @@ export class ListMantenimientoComponent implements OnInit {
   mantenimientos: Mantenimiento[] = []; // Array to store Mantenimientos
 
   // Inject the MantenimientoService and Router (if needed)
-  constructor(private MantenimientoService: MantenimientoService , private router: Router ) { }
+  constructor(private MantenimientoService: MantenimientoService, private router: Router) { }
 
   ngOnInit(): void {
     // Call the service to get the list of Mantenimientos
@@ -27,33 +27,65 @@ export class ListMantenimientoComponent implements OnInit {
 
   // Methods for edit and delete (adjust ID type based on your Mantenimiento model)
   edit(id: number) {
-    this.router.navigate(['mantenimiento/update', id])
-    // Implement navigation, e.g: this.router.navigate(['/admin/Mantenimiento/edit', id]);
+    if (isNaN(id)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID proporcionado no es válido.'
+      });
+      return;
+    }
+
+    this.router.navigate([`/mantenimientos/update`, id]).then(
+      success => {
+        if (success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Redirigido',
+            text: 'Navegación exitosa al formulario de edición.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo navegar al formulario de edición.'
+          });
+        }
+      },
+      error => {
+        console.error('Error al navegar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al intentar navegar al formulario de edición.'
+        });
+      }
+    );
   }
 
   delete(id: number) {
-  console.log("Delete seguro with id:", id);
-        Swal.fire({
-          title: 'Eliminar',
-          text: "Está seguro que quiere eliminar el registro?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.MantenimientoService.delete(id).
-              subscribe(data => {
-                Swal.fire(
-                  'Eliminado!',
-                  'Registro eliminado correctamente.',
-                  'success'
-                )
-                this.ngOnInit();
-              });
-          }
-        })
+    console.log("Delete seguro with id:", id);
+    Swal.fire({
+      title: 'Eliminar',
+      text: "Está seguro que quiere eliminar el registro?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.MantenimientoService.delete(id).
+          subscribe(data => {
+            Swal.fire(
+              'Eliminado!',
+              'Registro eliminado correctamente.',
+              'success'
+            )
+            this.ngOnInit();
+          });
+      }
+    })
   }
 }

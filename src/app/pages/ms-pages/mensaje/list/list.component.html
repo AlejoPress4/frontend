@@ -5,7 +5,7 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0">Messages</h3>
+          <h3 class="mb-0">Mensajes</h3>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -26,8 +26,8 @@
                   <td>{{ mensaje.contenido ? (mensaje.contenido.length > 50 ? mensaje.contenido.substring(0, 50) + '...'
                     : mensaje.contenido) : '' }}</td>
                   <td>{{ mensaje.fecha | date:'yyyy-MM-dd HH:mm' }}</td>
-                  <td>{{ mensaje.id_chat }}</td>
-                  <td>{{ mensaje.id_usuario }}</td>
+                  <td>{{ mensaje.chat_id }}</td>
+                  <td>{{ mensaje.usuario_id }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" (click)="edit(mensaje.id)">Editar</button>
                     <button class="btn btn-sm btn-danger" (click)="delete(mensaje.id)">Eliminar</button>

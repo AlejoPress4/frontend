@@ -23,14 +23,13 @@ export class NavbarComponent implements OnInit {
   toggleMenu(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed
   }
-
   private loadMenuItems(): void {
     this.menuItems = [
       { title: "Dashboard", route: "/dashboard", icon: "bi bi-speedometer2" },
-      { title: "Vehículos", route: "/vehicles", icon: "bi bi-truck" },
-      { title: "Conductores", route: "/drivers", icon: "bi bi-person" },
-      { title: "Rutas", route: "/routes", icon: "bi bi-map" },
-      { title: "Horarios", route: "/schedules", icon: "bi bi-calendar-week" },
+      { title: "Vehículos", route: "/maquina", icon: "bi bi-truck" },
+      { title: "Servicios", route: "/servicio", icon: "bi bi-tools" },
+      { title: "Mantenimientos", route: "/mantenimientos", icon: "bi bi-wrench" },
+      { title: "Reportes", route: "/evidencias", icon: "bi bi-file-text" },
     ]
   }
 }

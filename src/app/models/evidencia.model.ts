@@ -1,13 +1,8 @@
-import { Novedad } from "./novedad.model";
-import { Servicio } from "./servicio.model";
-
 export class Evidencia {
     id?: number;
-    tipo_archivo?: string;
+    tipo_de_archivo?: string;
     contenido_archivo?: string;
-    fecha_carga?: Date;
-    servicio_id?: number;
+    fecha_de_carga?: Date;
+    id_servicio?: number;
     novedad_id?: number;
-    servicio?: Servicio;
-    novedad?: Novedad;
 }

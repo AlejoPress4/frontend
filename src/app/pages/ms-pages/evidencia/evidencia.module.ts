@@ -9,11 +9,11 @@ import { ListEvidenciaComponent } from './list/list.component';
 
 
 @NgModule({
-  declarations:[
+  declarations: [
     ListEvidenciaComponent,
     ManageComponent
 
   ],
-  imports:[CommonModule, FormsModule, EvidenciaRoutingModule]
+  imports: [CommonModule, FormsModule, EvidenciaRoutingModule]
 })
-export class EvidenciaModule {}
+export class EvidenciaModule { }

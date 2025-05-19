@@ -16,7 +16,7 @@ export class ListMensajeComponent implements OnInit {
   mensajes: Mensaje[] = []; // Array to store Mensajes
 
   // Inject the MensajeService and Router (if needed)
-  constructor(private MensajeService: MensajeService , private router: Router) { }
+  constructor(private MensajeService: MensajeService, private router: Router) { }
 
   ngOnInit(): void {
     // Call the service to get the list of Mensajes
@@ -27,33 +27,65 @@ export class ListMensajeComponent implements OnInit {
 
   // Methods for edit and delete (adjust ID type based on your Mensaje model)
   edit(id: number) {
-    this.router.navigate(['mensajes/update', id])
-    // Implement navigation, e.g: this.router.navigate(['/admin/Mensaje/edit', id]);
+    if (isNaN(id)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID proporcionado no es válido.'
+      });
+      return;
+    }
+
+    this.router.navigate([`/mensajes/update`, id]).then(
+      success => {
+        if (success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Redirigido',
+            text: 'Navegación exitosa al formulario de edición.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo navegar al formulario de edición.'
+          });
+        }
+      },
+      error => {
+        console.error('Error al navegar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al intentar navegar al formulario de edición.'
+        });
+      }
+    );
   }
 
   delete(id: number) {
-  console.log("Delete seguro with id:", id);
-        Swal.fire({
-          title: 'Eliminar',
-          text: "Está seguro que quiere eliminar el registro?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.MensajeService.delete(id).
-              subscribe(data => {
-                Swal.fire(
-                  'Eliminado!',
-                  'Registro eliminado correctamente.',
-                  'success'
-                )
-                this.ngOnInit();
-              });
+    Swal.fire({
+      title: 'Eliminar',
+      text: '¿Está seguro que quiere eliminar el registro?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.MensajeService.delete(id).subscribe({
+          next: () => {
+            Swal.fire('Eliminado!', 'Registro eliminado correctamente.', 'success');
+            this.ngOnInit(); // Recargar la lista después de eliminar
+          },
+          error: (error) => {
+            console.error('Error al eliminar el mensaje:', error);
+            Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
           }
-        })
+        });
+      }
+    });
   }
 }

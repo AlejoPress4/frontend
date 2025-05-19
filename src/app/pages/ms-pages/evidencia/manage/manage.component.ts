@@ -15,10 +15,10 @@ export class ManageComponent implements OnInit {
   evidencia: Evidencia;
 
   constructor(private activateRoute: ActivatedRoute,
-    private someEvidencia: EvidenciaService,
+    private evidenciaService: EvidenciaService,
     private router: Router
   ) {
-    this.evidencia = { id: 0 }
+    this.evidencia = { id: 0 };
   }
 
   ngOnInit(): void {
@@ -31,80 +31,102 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.evidencia.id = this.activateRoute.snapshot.params.id  
-      this.getEvidencia(this.evidencia.id)
+      this.evidencia.id = this.activateRoute.snapshot.params.id;
+      this.getEvidencia(this.evidencia.id);
     }
   }
+
   getEvidencia(id: number) {
-    this.someEvidencia.view(id).subscribe({
+    this.evidenciaService.view(id).subscribe({
       next: (evidencia) => {
         this.evidencia = evidencia;
-        console.log('evidencia fetched successfully:', this.evidencia);
+        console.log('Evidencia fetched successfully:', this.evidencia);
       },
       error: (error) => {
         console.error('Error fetching evidencia:', error);
+        Swal.fire('Error', 'No se pudo obtener la evidencia.', 'error');
       }
     });
   }
+
   back() {
-    this.router.navigate(['evidencia/list'])
+    this.router.navigate(['evidencias/list']);
   }
+
   create() {
-    this.someEvidencia.create(this.evidencia).subscribe({
+    if (!this.validateEvidencia()) {
+      Swal.fire('Error', 'Por favor, complete todos los campos obligatorios.', 'error');
+      return;
+    }
+
+    this.evidenciaService.create(this.evidencia).subscribe({
       next: (evidencia) => {
-        console.log('evidencia created successfully:', evidencia);
+        console.log('Evidencia created successfully:', evidencia);
         Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/evidencia/list']);
+        }).then(() => {
+          this.router.navigate(['/evidencias/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating evidencia:', error);
+        Swal.fire('Error', 'No se pudo crear el registro.', 'error');
       }
     });
   }
+
   update() {
-    this.someEvidencia.update(this.evidencia).subscribe({
+    if (!this.validateEvidencia()) {
+      Swal.fire('Error', 'Por favor, complete todos los campos obligatorios.', 'error');
+      return;
+    }
+
+    this.evidenciaService.update(this.evidencia).subscribe({
       next: (evidencia) => {
-        console.log('evidencia updated successfully:', evidencia);
+        console.log('Evidencia updated successfully:', evidencia);
         Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/evidencia/list']);
+        }).then(() => {
+          this.router.navigate(['/evidencias/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating evidencia:', error);
+        Swal.fire('Error', 'No se pudo actualizar el registro.', 'error');
       }
     });
   }
+
   delete(id: number) {
-    console.log("Delete evidencia with id:", id);
     Swal.fire({
       title: 'Eliminar',
-      text: "Está evidencia que quiere eliminar el registro?",
+      text: '¿Está seguro que quiere eliminar el registro?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminar',
+      confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
-        this.someEvidencia.delete(id).
-          subscribe(data => {
-            Swal.fire(
-              'Eliminado!',
-              'Registro eliminado correctamente.',
-              'success'
-            )
-            this.ngOnInit();
-          });
+      if (result.isConfirmed) {
+        this.evidenciaService.delete(id).subscribe({
+          next: () => {
+            Swal.fire('Eliminado!', 'Registro eliminado correctamente.', 'success');
+            this.router.navigate(['/evidencias/list']);
+          },
+          error: (error) => {
+            console.error('Error al eliminar la evidencia:', error);
+            Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+          }
+        });
       }
-    })
-}
-
+    });
+  }
+  private validateEvidencia(): boolean {
+    return !!this.evidencia.tipo_de_archivo && !!this.evidencia.contenido_archivo && !!this.evidencia.fecha_de_carga && !!this.evidencia.id_servicio;
+  }
 }

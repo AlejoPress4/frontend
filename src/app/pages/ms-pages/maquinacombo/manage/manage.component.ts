@@ -30,7 +30,7 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.maquinacombo.id = this.activateRoute.snapshot.params.id  
+      this.maquinacombo.id = this.activateRoute.snapshot.params.id
       this.getMaquinaCombo(this.maquinacombo.id)
     }
   }
@@ -56,8 +56,9 @@ export class ManageComponent implements OnInit {
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/maquinacombo/list']);
+        }).then(() => {
+          this.router.navigate(['/maquina-combo/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating maquinacombo:', error);
@@ -72,8 +73,9 @@ export class ManageComponent implements OnInit {
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/maquinacombo/list']);
+        }).then(() => {
+          this.router.navigate(['/maquina-combo/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating maquinacombo:', error);
@@ -92,7 +94,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.someMaquinaCombo.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -104,5 +106,5 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 }

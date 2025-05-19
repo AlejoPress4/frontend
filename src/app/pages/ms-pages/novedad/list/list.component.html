@@ -13,23 +13,23 @@
               <thead class="thead-light">
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Service ID</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Gravedad</th>
+                  <th scope="col">ID Turno</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let novelty of novedades">
-                  <td>{{ novelty.id }}</td>
-                  <td>{{ novelty.date | date:'yyyy-MM-dd' }}</td>
-                  <td>{{ novelty.description }}</td>
-                  <td>{{ novelty.type }}</td>
-                  <td>{{ novelty.service_id }}</td>
+                <tr *ngFor="let novedad of novedades">
+                  <td>{{ novedad.id }}</td>
+                  <td>{{ novedad.tipo }}</td>
+                  <td>{{ novedad.descripcion }}</td>
+                  <td>{{ novedad.gravedad }}</td>
+                  <td>{{ novedad.turno_id }}</td>
                   <td>
-                    <button class="btn btn-sm btn-primary" (click)="edit(novelty.id)">Edit</button>
-                    <button class="btn btn-sm btn-danger" (click)="delete(novelty.id)">Delete</button>
+                    <button class="btn btn-sm btn-primary" (click)="edit(novedad.id)">Edit</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(novedad.id)">Delete</button>
                   </td>
                 </tr>
                 <tr *ngIf="novedades.length === 0">

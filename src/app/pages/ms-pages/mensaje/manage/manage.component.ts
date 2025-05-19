@@ -32,11 +32,21 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.mensaje.id = this.activateRoute.snapshot.params.id  
+      this.mensaje.id = this.activateRoute.snapshot.params.id
       this.getMensaje(this.mensaje.id)
     }
   }
   getMensaje(id: number) {
+    if (!id) {
+      console.error('El ID proporcionado es inválido o undefined:', id);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID proporcionado no es válido.'
+      });
+      return;
+    }
+    console.log('Buscando mensaje con ID:', id); // Log para depuración
     this.someMensaje.view(id).subscribe({
       next: (mensaje) => {
         this.mensaje = mensaje;
@@ -58,8 +68,9 @@ export class ManageComponent implements OnInit {
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/mensaje/list']);
+        }).then(() => {
+          this.router.navigate(['/mensaje/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating mensaje:', error);
@@ -74,8 +85,9 @@ export class ManageComponent implements OnInit {
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/mensaje/list']);
+        }).then(() => {
+          this.router.navigate(['/mensaje/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating mensaje:', error);
@@ -94,7 +106,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.someMensaje.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -106,5 +118,5 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 }

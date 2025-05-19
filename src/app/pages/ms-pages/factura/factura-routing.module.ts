@@ -5,7 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 // NOTA: Usamos ListBillComponent basado en el error anterior.
 // Asumimos que tu componente para crear/editar/ver se llama ManageComponent
 import { ListFacturaComponent } from './list/list.component';
-import { ManageComponent } from './manage/manage.component'; // Asegúrate de la ruta correcta si tu componente se llama diferente
+import { ManageFacturaComponent } from './manage/manage.component'; // Asegúrate de la ruta correcta si tu componente se llama diferente
 
 const routes: Routes = [
   // Ruta por defecto: redirige a la lista de facturas
@@ -15,13 +15,13 @@ const routes: Routes = [
   { path: 'list', component: ListFacturaComponent },
 
   // Ruta para crear una nueva factura
-  { path: 'create', component: ManageComponent },
+  { path: 'create', component: ManageFacturaComponent },
 
   // Ruta para actualizar una factura específica por su ID
-  { path: 'update/:id', component: ManageComponent }, // ':id' es un parámetro de ruta
+  { path: 'update/:id', component: ManageFacturaComponent }, // ':id' es un parámetro de ruta
 
   // Ruta para ver los detalles de una factura específica por su ID
-  { path: 'view/:id', component: ManageComponent }, // ':id' es un parámetro de ruta
+  { path: 'view/:id', component: ManageFacturaComponent }, // ':id' es un parámetro de ruta
 ];
 
 @NgModule({

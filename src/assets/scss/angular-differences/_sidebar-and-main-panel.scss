@@ -1,16 +1,33 @@
-@media screen and (min-width: 768px) {
-  html:not(.auth-layout) .main-content {
-      margin-left: $navbar-vertical-width;
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background-color: #f8f9fe;
+}
+
+.main-panel {
+  min-height: 100vh;
+  padding-top: 70px; /* altura del navbar */
+  
+  .content {
+    padding: 30px 0;
+    min-height: calc(100vh - 70px - 70px); /* 100vh - navbar - footer */
   }
 }
 
-.fixed-right{
-  .navbar-vertical.navbar-expand-md{
-    right: 0;
-    border-width: 0 0 0 1px;
-  }
-   .main-content {
-    margin-right: $navbar-vertical-width;
-    margin-left: 0;
-  }
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  padding: 1rem;
+  background-color: transparent;
+}
+
+.container-fluid {
+  padding-left: 30px;
+  padding-right: 30px;
 }

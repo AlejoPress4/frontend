@@ -27,6 +27,13 @@
           </div>
           <br>
           <div class="row">
+            <div class="col-3">ID Combo</div>
+            <div class="col-9">
+              <input type="number" class="form-control" [(ngModel)]="maquinacombo.combo_id" [disabled]="mode==1">
+            </div>
+          </div>
+          <br>
+          <div class="row">
             <div class="col-3">Fecha Inicio</div>
             <div class="col-9"><input type="date" class="form-control" [(ngModel)]="maquinacombo.fecha_inicio"
                 [disabled]="mode==1"></div>

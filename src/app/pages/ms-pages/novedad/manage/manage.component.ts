@@ -32,7 +32,7 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.novedad.id = this.activateRoute.snapshot.params.id  
+      this.novedad.id = this.activateRoute.snapshot.params.id
       this.getNovedad(this.novedad.id)
     }
   }
@@ -48,7 +48,7 @@ export class ManageComponent implements OnInit {
     });
   }
   back() {
-    this.router.navigate(['novedad/list'])
+    this.router.navigate(['novedades/list'])
   }
   create() {
     this.someNovedad.create(this.novedad).subscribe({
@@ -59,7 +59,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro creado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/novedad/list']);
+        this.router.navigate(['/novedades/list']);
       },
       error: (error) => {
         console.error('Error creating novedad:', error);
@@ -75,7 +75,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/novedad/list']);
+        this.router.navigate(['/novedades/list']);
       },
       error: (error) => {
         console.error('Error updating novedad:', error);
@@ -94,7 +94,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.someNovedad.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -106,6 +106,6 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 
 }

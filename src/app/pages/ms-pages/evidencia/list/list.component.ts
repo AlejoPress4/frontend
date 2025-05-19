@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Evidencia } from 'src/app/models/evidencia.model'; // Importa el modelo Evidence
-import { EvidenciaService } from 'src/app/services/evidenciaService/evidencia.service'; // Importa el servicio EvidenceService
-// import { Router } from '@angular/router'; // Importa Router si necesitas navegación
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Evidencia } from 'src/app/models/evidencia.model';
+import { EvidenciaService } from 'src/app/services/evidenciaService/evidencia.service';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-list-evidencia',
@@ -10,30 +11,116 @@ import { EvidenciaService } from 'src/app/services/evidenciaService/evidencia.se
 })
 export class ListEvidenciaComponent implements OnInit {
 
-  evidencias: Evidencia[] = []; // Arreglo para almacenar evidencias, tipado con el modelo Evidence
+  evidencias: Evidencia[] = [];
 
-  // Inyecta el servicio EvidenceService y Router (si lo necesitas)
-  constructor(private EvidenciaService: EvidenciaService /*, private router: Router*/) { }
+  constructor(private evidenciaService: EvidenciaService, private router: Router, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    // Llama al servicio para obtener la lista de evidencias
-    this.EvidenciaService.list().subscribe(data => {
-      this.evidencias = data; // Asigna los datos a la propiedad evidences
-    });
+    this.evidenciaService.list().subscribe(
+      data => {
+        this.evidencias = data;
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('Error al obtener las evidencias:', error);
+        Swal.fire('Error', 'No se pudieron cargar las evidencias.', 'error');
+      }
+    );
   }
 
-  // Métodos para editar y eliminar (ajusta el tipo de ID según tu modelo Evidence)
   edit(id: number) {
-    console.log('Editando Evidencia ID:', id);
-    // Implementa navegación, ej: this.router.navigate(['/admin/evidence/edit', id]);
+    if (isNaN(id)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID proporcionado no es válido.'
+      });
+      return;
+    }
+
+    this.router.navigate([`/evidencias/update`, id]).then(
+      success => {
+        if (success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Redirigido',
+            text: 'Navegación exitosa al formulario de edición.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo navegar al formulario de edición.'
+          });
+        }
+      },
+      error => {
+        console.error('Error al navegar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al intentar navegar al formulario de edición.'
+        });
+      }
+    );
   }
 
   delete(id: number) {
-    console.log('Eliminando Evidencia ID:', id);
-    // Implementa la llamada al servicio delete, ej:
-    // this.evidenceService.delete(id).subscribe(() => {
-    //   console.log('Evidencia eliminada con éxito');
-    //   this.ngOnInit(); // Recarga la lista
-    // });
+    Swal.fire({
+      title: 'Eliminar',
+      text: '¿Está seguro que quiere eliminar el registro?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.evidenciaService.delete(id).subscribe({
+          next: () => {
+            Swal.fire('Eliminado!', 'Registro eliminado correctamente.', 'success');
+            this.evidencias = this.evidencias.filter(evidencia => evidencia.id !== id);
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Error al eliminar la evidencia:', error);
+            Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  view(id: number) {
+    this.router.navigate([`/evidencias/view`, id]);
+  }
+
+  navigateToCreate() {
+    this.router.navigate(['/evidencias/create']).then(
+      success => {
+        if (success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Redirigido',
+            text: 'Navegación exitosa al formulario de creación.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo navegar al formulario de creación.'
+          });
+        }
+      },
+      error => {
+        console.error('Error al navegar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al intentar navegar al formulario de creación.'
+        });
+      }
+    );
   }
 }

@@ -15,10 +15,4 @@ export class Maquina {
     disponibilidad?: string;
     fecha_asignacion?: Date;
     fecha_retiro?: Date;
-    operarios: Operario[];
-    especialidades?: Especialidad[];
-    combos?: Combo[];
-    mantenimientos: Mantenimiento[];
-    seguros: Seguro[];
-
 }

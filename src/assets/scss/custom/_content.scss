@@ -2,18 +2,8 @@
 
 .main-content {
     position: relative;
-
-    // Navbar
-    .navbar-top {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        z-index: 1;
-        background-color: transparent;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
+    min-height: 100vh;
+    padding-top: 70px; // Ajusta este valor según la altura de tu navbar
 
     // Container
     .container-fluid {
@@ -23,6 +13,3 @@
         }
     }
 }
-
-
-// Main content is now full width
