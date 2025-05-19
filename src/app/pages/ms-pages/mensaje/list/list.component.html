@@ -1,0 +1,46 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Messages</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Contenido</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">ID Chat</th>
+                  <th scope="col">ID Usuario</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let mensaje of mensajes">
+                  <td>{{ mensaje.id }}</td>
+                  <td>{{ mensaje.contenido ? (mensaje.contenido.length > 50 ? mensaje.contenido.substring(0, 50) + '...'
+                    : mensaje.contenido) : '' }}</td>
+                  <td>{{ mensaje.fecha | date:'yyyy-MM-dd HH:mm' }}</td>
+                  <td>{{ mensaje.id_chat }}</td>
+                  <td>{{ mensaje.id_usuario }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="edit(mensaje.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(mensaje.id)">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="mensajes.length === 0">
+                  <td colspan="6" class="text-center">No hay mensajes disponibles.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

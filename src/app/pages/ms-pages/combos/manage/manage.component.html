@@ -1,0 +1,14 @@
+<div class="container mt-5">
+    <h2 class="text-center">Gestión de Combo</h2>
+    <form>
+        <div class="form-group">
+            <label for="servicioId">Servicio ID</label>
+            <input type="number" id="servicioId" class="form-control" placeholder="Ingrese el ID del servicio"
+                [(ngModel)]="combo.servicio_id" name="servicioId" />
+        </div>
+
+        <button type="button" class="btn btn-primary" *ngIf="mode === 2" (click)="create()">Guardar</button>
+        <button type="button" class="btn btn-primary" *ngIf="mode === 3" (click)="update()">Actualizar</button>
+        <button type="button" class="btn btn-secondary" (click)="back()">Volver</button>
+    </form>
+</div>

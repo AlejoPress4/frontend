@@ -1,0 +1,149 @@
+<div class="dashboard">
+  <h1 class="mb-4">Dashboard</h1>
+  
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando datos del dashboard...</p>
+  </div>
+  
+  <ng-container *ngIf="!loading">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card border-primary h-100">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Vehículos</h5>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 class="mb-0">{{stats.totalVehicles}}</h2>
+                <p class="text-muted">Total de vehículos</p>
+              </div>
+              <div class="fs-1 text-primary">
+                <i class="bi bi-truck"></i>
+              </div>
+            </div>
+            <p class="mt-2 mb-0">{{stats.activeVehicles}} vehículos activos</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <div class="card border-success h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">Conductores</h5>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 class="mb-0">{{stats.totalDrivers}}</h2>
+                <p class="text-muted">Total de conductores</p>
+              </div>
+              <div class="fs-1 text-success">
+                <i class="bi bi-person"></i>
+              </div>
+            </div>
+            <p class="mt-2 mb-0">{{stats.totalDrivers - 5}} conductores disponibles</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <div class="card border-info h-100">
+          <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0">Rutas</h5>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 class="mb-0">{{stats.activeRoutes}}</h2>
+                <p class="text-muted">Rutas activas</p>
+              </div>
+              <div class="fs-1 text-info">
+                <i class="bi bi-map"></i>
+              </div>
+            </div>
+            <p class="mt-2 mb-0">{{stats.activeRoutes - 8}} rutas en progreso</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-8 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Servicios Recientes</h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Origen</th>
+                  <th>Destino</th>
+                  <th>Conductor</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let service of recentServices">
+                  <td>{{service.id}}</td>
+                  <td>{{service.origin}}</td>
+                  <td>{{service.destination}}</td>
+                  <td>{{service.driver}}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(service.status)">
+                      {{getStatusLabel(service.status)}}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Resumen de Servicios</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-4">
+              <h6>Servicios Pendientes</h6>
+              <div class="progress" style="height: 25px;">
+                <div class="progress-bar bg-warning" role="progressbar" 
+                     [style.width]="(stats.pendingServices / (stats.pendingServices + stats.completedServices)) * 100 + '%'" 
+                     aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+                  {{stats.pendingServices}}
+                </div>
+              </div>
+            </div>
+            <div>
+              <h6>Servicios Completados</h6>
+              <div class="progress" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     [style.width]="(stats.completedServices / (stats.pendingServices + stats.completedServices)) * 100 + '%'" 
+                     aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                  {{stats.completedServices}}
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2 mt-4">
+              <button class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Nuevo Servicio
+              </button>
+              <button class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-text me-2"></i>Ver Todos los Servicios
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

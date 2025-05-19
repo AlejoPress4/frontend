@@ -1,0 +1,114 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
+
+
+        </div>
+        <div class="card-body container">
+          <div class="row">
+            <div class="col-3">ID</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.id" disabled></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Especialidad</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.especialidad"
+                [disabled]="mode==1">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Modelo</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.modelo"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Marca</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.marca"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Estado</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.estado"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Ubicación</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.ubicacion"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Disponibilidad</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="maquina.disponibilidad"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Fecha Asignación</div>
+            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="maquina.fecha_asignacion"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Fecha Retiro</div>
+            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="maquina.fecha_retiro"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Operarios</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.operarios"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Especialidades</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.especialidades"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Combos</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.combos"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Mantenimientos</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.mantenimientos"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Seguros</div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="maquina.seguros"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3"></div>
+            <div class="col-9">
+              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
+              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
+              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

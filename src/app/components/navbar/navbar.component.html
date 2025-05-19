@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-truck me-2"></i>
+      {{ appTitle }}
+    </a>
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()" 
+            aria-controls="navbarNav" [attr.aria-expanded]="!isMenuCollapsed" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [ngClass]="{'show': !isMenuCollapsed}" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item" *ngFor="let item of menuItems">
+          <a class="nav-link" [routerLink]="item.route" routerLinkActive="active">
+            <i [class]="item.icon + ' me-1'"></i>{{ item.title }}
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <div class="dropdown">
+          <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" 
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>
+            Usuario
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#">Perfil</a></li>
+            <li><a class="dropdown-item" href="#">Configuración</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,58 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Servicios</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Costo</th>
+                  <th scope="col">Fecha Inicio</th>
+                  <th scope="col">Fecha Fin</th>
+                  <th scope="col">Prioridad</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Ubicación</th>
+                  <th scope="col">Resumen</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let servicio of servicios">
+                  <td>{{ servicio.costo }}</td>
+                  <td>{{ servicio.f_inicio | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ servicio.f_fin | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ servicio.prioridad }}</td>
+                  <td>{{ servicio.tipo }}</td>
+                  <td>{{ servicio.estado }}</td>
+                  <td>{{ servicio.ubicacion }}</td>
+                  <td>{{ servicio.resumen }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="edit(servicio.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(servicio.id)">Eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div *ngIf="servicios && servicios.length === 0" class="text-center mt-3">
+              <p>No hay servicios disponibles.</p>
+            </div>
+
+            <div *ngIf="!servicios" class="text-center mt-3">
+              <p>Cargando servicios...</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

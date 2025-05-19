@@ -1,0 +1,43 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Mantenimientos</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">ID Maquinaria</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let mantenimiento of mantenimientos">
+                  <td>{{ mantenimiento.id }}</td>
+                  <td>{{ mantenimiento.fecha | date:'yyyy-MM-dd HH:mm' }}</td>
+                  <td>{{ mantenimiento.estado }}</td>
+                  <td>{{ mantenimiento.maquinaria_id }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="edit(mantenimiento.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(mantenimiento.id)">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="mantenimientos.length === 0">
+                  <td colspan="5" class="text-center">No hay mantenimientos disponibles.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

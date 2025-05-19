@@ -1,0 +1,53 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Maquinarias</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Especialidad</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Ubicación</th>
+                  <th scope="col">Disponibilidad</th>
+                  <th scope="col">Fecha Asignación</th>
+                  <th scope="col">Fecha Retiro</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let machine of maquinas">
+                  <td>{{ machine.id }}</td>
+                  <td>{{ machine.especialidad }}</td>
+                  <td>{{ machine.marca }}</td>
+                  <td>{{ machine.modelo }}</td>
+                  <td>{{ machine.estado }}</td>
+                  <td>{{ machine.ubicacion }}</td>
+                  <td>{{ machine.disponibilidad }}</td>
+                  <td>{{ machine.fecha_asignacion }}</td>
+                  <td>{{ machine.fecha_retiro }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="edit(machine.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(machine.id)">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="maquinas.length === 0">
+                  <td colspan="5" class="text-center">No hay maquinarias disponibles.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

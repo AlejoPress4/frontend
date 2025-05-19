@@ -1,0 +1,49 @@
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Pólizas</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">ID Maquina</th>
+                  <th scope="col">ID Operario</th>
+                  <th scope="col">ID Aseguradora</th>
+                  <th scope="col">Fecha Inicio</th>
+                  <th scope="col">Fecha Fin</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let poliza of polizas">
+                  <td>{{ poliza.id }}</td>
+                  <td>{{ poliza.tipo_poliza }}</td>
+                  <td>{{ poliza.maquina_id }}</td>
+                  <td>{{ poliza.operario_id }}</td>
+                  <td>{{ poliza.seguro_id }}</td>
+                  <td>{{ poliza.fecha_inicio | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ poliza.fecha_fin | date:'yyyy-MM-dd' }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="edit(poliza.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(poliza.id)">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="polizas && polizas.length === 0">
+                  <td colspan="8" class="text-center">No hay pólizas disponibles.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
