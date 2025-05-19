@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Maquina } from 'src/app/models/maquina.model';
 import { MaquinaService } from 'src/app/services/maquinaService/maquina.service';
 import Swal from 'sweetalert2';
@@ -13,14 +14,26 @@ export class ManageComponent implements OnInit {
 
   mode: number; //1->View, 2->Create, 3-> Update
   maquina: Maquina;
+  theFormGroup: FormGroup;
 
   constructor(private activateRoute: ActivatedRoute,
     private someMaquina: MaquinaService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
     this.maquina = {
       id: 0
     };
+    this.theFormGroup = this.fb.group({
+      especialidad: ['', [Validators.required, Validators.minLength(3)]],
+      marca: ['', [Validators.required, Validators.minLength(2)]],
+      modelo: ['', [Validators.required, Validators.minLength(2)]],
+      estado: ['', [Validators.required]],
+      ubicacion: ['', [Validators.required]],
+      disponibilidad: ['', [Validators.required]],
+      fecha_asignacion: [null],
+      fecha_retiro: [null]
+    });
   }
 
   ngOnInit(): void {
@@ -35,6 +48,10 @@ export class ManageComponent implements OnInit {
     if (this.activateRoute.snapshot.params.id) {
       this.maquina.id = this.activateRoute.snapshot.params.id
       this.getMaquina(this.maquina.id)
+    }
+    // Si es update o view, setea los valores en el form
+    if (this.mode === 1 || this.mode === 3) {
+      this.theFormGroup.patchValue(this.maquina);
     }
   }
   getMaquina(id: number) {
@@ -52,8 +69,14 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['maquina/list'])
   }
   create() {
-    console.log('Payload enviado al backend:', this.maquina); // Log para depuración
-    this.someMaquina.create(this.maquina).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = this.theFormGroup.value;
+    console.log('Payload enviado al backend:', payload); // Log para depuración
+    this.someMaquina.create(payload).subscribe({
       next: (maquina) => {
         console.log('maquina created successfully:', maquina);
         Swal.fire({
@@ -73,7 +96,13 @@ export class ManageComponent implements OnInit {
     });
   }
   update() {
-    this.someMaquina.update(this.maquina).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = { ...this.maquina, ...this.theFormGroup.value };
+    this.someMaquina.update(payload).subscribe({
       next: (maquina) => {
         console.log('maquina updated successfully:', maquina);
         Swal.fire({
@@ -113,6 +142,11 @@ export class ManageComponent implements OnInit {
           });
       }
     })
+  }
+
+  // Helper getter for easy access in template
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
   }
 
 }

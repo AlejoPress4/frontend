@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Mantenimiento } from 'src/app/models/mantenimiento.model';
 import { MantenimientoService } from 'src/app/services/mantenimientoService/mantenimiento.service';
 import Swal from 'sweetalert2';
@@ -12,13 +13,23 @@ import Swal from 'sweetalert2';
 export class ManageComponent implements OnInit {
 
   mode: number = 1; // 1 -> Ver, 2 -> Crear, 3 -> Actualizar
-  mantenimiento: Mantenimiento = { id: 0 };
+  mantenimiento: Mantenimiento;
+  theFormGroup: FormGroup;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private mantenimientoService: MantenimientoService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.mantenimiento = { id: 0 };
+    this.theFormGroup = this.fb.group({
+      fecha: [null, [Validators.required]],
+      estado: ['', [Validators.required, Validators.minLength(3)]],
+      maquina_id: [null, [Validators.required]],
+      responsable: ['', [Validators.required, Validators.minLength(3)]]
+    });
+  }
 
   ngOnInit(): void {
     const currentUrl = this.activatedRoute.snapshot.url.join('/');
@@ -34,6 +45,10 @@ export class ManageComponent implements OnInit {
     if (idParam) {
       this.mantenimiento.id = Number(idParam);
       this.getMantenimiento(this.mantenimiento.id);
+    }
+
+    if (this.mode === 1 || this.mode === 3) {
+      this.theFormGroup.patchValue(this.mantenimiento);
     }
   }
 
@@ -54,16 +69,23 @@ export class ManageComponent implements OnInit {
   }
 
   create(): void {
-    console.log('Payload enviado al backend:', this.mantenimiento); // Log para depuración
-    this.mantenimientoService.create(this.mantenimiento).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = this.theFormGroup.value;
+    console.log('Payload enviado al backend:', payload); // Log para depuración
+    this.mantenimientoService.create(payload).subscribe({
       next: (createdMantenimiento) => {
         console.log('Mantenimiento creado exitosamente:', createdMantenimiento);
         Swal.fire({
-          title: '¡Creado!',
+          title: 'Creado!',
           text: 'Registro creado correctamente.',
-          icon: 'success'
+          icon: 'success',
+        }).then(() => {
+          this.router.navigate(['/mantenimientos/list']);
         });
-        this.router.navigate(['/mantenimientos/list']);
       },
       error: (error) => {
         console.error('Error al crear el mantenimiento:', error);
@@ -72,15 +94,22 @@ export class ManageComponent implements OnInit {
   }
 
   update(): void {
-    this.mantenimientoService.update(this.mantenimiento).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = { ...this.mantenimiento, ...this.theFormGroup.value };
+    this.mantenimientoService.update(payload).subscribe({
       next: (updatedMantenimiento) => {
         console.log('Mantenimiento actualizado exitosamente:', updatedMantenimiento);
         Swal.fire({
-          title: '¡Actualizado!',
+          title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
-          icon: 'success'
+          icon: 'success',
+        }).then(() => {
+          this.router.navigate(['/mantenimientos/list']);
         });
-        this.router.navigate(['/mantenimientos/list']);
       },
       error: (error) => {
         console.error('Error al actualizar el mantenimiento:', error);
@@ -110,5 +139,9 @@ export class ManageComponent implements OnInit {
         });
       }
     });
+  }
+
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
   }
 }

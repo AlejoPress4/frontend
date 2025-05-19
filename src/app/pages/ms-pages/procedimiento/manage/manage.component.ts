@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Procedimiento } from 'src/app/models/procedimiento.model';
 import { ProcedimientoService } from 'src/app/services/procedimientoService/procedimiento.service';
 import Swal from 'sweetalert2';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-manage',
@@ -13,12 +14,19 @@ export class ManageComponent implements OnInit {
 
   mode: number; //1->View, 2->Create, 3-> Update
   procedimiento: Procedimiento;
+  theFormGroup: FormGroup;
 
   constructor(private activateRoute: ActivatedRoute,
     private someProcedimiento: ProcedimientoService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.procedimiento = { id: 0 }
+    this.procedimiento = { id: 0 };
+    this.theFormGroup = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      descripcion: ['', [Validators.required, Validators.minLength(5)]],
+      // mantenimientos: ['', []] // Si quieres validar mantenimientos, ajusta aquí
+    });
   }
 
   ngOnInit(): void {
@@ -33,6 +41,9 @@ export class ManageComponent implements OnInit {
     if (this.activateRoute.snapshot.params.id) {
       this.procedimiento.id = this.activateRoute.snapshot.params.id  
       this.getProcedimiento(this.procedimiento.id)
+    }
+    if (this.mode === 1 || this.mode === 3) {
+      this.theFormGroup.patchValue(this.procedimiento);
     }
   }
   getProcedimiento(id: number) {
@@ -50,15 +61,21 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['procedimiento/list'])
   }
   create() {
-    this.someProcedimiento.create(this.procedimiento).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = this.theFormGroup.value;
+    this.someProcedimiento.create(payload).subscribe({
       next: (procedimiento) => {
-        console.log('procedimiento created successfully:', procedimiento);
         Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/procedimientos/list']);
+        }).then(() => {
+          this.router.navigate(['/procedimiento/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating procedimiento:', error);
@@ -66,15 +83,21 @@ export class ManageComponent implements OnInit {
     });
   }
   update() {
-    this.someProcedimiento.update(this.procedimiento).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.theFormGroup.markAllAsTouched();
+      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      return;
+    }
+    const payload = { ...this.procedimiento, ...this.theFormGroup.value };
+    this.someProcedimiento.update(payload).subscribe({
       next: (procedimiento) => {
-        console.log('procedimiento updated successfully:', procedimiento);
         Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/procedimiento/list']);
+        }).then(() => {
+          this.router.navigate(['/procedimiento/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating procedimiento:', error);
@@ -105,6 +128,9 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
+  }
 
- }
+}

@@ -1,5 +1,4 @@
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
-</div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8"></div>
 <!-- Page content -->
 <div class="container-fluid mt--7">
   <!-- Table -->
@@ -7,52 +6,162 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
-
-
+          <h3 class="mb-0" *ngIf="mode == 1">Detalle</h3>
+          <h3 class="mb-0" *ngIf="mode == 2">Creación</h3>
+          <h3 class="mb-0" *ngIf="mode == 3">Actualización</h3>
         </div>
         <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="mantenimiento.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Fecha</div>
-            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="mantenimiento.fecha"
-                [disabled]="mode==1">
+          <form [formGroup]="theFormGroup">
+            <div class="row">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input
+                  type="number"
+                  class="form-control"
+                  [value]="mantenimiento.id"
+                  disabled
+                />
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Estado</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="mantenimiento.estado"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID Maquina</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="mantenimiento.maquina_id"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Responsable</div>
-            <div class="col-9">
-              <input type="text" class="form-control" [(ngModel)]="mantenimiento.responsable" [disabled]="mode==1">
+            <br />
+            <div class="row">
+              <div class="col-3">Fecha</div>
+              <div class="col-9">
+                <input
+                  type="date"
+                  class="form-control"
+                  formControlName="fecha"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.fecha.errors &&
+                    (getTheFormGroup.fecha.dirty ||
+                      getTheFormGroup.fecha.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.fecha.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-12 text-center">
-              <button *ngIf="mode==1" class="btn btn-primary mx-2" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-success mx-2" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-warning mx-2" (click)="update()">Actualizar</button>
+            <br />
+            <div class="row">
+              <div class="col-3">Estado</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="estado"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.estado.errors &&
+                    (getTheFormGroup.estado.dirty ||
+                      getTheFormGroup.estado.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.estado.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                  <strong
+                    *ngIf="getTheFormGroup.estado.errors.minlength"
+                    class="msnError"
+                    >Mínimo 3 caracteres</strong
+                  >
+                </div>
+              </div>
             </div>
-          </div>
+            <br />
+            <div class="row">
+              <div class="col-3">ID Maquina</div>
+              <div class="col-9">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="maquina_id"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.maquina_id.errors &&
+                    (getTheFormGroup.maquina_id.dirty ||
+                      getTheFormGroup.maquina_id.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.maquina_id.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-3">Responsable</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="responsable"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.responsable.errors &&
+                    (getTheFormGroup.responsable.dirty ||
+                      getTheFormGroup.responsable.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.responsable.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                  <strong
+                    *ngIf="getTheFormGroup.responsable.errors.minlength"
+                    class="msnError"
+                    >Mínimo 3 caracteres</strong
+                  >
+                </div>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-12 text-center">
+                <button
+                  *ngIf="mode == 1"
+                  class="btn btn-primary mx-2"
+                  (click)="back()"
+                >
+                  Volver
+                </button>
+                <button
+                  *ngIf="mode == 2"
+                  class="btn btn-primary mx-2"
+                  (click)="create()"
+                >
+                  Crear
+                </button>
+                <button
+                  *ngIf="mode == 3"
+                  class="btn btn-primary mx-2"
+                  (click)="update()"
+                >
+                  Actualizar
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>

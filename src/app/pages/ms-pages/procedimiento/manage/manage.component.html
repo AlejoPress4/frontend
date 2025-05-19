@@ -1,5 +1,4 @@
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
-</div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8"></div>
 <!-- Page content -->
 <div class="container-fluid mt--7">
   <!-- Table -->
@@ -7,47 +6,112 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
-
-
+          <h3 class="mb-0" *ngIf="mode == 1">Detalle</h3>
+          <h3 class="mb-0" *ngIf="mode == 2">Creación</h3>
+          <h3 class="mb-0" *ngIf="mode == 3">Actualización</h3>
         </div>
         <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="procedimiento.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Nombre</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="procedimiento.nombre"
-                [disabled]="mode==1">
+          <form [formGroup]="theFormGroup">
+            <div class="row">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="procedimiento.id"
+                  disabled
+                />
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Descripción</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="procedimiento.descripcion"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Mantenimientos</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="procedimiento.mantenimientos"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
+            <br />
+            <div class="row">
+              <div class="col-3">Nombre</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nombre"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.nombre.errors &&
+                    (getTheFormGroup.nombre.dirty ||
+                      getTheFormGroup.nombre.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.nombre.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                  <strong
+                    *ngIf="getTheFormGroup.nombre.errors.minlength"
+                    class="msnError"
+                    >Mínimo 3 caracteres</strong
+                  >
+                </div>
+              </div>
             </div>
-          </div>
+            <br />
+            <div class="row">
+              <div class="col-3">Descripción</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="descripcion"
+                  [disabled]="mode == 1"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.descripcion.errors &&
+                    (getTheFormGroup.descripcion.dirty ||
+                      getTheFormGroup.descripcion.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.descripcion.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                  <strong
+                    *ngIf="getTheFormGroup.descripcion.errors.minlength"
+                    class="msnError"
+                    >Mínimo 5 caracteres</strong
+                  >
+                </div>
+              </div>
+            </div>
+            <br />
+            <!-- Si quieres agregar validación para mantenimientos, puedes hacerlo aquí -->
+            <div class="row">
+              <div class="col-12 text-center">
+                <button
+                  *ngIf="mode == 1"
+                  class="btn btn-primary mx-2"
+                  (click)="back()"
+                >
+                  Volver
+                </button>
+                <button
+                  *ngIf="mode == 2"
+                  class="btn btn-primary mx-2"
+                  (click)="create()"
+                >
+                  Crear
+                </button>
+                <button
+                  *ngIf="mode == 3"
+                  class="btn btn-primary mx-2"
+                  (click)="update()"
+                >
+                  Actualizar
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-
       </div>
     </div>
   </div>
