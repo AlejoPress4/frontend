@@ -1,101 +1,264 @@
-<div class="pay-container">
-    <h2>Payment Form</h2>
-    <form (ngSubmit)="onSubmit()" #paymentForm="ngForm">
-        <!-- Card Details -->
-        <div class="form-group">
-            <label for="cardNumber">Card Number</label>
-            <input type="text" id="cardNumber" name="cardNumber" ngModel required class="form-control"
-                placeholder="Enter card number">
+<!-- pay.component.html -->
+<div class="header bg-gradient-primary py-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center">
+        <div class="col">
+          <h1 class="header-title text-white">Formulario de Pago</h1>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="wave-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+</div>
 
-        <div class="form-group">
-            <label for="expYear">Expiry Year</label>
-            <input type="text" id="expYear" name="expYear" ngModel required class="form-control" placeholder="YYYY">
+<div class="container mt--6">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-soft border-0">
+        <div class="card-header bg-transparent text-center border-0 pt-4">
+          <div class="payment-icon-circle mb-3">
+            <i class="fas fa-credit-card"></i>
+          </div>
+          <h3 class="card-title text-primary">Información de Pago</h3>
+          <p class="text-muted">Complete los datos para procesar su pago</p>
         </div>
-
-        <div class="form-group">
-            <label for="expMonth">Expiry Month</label>
-            <input type="text" id="expMonth" name="expMonth" ngModel required class="form-control" placeholder="MM">
+        <div class="card-body px-lg-5 py-lg-4">
+          <form (ngSubmit)="onSubmit()" #paymentForm="ngForm">
+            <div class="row">
+              <div class="col-12">
+                <h5 class="text-primary mb-3">Información de Tarjeta</h5>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-credit-card text-primary"></i>
+                    </span>
+                    <input type="text" id="cardNumber" name="cardNumber" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="XXXX XXXX XXXX XXXX">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="cvc" class="form-label">CVC</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-lock text-primary"></i>
+                    </span>
+                    <input type="text" id="cvc" name="cvc" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="CVC">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="expMonth" class="form-label">Mes de Expiración</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-calendar text-primary"></i>
+                    </span>
+                    <input type="text" id="expMonth" name="expMonth" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="MM">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="expYear" class="form-label">Año de Expiración</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-calendar-alt text-primary"></i>
+                    </span>
+                    <input type="text" id="expYear" name="expYear" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="YYYY">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12 mt-4">
+                <h5 class="text-primary mb-3">Información del Cliente</h5>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="customerName" class="form-label">Nombre</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-user text-primary"></i>
+                    </span>
+                    <input type="text" id="customerName" name="customerName" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Nombre">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastName" class="form-label">Apellido</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-user text-primary"></i>
+                    </span>
+                    <input type="text" id="lastName" name="lastName" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Apellido">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="email" class="form-label">Email</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-envelope text-primary"></i>
+                    </span>
+                    <input type="email" id="email" name="email" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="email@ejemplo.com">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="phone" class="form-label">Teléfono</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-phone text-primary"></i>
+                    </span>
+                    <input type="text" id="phone" name="phone" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Teléfono">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="docNumber" class="form-label">Número de Documento</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-id-card text-primary"></i>
+                    </span>
+                    <input type="text" id="docNumber" name="docNumber" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Documento">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12 mt-4">
+                <h5 class="text-primary mb-3">Información del Pago</h5>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="dueId" class="form-label">ID de Cuota</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-hashtag text-primary"></i>
+                    </span>
+                    <input type="text" id="dueId" name="due_id" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="ID Cuota">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="idServicio" class="form-label">ID de Servicio</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-hashtag text-primary"></i>
+                    </span>
+                    <input type="text" id="idServicio" name="id_servicio" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="ID Servicio">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="valor" class="form-label">Valor</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-dollar-sign text-primary"></i>
+                    </span>
+                    <input type="number" id="valor" name="valor" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Valor">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="description" class="form-label">Descripción</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-align-left text-primary"></i>
+                    </span>
+                    <input type="text" id="description" name="description" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Descripción">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="tax" class="form-label">Impuesto</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-percentage text-primary"></i>
+                    </span>
+                    <input type="number" id="tax" name="tax" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Impuesto">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="taxBase" class="form-label">Base Imponible</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-calculator text-primary"></i>
+                    </span>
+                    <input type="number" id="taxBase" name="taxBase" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Base Imponible">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="dues" class="form-label">Cuotas</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-list-ol text-primary"></i>
+                    </span>
+                    <input type="number" id="dues" name="dues" ngModel required 
+                      class="form-control ps-2 border-start-0" placeholder="Cuotas">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="!paymentForm.valid">
+                  <i class="fas fa-lock mr-2"></i>Realizar Pago
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-
-        <div class="form-group">
-            <label for="cvc">CVC</label>
-            <input type="text" id="cvc" name="cvc" ngModel required class="form-control" placeholder="CVC">
-        </div>
-
-        <!-- Customer Information -->
-        <div class="form-group">
-            <label for="customerName">Customer Name</label>
-            <input type="text" id="customerName" name="customerName" ngModel required class="form-control"
-                placeholder="Enter your name">
-        </div>
-
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" ngModel required class="form-control"
-                placeholder="Enter your last name">
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" ngModel required class="form-control"
-                placeholder="Enter your email">
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="text" id="phone" name="phone" ngModel required class="form-control"
-                placeholder="Enter your phone number">
-        </div>
-
-        <div class="form-group">
-            <label for="docNumber">Document Number</label>
-            <input type="text" id="docNumber" name="docNumber" ngModel required class="form-control"
-                placeholder="Enter your document number">
-        </div>
-
-        <!-- Due Information -->
-        <div class="form-group">
-            <label for="dueId">Due ID</label>
-            <input type="text" id="dueId" name="due_id" ngModel required class="form-control"
-                placeholder="Enter due ID">
-        </div>
-
-        <div class="form-group">
-            <label for="idServicio">Service ID</label>
-            <input type="text" id="idServicio" name="id_servicio" ngModel required class="form-control"
-                placeholder="Enter service ID">
-        </div>
-
-        <div class="form-group">
-            <label for="valor">Value</label>
-            <input type="number" id="valor" name="valor" ngModel required class="form-control"
-                placeholder="Enter value">
-        </div>
-
-        <!-- Additional Payment Metadata -->
-        <div class="form-group">
-            <label for="description">Description</label>
-            <input type="text" id="description" name="description" ngModel required class="form-control"
-                placeholder="Enter description">
-        </div>
-
-        <div class="form-group">
-            <label for="tax">Tax</label>
-            <input type="number" id="tax" name="tax" ngModel required class="form-control" placeholder="Enter tax">
-        </div>
-
-        <div class="form-group">
-            <label for="taxBase">Tax Base</label>
-            <input type="number" id="taxBase" name="taxBase" ngModel required class="form-control"
-                placeholder="Enter tax base">
-        </div>
-
-        <div class="form-group">
-            <label for="dues">Dues</label>
-            <input type="number" id="dues" name="dues" ngModel required class="form-control" placeholder="Enter dues">
-        </div>
-
-        <button type="submit" class="btn btn-primary" [disabled]="!paymentForm.valid">Pay</button>
-    </form>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,55 +1,114 @@
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+<!-- list.component-servicios.html -->
+<div class="header bg-gradient-primary py-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center">
+        <div class="col">
+          <h1 class="header-title text-white">Servicios</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wave-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
 </div>
-<div class="container-fluid mt--7">
+
+<div class="container-fluid mt--6">
   <div class="row">
     <div class="col">
-      <div class="card shadow">
-        <div class="card-header bg-transparent">
-          <h3 class="mb-0">Servicios</h3>
+      <div class="card shadow-soft border-0">
+        <div class="card-header bg-transparent border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-primary">Listado de Servicios</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-primary">
+                <i class="fas fa-plus mr-2"></i>Nuevo Servicio
+              </button>
+            </div>
+          </div>
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table align-items-center table-flush">
-
+            <table class="table align-items-center table-flush table-hover">
               <thead class="thead-light">
                 <tr>
-                  <th scope="col">Costo</th>
-                  <th scope="col">Fecha Inicio</th>
-                  <th scope="col">Fecha Fin</th>
-                  <th scope="col">Prioridad</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Ubicación</th>
-                  <th scope="col">Resumen</th>
-                  <th scope="col">Acciones</th>
+                  <th scope="col" class="text-primary">Costo</th>
+                  <th scope="col" class="text-primary">Fecha Inicio</th>
+                  <th scope="col" class="text-primary">Fecha Fin</th>
+                  <th scope="col" class="text-primary">Prioridad</th>
+                  <th scope="col" class="text-primary">Tipo</th>
+                  <th scope="col" class="text-primary">Estado</th>
+                  <th scope="col" class="text-primary">Ubicación</th>
+                  <th scope="col" class="text-primary">Resumen</th>
+                  <th scope="col" class="text-primary">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let servicio of servicios">
-                  <td>{{ servicio.costo }}</td>
+                <tr *ngFor="let servicio of servicios" class="table-row-hover">
+                  <td>{{ servicio.costo | currency }}</td>
                   <td>{{ servicio.f_inicio | date:'yyyy-MM-dd' }}</td>
                   <td>{{ servicio.f_fin | date:'yyyy-MM-dd' }}</td>
-                  <td>{{ servicio.prioridad }}</td>
-                  <td>{{ servicio.tipo }}</td>
-                  <td>{{ servicio.estado }}</td>
-                  <td>{{ servicio.ubicacion }}</td>
-                  <td>{{ servicio.resumen }}</td>
                   <td>
-                    <button class="btn btn-sm btn-primary" (click)="edit(servicio.id)">Editar</button>
-                    <button class="btn btn-sm btn-danger" (click)="delete(servicio.id)">Eliminar</button>
+                    <span class="badge badge-pill" 
+                          [ngClass]="{
+                            'badge-danger': servicio.prioridad === 'Alta',
+                            'badge-warning': servicio.prioridad === 'Media',
+                            'badge-info': servicio.prioridad === 'Baja'
+                          }">
+                      {{ servicio.prioridad }}
+                    </span>
+                  </td>
+                  <td>{{ servicio.tipo }}</td>
+                  <td>
+                    <span class="badge badge-pill" 
+                          [ngClass]="{
+                            'badge-success': servicio.estado === 'Completado',
+                            'badge-warning': servicio.estado === 'En Proceso',
+                            'badge-danger': servicio.estado === 'Pendiente'
+                          }">
+                      {{ servicio.estado }}
+                    </span>
+                  </td>
+                  <td>{{ servicio.ubicacion }}</td>
+                  <td>
+                    <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ servicio.resumen }}">
+                      {{ servicio.resumen }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-primary" (click)="edit(servicio.id)">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="delete(servicio.id)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            <div *ngIf="servicios && servicios.length === 0" class="text-center mt-3">
-              <p>No hay servicios disponibles.</p>
+            <div *ngIf="servicios && servicios.length === 0" class="text-center py-4">
+              <div class="empty-state">
+                <i class="fas fa-tools text-muted mb-3"></i>
+                <p class="text-muted">No hay servicios disponibles.</p>
+              </div>
             </div>
 
-            <div *ngIf="!servicios" class="text-center mt-3">
-              <p>Cargando servicios...</p>
+            <div *ngIf="!servicios" class="text-center py-4">
+              <div class="loading-state">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="sr-only">Cargando...</span>
+                </div>
+                <p class="text-muted mt-3">Cargando servicios...</p>
+              </div>
             </div>
-
           </div>
         </div>
       </div>

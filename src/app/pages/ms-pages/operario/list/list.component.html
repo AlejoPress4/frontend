@@ -1,37 +1,86 @@
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+<!-- list.component-operarios.html -->
+<div class="header bg-gradient-primary py-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center">
+        <div class="col">
+          <h1 class="header-title text-white">Operarios</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wave-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
 </div>
-<div class="container-fluid mt--7">
+
+<div class="container-fluid mt--6">
   <div class="row">
     <div class="col">
-      <div class="card shadow">
-        <div class="card-header bg-transparent">
-          <h3 class="mb-0">Operarios</h3>
+      <div class="card shadow-soft border-0">
+        <div class="card-header bg-transparent border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-primary">Listado de Operarios</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-primary">
+                <i class="fas fa-plus mr-2"></i>Nuevo Operario
+              </button>
+            </div>
+          </div>
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table align-items-center table-flush">
+            <table class="table align-items-center table-flush table-hover">
               <thead class="thead-light">
                 <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Experiencia</th>
-                  <th scope="col">Acciones</th>
+                  <th scope="col" class="text-primary">ID</th>
+                  <th scope="col" class="text-primary">Nombre</th>
+                  <th scope="col" class="text-primary">Email</th>
+                  <th scope="col" class="text-primary">Experiencia</th>
+                  <th scope="col" class="text-primary">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let operario of operarios">
+                <tr *ngFor="let operario of operarios" class="table-row-hover">
                   <td>{{ operario.id }}</td>
-                  <td>{{ operario.name }}</td>
-                  <td>{{ operario.email }}</td>
-                  <td>{{ operario.experiencia }}</td>
                   <td>
-                    <button class="btn btn-sm btn-primary" (click)="edit(operario.id)">Editar</button>
-                    <button class="btn btn-sm btn-danger" (click)="delete(operario.id)">Eliminar</button>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-sm bg-primary-soft mr-3">
+                        <span>{{ operario.name.charAt(0) }}</span>
+                      </div>
+                      {{ operario.name }}
+                    </div>
+                  </td>
+                  <td>
+                    <a href="mailto:{{ operario.email }}" class="text-primary">
+                      <i class="fas fa-envelope mr-2"></i>{{ operario.email }}
+                    </a>
+                  </td>
+                  <td>
+                    <span class="badge bg-info-soft">{{ operario.experiencia }}</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-primary" (click)="edit(operario.id)">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="delete(operario.id)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr *ngIf="operarios.length === 0">
-                  <td colspan="5" class="text-center">No hay operarios disponibles.</td>
+                  <td colspan="5" class="text-center py-4">
+                    <div class="empty-state">
+                      <i class="fas fa-users text-muted mb-3"></i>
+                      <p class="text-muted">No hay operarios disponibles.</p>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
