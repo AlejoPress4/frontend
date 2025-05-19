@@ -22,7 +22,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'evidencias', loadChildren: () => import('src/app/pages/ms-pages/evidencia/evidencia.module').then(m => m.EvidenciaModule) },
   { path: 'gps', loadChildren: () => import('src/app/pages/ms-pages/gps/gps.module').then(m => m.GpsModule) },
   { path: 'seguros', loadChildren: () => import('src/app/pages/ms-pages/seguro/seguro.module').then(m => m.SeguroModule) },
-  { path: 'maquina', loadChildren: () => import('src/app/pages/ms-pages/maquina/maquina.module').then(m => m.MaquinaModule) },
+  { path: 'maquinas', loadChildren: () => import('src/app/pages/ms-pages/maquina/maquina.module').then(m => m.MaquinaModule) },
   { path: 'especialidad-maquinaria', loadChildren: () => import('src/app/pages/ms-pages/especialidadmaquinaria/especialidadmaquinaria.module').then(m => m.EspecialidadMaquinariaModule) },
   { path: 'mantenimientos', loadChildren: () => import('src/app/pages/ms-pages/mantenimiento/mantenimiento.module').then(m => m.MantenimientoModule) },
   { path: 'procedimiento-mantenimiento', loadChildren: () => import('src/app/pages/ms-pages/procedimientomantenimiento/procedimientomantenimiento.module').then(m => m.ProcedimientoMantenimientoModule) },
@@ -39,5 +39,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'turnos', loadChildren: () => import('src/app/pages/ms-pages/turno/turno.module').then(m => m.TurnoModule) },
   { path: 'especialidad-operarios', loadChildren: () => import('src/app/pages/ms-pages/operarioespecialidad/operarioespecialidad.module').then(m => m.OperarioEspecialidadModule) },
   { path: 'especialidades', loadChildren: () => import('src/app/pages/ms-pages/especialidades/especialidades.module').then(m => m.EspecialidadesModule) },
-  { path: 'tiposervicio', loadChildren: () => import('src/app/pages/ms-pages/tiposervicio/tiposervicio.module').then(m => m.TipoServicioModule) }
+  { path: 'tiposervicio', loadChildren: () => import('src/app/pages/ms-pages/tiposervicio/tiposervicio.module').then(m => m.TipoServicioModule) },
+  { path: 'departamentos', loadChildren: () => import('src/app/pages/ms-pages/departamentos/departamentos.module').then(m => m.DepartamentosModule) },
+  { path: 'municipios', loadChildren: () => import('src/app/pages/ms-pages/municipios/municipios.module').then(m => m.MunicipiosModule) },
 ];
