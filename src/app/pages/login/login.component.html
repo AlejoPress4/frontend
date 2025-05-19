@@ -1,64 +1,58 @@
 <div class="login-container">
-  <!-- Header con gradiente y forma de onda -->
-  <div class="header bg-gradient-primary py-7 py-lg-8">
+  <!-- Header con efecto de onda mejorado -->
+  <div class="header bg-gradient-primary py-7">
     <div class="container">
       <div class="header-body text-center mb-7">
         <div class="row justify-content-center">
           <div class="col-lg-5 col-md-6">
-            <div class="brand-logo mb-4">
-              <i class="bi bi-truck-front-fill"></i>
-            </div>
-            <h1 class="text-white">¡Bienvenido!</h1>
-            <p class="text-lead text-light">
-              Inicie sesión para acceder al sistema de Gestión de Servicios de Transporte
-            </p>
+            <h1 class="text-white display-4 fw-bold">¡Bienvenido!</h1>
+            <p class="text-white opacity-8 lead">Inicie sesión para acceder al sistema.</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="separator separator-bottom separator-skew zindex-100">
-      <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+    <div class="wave-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
       </svg>
     </div>
   </div>
-  
-  <!-- Contenido de la página -->
-  <div class="container mt--8 pb-5">
+
+  <!-- Contenido principal -->
+  <div class="container position-relative">
     <div class="row justify-content-center">
       <div class="col-lg-5 col-md-7">
-        <div class="card bg-secondary shadow border-0 card-login">
-          <div class="card-header bg-transparent pb-5">
-            <div class="text-center">
-              <h3 class="card-title">
-                {{ !showTwoFactorInput ? 'Iniciar Sesión' : 'Verificación de Seguridad' }}
-              </h3>
-              <p class="text-muted">
-                {{ !showTwoFactorInput ? 'Acceda a su cuenta para continuar' : 'Ingrese el código enviado a su email' }}
-              </p>
+        <div class="card auth-card border-0">
+          <div class="card-header bg-transparent text-center border-0 pt-4">
+            <div class="auth-icon-circle mb-3">
+              <i class="fas fa-user-shield"></i>
             </div>
+            <h4 class="card-title fw-bold">
+              {{ !showTwoFactorInput ? 'Iniciar Sesión' : 'Verificación 2FA' }}
+            </h4>
+            <p class="text-muted small">
+              {{ !showTwoFactorInput ? 'Ingrese sus credenciales para continuar' : 'Ingrese el código enviado a su email' }}
+            </p>
           </div>
           
-          <div class="card-body px-lg-5 py-lg-5">
+          <div class="card-body px-lg-5 py-lg-4">
             <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-              <!-- Campos de email y contraseña -->
+              <!-- Campos de login normal -->
               <div *ngIf="!showTwoFactorInput" class="login-fields">
                 <div class="form-group mb-4">
-                  <label for="email" class="form-label">Correo electrónico</label>
-                  <div class="input-group input-group-alternative">
-                    <span class="input-group-text">
-                      <i class="bi bi-envelope"></i>
+                  <label class="form-label text-muted small">Email</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="far fa-envelope text-primary"></i>
                     </span>
                     <input 
-                      id="email"
-                      class="form-control" 
-                      placeholder="usuario@empresa.com" 
                       type="email" 
+                      class="form-control ps-2 border-start-0" 
+                      placeholder="nombre@ejemplo.com" 
                       formControlName="email"
-                      [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
                     >
                   </div>
-                  <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="invalid-feedback d-block">
+                  <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger small mt-1">
                     <div *ngIf="loginForm.get('email')?.errors?.['required']">El email es requerido</div>
                     <div *ngIf="loginForm.get('email')?.errors?.['email']">Ingrese un email válido</div>
                   </div>
@@ -66,63 +60,51 @@
                 
                 <div class="form-group mb-4">
                   <div class="d-flex justify-content-between align-items-center">
-                    <label for="password" class="form-label">Contraseña</label>
+                    <label class="form-label text-muted small">Contraseña</label>
                     <a routerLink="/forgot-password" class="text-primary small">¿Olvidó su contraseña?</a>
                   </div>
-                  <div class="input-group input-group-alternative">
-                    <span class="input-group-text">
-                      <i class="bi bi-lock"></i>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text bg-light border-end-0">
+                      <i class="fas fa-lock text-primary"></i>
                     </span>
                     <input 
-                      id="password"
-                      class="form-control" 
-                      placeholder="••••••••" 
                       type="password" 
+                      class="form-control ps-2 border-start-0" 
+                      placeholder="••••••••" 
                       formControlName="password"
-                      [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
                     >
                   </div>
-                  <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback d-block">
+                  <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger small mt-1">
                     <div *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida</div>
                   </div>
-                </div>
-                
-                <div class="form-check mb-4">
-                  <input class="form-check-input" type="checkbox" id="rememberMe">
-                  <label class="form-check-label" for="rememberMe">
-                    Recordar mi sesión
-                  </label>
                 </div>
               </div>
 
               <!-- Campo de código 2FA -->
               <div class="form-group mb-4" *ngIf="showTwoFactorInput">
-                <label for="code2FA" class="form-label">Código de verificación</label>
-                <div class="input-group input-group-alternative">
-                  <span class="input-group-text">
-                    <i class="bi bi-shield-lock"></i>
+                <label class="form-label text-muted small">Código de verificación</label>
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="fas fa-key text-primary"></i>
                   </span>
                   <input 
-                    id="code2FA"
-                    class="form-control" 
-                    placeholder="Ingrese el código de 6 dígitos" 
                     type="text" 
+                    class="form-control ps-2 border-start-0" 
+                    placeholder="Ingrese el código de 6 dígitos" 
                     formControlName="code2FA"
-                    [ngClass]="{'is-invalid': loginForm.get('code2FA')?.invalid && loginForm.get('code2FA')?.touched}"
                   >
                 </div>
-                <div *ngIf="loginForm.get('code2FA')?.invalid && loginForm.get('code2FA')?.touched" class="invalid-feedback d-block">
+                <div *ngIf="loginForm.get('code2FA')?.invalid && loginForm.get('code2FA')?.touched" class="text-danger small mt-1">
                   <div *ngIf="loginForm.get('code2FA')?.errors?.['required']">El código de verificación es requerido</div>
-                </div>
-                <div class="text-center mt-3">
-                  <small class="text-muted">
-                    ¿No recibió el código? <a href="#" class="text-primary">Reenviar</a>
-                  </small>
                 </div>
               </div>
 
-              <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-lg w-100 my-4" [disabled]="loginForm.invalid">
+              <div class="d-grid gap-2 mt-4">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary btn-lg" 
+                  [disabled]="loginForm.invalid"
+                >
                   <span *ngIf="!showTwoFactorInput">Iniciar sesión</span>
                   <span *ngIf="showTwoFactorInput">Verificar código</span>
                 </button>
@@ -131,27 +113,13 @@
           </div>
         </div>
         
-        <div class="row mt-4 text-center">
-          <div class="col-12">
-            <p class="text-light">
-              ¿No tiene una cuenta? <a routerLink="/register" class="text-white font-weight-bold">Registrarse</a>
-            </p>
-          </div>
+        <div class="text-center mt-4" *ngIf="!showTwoFactorInput">
+          <p class="text-muted">
+            ¿No tiene una cuenta? 
+            <a routerLink="/register" class="text-primary fw-bold">Crear cuenta</a>
+          </p>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="row align-items-center justify-content-center">
-        <div class="col-md-6">
-          <div class="copyright text-center text-muted">
-            &copy; 2025 <span class="font-weight-bold">Gestión de Servicios de Transporte</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
 </div>
