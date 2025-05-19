@@ -22,7 +22,7 @@ export class ManageComponent implements OnInit {
     this.obra = {
       id: 0,
       combo: 1, // Default value for paquete_id
-      municipios: ''  // Default value for municipio
+      municipios: { id: 0, nombre: '', departamento_id: 0 } // Default value for municipio
     };
   }
 
