@@ -10,9 +10,6 @@ dist/
 tmp/
 out-tsc/
 
-# Environment files
-src/environments/environment*.ts
-
 # IDE/Editor files
 .vscode/
 .idea/
