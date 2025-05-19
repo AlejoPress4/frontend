@@ -6,9 +6,14 @@ import { Usuario } from '../../models/usuario.model';
 import { map, catchError } from 'rxjs/operators';
 
 interface RespuestaLogin {
-  token: string;
-  user_id: string;
+  token?: string;
+  user?: {
+    _id: string;
+    name?: string;
+    email?: string;
+  };
   message?: string;
+  error?: any;
 }
 
 @Injectable({
@@ -23,10 +28,23 @@ export class SeguridadService {
 
   // Primera fase de login con email y password
   login(email: string, password: string): Observable<RespuestaLogin> {
-    return this.http.post<RespuestaLogin>(`${environment.api_url}/api/public/security/login`, {
+    return this.http.post<any>(`${environment.api_url}/api/public/security/login`, {
       email,
       password
     }).pipe(
+      map(response => {
+        console.log('Respuesta del login:', response);
+        // Si la respuesta es un string, intentamos parsearlo
+        if (typeof response === 'string') {
+          try {
+            return JSON.parse(response);
+          } catch (e) {
+            console.error('Error parseando respuesta:', e);
+            throw new Error('Formato de respuesta inválido');
+          }
+        }
+        return response;
+      }),
       catchError(error => {
         console.error('Error en login:', error);
         throw error;
@@ -35,17 +53,36 @@ export class SeguridadService {
   }
 
   // Segunda fase de login con código 2FA
-  validateTwoFactor(email: string, password: string, code2FA: string): Observable<RespuestaLogin> {
-    return this.http.post<RespuestaLogin>(`${environment.api_url}/api/public/security/login/2FA`, {
+  validateTwoFactor(email: string, password: string, code2FA: string, userId: string): Observable<RespuestaLogin> {
+    return this.http.post<any>(`${environment.api_url}/api/public/security/login/2FA/${userId}`, {
       email,
       password,
       code2FA
     }).pipe(
       map(response => {
-        if (response && response.token) {
-          this.guardarDatosSesion(response);
+        console.log('Respuesta 2FA:', response);
+        let parsedResponse: RespuestaLogin;
+        
+        // Si la respuesta es un string (token), la formateamos
+        if (typeof response === 'string') {
+          parsedResponse = {
+            token: response,
+            user: { 
+              _id: userId,
+              name: email.split('@')[0],
+              email: email
+            }
+          };
+        } else {
+          parsedResponse = response;
         }
-        return response;
+
+        // Si tenemos un token, guardamos la sesión
+        if (parsedResponse.token) {
+          this.guardarDatosSesion(parsedResponse);
+        }
+
+        return parsedResponse;
       }),
       catchError(error => {
         console.error('Error en validateTwoFactor:', error);
@@ -68,12 +105,19 @@ export class SeguridadService {
 
   guardarDatosSesion(datosSesion: RespuestaLogin) {
     try {
-      const data: Usuario = {
-        _id: datosSesion.user_id,
-        token: datosSesion.token,
-      };
-      localStorage.setItem('sesion', JSON.stringify(data));
-      this.setUsuario(data);
+      if (!datosSesion.token) {
+        throw new Error('No se recibió el token de autenticación');
+      }
+      
+      // Crear un nuevo objeto Usuario con los datos de la sesión
+      const usuarioData = new Usuario();
+      usuarioData.token = datosSesion.token;
+      usuarioData._id = datosSesion.user?._id || '';
+      usuarioData.email = datosSesion.user?.email || '';
+      usuarioData.nombre = datosSesion.user?.name || '';
+
+      localStorage.setItem('sesion', JSON.stringify(usuarioData));
+      this.setUsuario(usuarioData);
     } catch (error) {
       console.error('Error al guardar datos de sesión:', error);
       throw error;

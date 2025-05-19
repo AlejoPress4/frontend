@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   showTwoFactorInput: boolean = false;
   attemptedEmail: string = '';
   attemptedPassword: string = '';
+  attempted_id: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -43,19 +44,29 @@ export class LoginComponent implements OnInit {
     if (!this.showTwoFactorInput) {
       // Primera fase del login
       this.attemptedEmail = email;
-      this.attemptedPassword = password;
-      
-      this.seguridadService.login(email, password).subscribe({
-        next: (response) => {
-          this.showTwoFactorInput = true;
-          this.loginForm.get('code2FA')?.setValidators([Validators.required]);
-          this.loginForm.get('code2FA')?.updateValueAndValidity();
-          
-          Swal.fire({
-            title: 'Código 2FA',
-            text: 'Se ha enviado un código a su email. Por favor, ingréselo para continuar.',
-            icon: 'info'
-          });
+      this.attemptedPassword = password;      this.seguridadService.login(email, password).subscribe({
+        next: (response: any) => {
+          console.log('Respuesta completa:', response);
+          if (response && response.user && response.user._id) {
+            // Primera fase exitosa, necesitamos 2FA
+            this.showTwoFactorInput = true;
+            this.attempted_id = response.user._id;
+            this.loginForm.get('code2FA')?.setValidators([Validators.required]);
+            this.loginForm.get('code2FA')?.setValidators([Validators.required]);
+            this.loginForm.get('code2FA')?.updateValueAndValidity();
+            
+            Swal.fire({
+              title: 'Código 2FA',
+              text: 'Se ha enviado un código a su email. Por favor, ingréselo para continuar.',
+              icon: 'info'
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'No se recibió el ID de usuario necesario para la autenticación',
+              icon: 'error'
+            });
+          }
         },
         error: (error) => {
           console.error('Error during login:', error);
@@ -68,24 +79,52 @@ export class LoginComponent implements OnInit {
       });
     } else {
       // Segunda fase del login (2FA)
-      this.seguridadService.validateTwoFactor(this.attemptedEmail, this.attemptedPassword, code2FA).subscribe({
+      if (!this.attempted_id) {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se encontró el ID de usuario. Por favor, intente iniciar sesión nuevamente.',
+          icon: 'error'
+        });
+        return;
+      }      this.seguridadService.validateTwoFactor(
+        this.attemptedEmail, 
+        this.attemptedPassword, 
+        code2FA, 
+        this.attempted_id
+      ).subscribe({
         next: (response) => {
-          if (response) {
-            Swal.fire({
-              title: '¡Bienvenido!',
-              text: 'Ha iniciado sesión exitosamente',
+          if (response?.token) {
+            // Primero cambiamos la ruta
+            this.router.navigate(['/dashboard']);
+            
+            // Luego mostramos la notificación
+            const toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true
+            });
+
+            toast.fire({
               icon: 'success',
-              timer: 1500
-            }).then(() => {
-              this.router.navigate(['/dashboard']);
+              title: '¡Bienvenido!',
+              text: 'Inicio de sesión exitoso'
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response?.message || 'No se pudo completar la autenticación',
+              confirmButtonText: 'Intentar nuevamente'
             });
           }
         },
         error: (error) => {
           Swal.fire({
+            icon: 'error',
             title: 'Error de autenticación',
-            text: error.error?.message || 'Código 2FA inválido',
-            icon: 'error'
+            text: error.error?.message || 'Código 2FA inválido'
           });
         }
       });
