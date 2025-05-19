@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TipoServicio } from 'src/app/models/tipo-servicio.model';
 import { TipoServicioService } from 'src/app/services/tipoServicioService/tipo-servicio.service';
-// import { Router } from '@angular/router'; // Import Router if you need navigation
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 @Component({
   selector: 'app-list-tipo-servicio',
@@ -31,7 +31,28 @@ export class ListTipoServicioComponent implements OnInit {
   }
 
   delete(id: number) {
-    console.log('Deleting Service Type ID:', id);
-    // Implement call to the delete service method
+    Swal.fire({
+      title: 'Eliminar',
+      text: '¿Está seguro que desea eliminar este registro?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.TipoServicioService.delete(id).subscribe({
+          next: () => {
+            Swal.fire('Eliminado!', 'Registro eliminado correctamente.', 'success');
+            this.ngOnInit(); // Recargar la lista después de eliminar
+          },
+          error: (error) => {
+            console.error('Error al eliminar el tipo de servicio:', error);
+            Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+          }
+        });
+      }
+    });
   }
 }

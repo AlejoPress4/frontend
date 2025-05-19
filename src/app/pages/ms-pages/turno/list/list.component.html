@@ -21,8 +21,8 @@
               <tbody>
                 <tr *ngFor="let turno of turnos">
                   <td>{{ turno.id }}</td>
-                  <td>{{ turno.id_operario }}</td>
-                  <td>{{ turno.id_maquinaria }}</td>
+                  <td>{{ turno.operario_id }}</td>
+                  <td>{{ turno.maquina_id }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" (click)="edit(turno.id)">Editar</button>
                     <button class="btn btn-sm btn-danger" (click)="delete(turno.id)">Eliminar</button>

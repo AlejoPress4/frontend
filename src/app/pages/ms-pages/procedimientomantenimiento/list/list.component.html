@@ -22,8 +22,8 @@
               <tbody>
                 <tr *ngFor="let procedimientomantenimiento of procedimientomantenimientos">
                   <td>{{ procedimientomantenimiento.id }}</td>
-                  <td>{{ procedimientomantenimiento.id_procedimiento }}</td>
-                  <td>{{ procedimientomantenimiento.id_mantenimiento }}</td>
+                  <td>{{ procedimientomantenimiento.procedimiento_id }}</td>
+                  <td>{{ procedimientomantenimiento.mantenimiento_id }}</td>
                   <td>{{ procedimientomantenimiento.estado }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" (click)="edit(procedimientomantenimiento.id)">Editar</button>

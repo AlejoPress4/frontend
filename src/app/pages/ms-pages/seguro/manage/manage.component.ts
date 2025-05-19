@@ -18,7 +18,7 @@ export class ManageComponent implements OnInit {
     private someSeguro: SeguroService,
     private router: Router
   ) {
-    this.seguro = { id: 0, poliza: [] };
+    this.seguro = { id: 0 };
   }
 
   ngOnInit(): void {

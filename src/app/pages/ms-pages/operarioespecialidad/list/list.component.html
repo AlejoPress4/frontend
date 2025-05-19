@@ -22,8 +22,8 @@
               <tbody>
                 <tr *ngFor="let operarioEspecialidad of OperarioEspecialidads">
                   <td>{{ operarioEspecialidad.id }}</td>
-                  <td>{{ operarioEspecialidad.id_operario }}</td>
-                  <td>{{ operarioEspecialidad.id_especialidad }}</td>
+                  <td>{{ operarioEspecialidad.operario_id }}</td>
+                  <td>{{ operarioEspecialidad.especialidad_id }}</td>
                   <td>{{ operarioEspecialidad.nivel_experiencia }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" (click)="edit(operarioEspecialidad.id)">Editar</button>

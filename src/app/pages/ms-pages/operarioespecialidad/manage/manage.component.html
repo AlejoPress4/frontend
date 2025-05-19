@@ -16,26 +16,27 @@
         <div class="card-body container">
           <div class="row">
             <div class="col-3">ID</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operarioespecialidad.id" disabled></div>
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operarioespecialidad.id" disabled>
+            </div>
           </div>
           <br>
           <div class="row">
             <div class="col-3">ID Operario</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operarioespecialidad.id_operario"
+            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operarioespecialidad.operario_id"
                 [disabled]="mode==1">
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col-3">ID Especialidad</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operarioespecialidad.id_especialidad"
-                [disabled]="mode==1"></div>
+            <div class="col-9"><input type="number" class="form-control"
+                [(ngModel)]="operarioespecialidad.especialidad_id" [disabled]="mode==1"></div>
           </div>
           <br>
           <div class="row">
             <div class="col-3">Nivel Experiencia</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="operarioespecialidad.nivel_experiencia"
-                [disabled]="mode==1"></div>
+            <div class="col-9"><input type="text" class="form-control"
+                [(ngModel)]="operarioespecialidad.nivel_experiencia" [disabled]="mode==1"></div>
           </div>
           <br>
           <div class="row">

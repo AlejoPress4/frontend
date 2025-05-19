@@ -20,15 +20,38 @@
           </div>
           <br>
           <div class="row">
-            <div class="col-3">ID Usuario</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="operario.usuario_id"
-                [disabled]="mode==1">
+            <div class="col-3">Nombre</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="operario.name" [disabled]="mode==1">
             </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Email</div>
+            <div class="col-9"><input type="email" class="form-control" [(ngModel)]="operario.email"
+                [disabled]="mode==1"></div>
           </div>
           <br>
           <div class="row">
             <div class="col-3">Experiencia</div>
             <div class="col-9"><input type="text" class="form-control" [(ngModel)]="operario.experiencia"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">ID Usuario</div>
+            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="operario.user_id"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Periodo Inicio</div>
+            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="operario.periodoInit"
+                [disabled]="mode==1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-3">Periodo Fin</div>
+            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="operario.periodoEnd"
                 [disabled]="mode==1"></div>
           </div>
           <br>

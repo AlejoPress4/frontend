@@ -47,7 +47,7 @@ export class ManageComponent implements OnInit {
     });
   }
   back() {
-    this.router.navigate(['turno/list'])
+    this.router.navigate(['turnos/list'])
   }
   create() {
     this.someTurno.create(this.turno).subscribe({
@@ -58,7 +58,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro creado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/turno/list']);
+        this.router.navigate(['/turnos/list']);
       },
       error: (error) => {
         console.error('Error creating turno:', error);
@@ -74,7 +74,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/turno/list']);
+        this.router.navigate(['/turnos/list']);
       },
       error: (error) => {
         console.error('Error updating turno:', error);

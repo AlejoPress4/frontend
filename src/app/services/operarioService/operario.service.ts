@@ -23,8 +23,8 @@ export class OperarioService {
     return this.http.post<Operario>(`${environment.url_ms_cinema}/operarios`, newOperario);
   }
 
-  update(operario: Operario): Observable<Operario> {
-    return this.http.put<Operario>(`${environment.url_ms_cinema}/operarios/${operario.id}`, operario);
+  update(id: number, payload: Operario): Observable<Operario> {
+    return this.http.put<Operario>(`${environment.url_ms_cinema}/operarios/${id}`, payload);
   }
 
   delete(id: number) {

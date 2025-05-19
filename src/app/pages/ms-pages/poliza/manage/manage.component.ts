@@ -31,7 +31,7 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.poliza.id = this.activateRoute.snapshot.params.id  
+      this.poliza.id = this.activateRoute.snapshot.params.id
       this.getPoliza(this.poliza.id)
     }
   }
@@ -47,7 +47,7 @@ export class ManageComponent implements OnInit {
     });
   }
   back() {
-    this.router.navigate(['poliza/list'])
+    this.router.navigate(['polizas/list'])
   }
   create() {
     this.somePoliza.create(this.poliza).subscribe({
@@ -58,7 +58,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro creado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/poliza/list']);
+        this.router.navigate(['/polizas/list']);
       },
       error: (error) => {
         console.error('Error creating poliza:', error);
@@ -74,7 +74,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/poliza/list']);
+        this.router.navigate(['/polizas/list']);
       },
       error: (error) => {
         console.error('Error updating poliza:', error);
@@ -93,7 +93,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.somePoliza.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -105,5 +105,5 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 }

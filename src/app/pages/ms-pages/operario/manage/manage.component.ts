@@ -32,7 +32,7 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.operario.id = this.activateRoute.snapshot.params.id  
+      this.operario.id = this.activateRoute.snapshot.params.id
       this.getOperario(this.operario.id)
     }
   }
@@ -51,14 +51,20 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['operario/list'])
   }
   create() {
-    this.someOperario.create(this.operario).subscribe({
+    const payload = {
+      user_id: this.operario.user_id,
+      experiencia: this.operario.experiencia,
+      periodoInit: this.operario.periodoInit,
+      periodoEnd: this.operario.periodoEnd
+    };
+    this.someOperario.create(payload).subscribe({
       next: (Operario) => {
         console.log('Operario created successfully:', Operario);
         Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
+        });
         this.router.navigate(['/operario/list']);
       },
       error: (error) => {
@@ -67,14 +73,20 @@ export class ManageComponent implements OnInit {
     });
   }
   update() {
-    this.someOperario.update(this.operario).subscribe({
+    const payload = {
+      user_id: this.operario.user_id,
+      experiencia: this.operario.experiencia,
+      periodoInit: this.operario.periodoInit,
+      periodoEnd: this.operario.periodoEnd
+    };
+    this.someOperario.update(this.operario.id, payload).subscribe({
       next: (operario) => {
         console.log('Operario updated successfully:', operario);
         Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
+        });
         this.router.navigate(['/operario/list']);
       },
       error: (error) => {
@@ -94,7 +106,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.someOperario.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -106,6 +118,6 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 
 }

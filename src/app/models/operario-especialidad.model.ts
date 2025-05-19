@@ -2,7 +2,7 @@ import { Especialidad } from "./especialidad.model";
 
 export class OperarioEspecialidad {
     id?: number;
-    id_operario?: number;
-    id_especialidad?: Especialidad;
+    operario_id?: number;
+    especialidad_id?: number;;
     nivel_experiencia?: string;
 }

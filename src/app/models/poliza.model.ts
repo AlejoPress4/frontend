@@ -10,7 +10,4 @@ export class Poliza {
     fecha_inicio?: Date;
     fecha_fin?: Date;
     tipo_poliza?: number;
-    operario?: Operario;
-    maquina?: Maquina;
-    seguro?: Seguro;
 }

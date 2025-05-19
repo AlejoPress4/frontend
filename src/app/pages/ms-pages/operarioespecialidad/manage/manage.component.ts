@@ -31,7 +31,7 @@ export class ManageComponent implements OnInit {
       this.mode = 3;
     }
     if (this.activateRoute.snapshot.params.id) {
-      this.operarioespecialidad.id = this.activateRoute.snapshot.params.id  
+      this.operarioespecialidad.id = this.activateRoute.snapshot.params.id
       this.getOperarioEspecialidad(this.operarioespecialidad.id)
     }
   }
@@ -47,7 +47,7 @@ export class ManageComponent implements OnInit {
     });
   }
   back() {
-    this.router.navigate(['OperarioEspecialidad/list'])
+    this.router.navigate(['especialidad-operarios/list'])
   }
   create() {
     this.someOperarioEspecialidad.create(this.operarioespecialidad).subscribe({
@@ -58,7 +58,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro creado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/OperarioEspecialidad/list']);
+        this.router.navigate(['/especialidad-operarios/list']);
       },
       error: (error) => {
         console.error('Error creating OperarioEspecialidad:', error);
@@ -74,7 +74,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/OperarioEspecialidad/list']);
+        this.router.navigate(['/especialidad-operarios/list']);
       },
       error: (error) => {
         console.error('Error updating OperarioEspecialidad:', error);
@@ -93,7 +93,7 @@ export class ManageComponent implements OnInit {
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         this.someOperarioEspecialidad.delete(id).
           subscribe(data => {
             Swal.fire(
@@ -105,5 +105,5 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-}
+  }
 }

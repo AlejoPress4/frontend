@@ -5,16 +5,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { CuotasRoutingModule } from './cuotas-routing.module';
 import { ListCuotaComponent } from './list/list.component';
 import { ManageComponent } from './manage/manage.component';
-
-
-
+import { PayComponent } from './pay/pay.component';
 
 @NgModule({
-  declarations:[
+  declarations: [
     ListCuotaComponent,
-    ManageComponent
-
+    ManageComponent,
+    PayComponent
   ],
-  imports:[CommonModule, FormsModule, CuotasRoutingModule]
+  imports: [CommonModule, FormsModule, CuotasRoutingModule]
 })
-export class CuotasModule {}
+export class CuotasModule { }

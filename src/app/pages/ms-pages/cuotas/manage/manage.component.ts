@@ -13,6 +13,30 @@ export class ManageComponent implements OnInit {
 
   mode: number; // 1->View, 2->Create, 3->Update
   cuota: Cuotas;
+  paymentData = {
+    card: {
+      number: '',
+      exp_year: '',
+      exp_month: '',
+      cvc: ''
+    },
+    customer: {
+      name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+      doc_number: ''
+    },
+    due: {
+      id: '',
+      id_servicio: '',
+      valor: ''
+    },
+    description: '',
+    tax: '',
+    tax_base: '',
+    dues: ''
+  };
 
   constructor(private activateRoute: ActivatedRoute,
     private cuotasService: CuotasService,
@@ -111,6 +135,19 @@ export class ManageComponent implements OnInit {
             console.error('Error deleting cuota:', error);
           }
         });
+      }
+    });
+  }
+
+  pay() {
+    this.cuotasService.pay(this.paymentData).subscribe({
+      next: (response) => {
+        Swal.fire('Éxito', 'Pago procesado exitosamente.', 'success');
+        console.log('Payment response:', response);
+      },
+      error: (error) => {
+        Swal.fire('Error', 'Hubo un problema al procesar el pago.', 'error');
+        console.error('Payment error:', error);
       }
     });
   }

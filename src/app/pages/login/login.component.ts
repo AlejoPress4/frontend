@@ -44,14 +44,15 @@ export class LoginComponent implements OnInit {
     if (!this.showTwoFactorInput) {
       // Primera fase del login
       this.attemptedEmail = email;
-      this.attemptedPassword = password;      this.seguridadService.login(email, password).subscribe({
+      this.attemptedPassword = password;
+      
+      this.seguridadService.login(email, password).subscribe({
         next: (response: any) => {
           console.log('Respuesta completa:', response);
           if (response && response.user && response.user._id) {
             // Primera fase exitosa, necesitamos 2FA
             this.showTwoFactorInput = true;
             this.attempted_id = response.user._id;
-            this.loginForm.get('code2FA')?.setValidators([Validators.required]);
             this.loginForm.get('code2FA')?.setValidators([Validators.required]);
             this.loginForm.get('code2FA')?.updateValueAndValidity();
             
@@ -86,45 +87,47 @@ export class LoginComponent implements OnInit {
           icon: 'error'
         });
         return;
-      }      this.seguridadService.validateTwoFactor(
-        this.attemptedEmail, 
-        this.attemptedPassword, 
-        code2FA, 
+      }
+
+      this.seguridadService.validateTwoFactor(
+        this.attemptedEmail,
+        this.attemptedPassword,
+        code2FA,
         this.attempted_id
       ).subscribe({
-        next: (response) => {
-          if (response?.token) {
-            // Primero cambiamos la ruta
-            this.router.navigate(['/dashboard']);
-            
-            // Luego mostramos la notificación
-            const toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true
-            });
-
-            toast.fire({
+        next: (response: any) => {
+          console.log('Respuesta 2FA:', response);
+          
+          // Si la respuesta es un string, es el token
+          const token = typeof response === 'string' ? response : response?.token;
+          
+          if (token) {
+            Swal.fire({
               icon: 'success',
               title: '¡Bienvenido!',
-              text: 'Inicio de sesión exitoso'
+              text: 'Inicio de sesión exitoso',
+              showConfirmButton: false,
+              timer: 1500,
+              timerProgressBar: true
+            }).then(() => {
+              this.router.navigate(['/dashboard']);
             });
           } else {
             Swal.fire({
               icon: 'error',
-              title: 'Error',
-              text: response?.message || 'No se pudo completar la autenticación',
-              confirmButtonText: 'Intentar nuevamente'
+              title: 'Error de autenticación',
+              text: 'Código 2FA inválido',
+              showConfirmButton: true
             });
           }
         },
         error: (error) => {
+          console.error('Error en validación 2FA:', error);
           Swal.fire({
             icon: 'error',
             title: 'Error de autenticación',
-            text: error.error?.message || 'Código 2FA inválido'
+            text: error.error?.message || 'Error al validar el código 2FA',
+            showConfirmButton: true
           });
         }
       });

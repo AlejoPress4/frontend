@@ -13,7 +13,8 @@
               <thead class="thead-light">
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">ID Usuario</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Email</th>
                   <th scope="col">Experiencia</th>
                   <th scope="col">Acciones</th>
                 </tr>
@@ -21,7 +22,8 @@
               <tbody>
                 <tr *ngFor="let operario of operarios">
                   <td>{{ operario.id }}</td>
-                  <td>{{ operario.usuario_id }}</td>
+                  <td>{{ operario.name }}</td>
+                  <td>{{ operario.email }}</td>
                   <td>{{ operario.experiencia }}</td>
                   <td>
                     <button class="btn btn-sm btn-primary" (click)="edit(operario.id)">Editar</button>
@@ -29,7 +31,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="operarios.length === 0">
-                  <td colspan="4" class="text-center">No hay operarios disponibles.</td>
+                  <td colspan="5" class="text-center">No hay operarios disponibles.</td>
                 </tr>
               </tbody>
             </table>

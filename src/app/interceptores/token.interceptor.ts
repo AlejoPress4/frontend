@@ -54,10 +54,13 @@ export class TokenInterceptor implements HttpInterceptor {
   }
 
   private isAuthRoute(url: string): boolean {
+    // Lista de rutas que no requieren token
     const authRoutes = [
       '/api/public/security/login',
-      '/api/public/security/login/2FA'
+      '/api/public/security/login/2FA/',
+      '/api/public/security/register'
     ];
-    return authRoutes.some(route => url.includes(route));
+    // Verificar si la URL coincide con alguna ruta de autenticación
+    return authRoutes.some(route => url.toLowerCase().includes(route.toLowerCase()));
   }
 }

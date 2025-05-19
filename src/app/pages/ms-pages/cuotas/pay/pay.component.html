@@ -1,0 +1,101 @@
+<div class="pay-container">
+    <h2>Payment Form</h2>
+    <form (ngSubmit)="onSubmit()" #paymentForm="ngForm">
+        <!-- Card Details -->
+        <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" name="cardNumber" ngModel required class="form-control"
+                placeholder="Enter card number">
+        </div>
+
+        <div class="form-group">
+            <label for="expYear">Expiry Year</label>
+            <input type="text" id="expYear" name="expYear" ngModel required class="form-control" placeholder="YYYY">
+        </div>
+
+        <div class="form-group">
+            <label for="expMonth">Expiry Month</label>
+            <input type="text" id="expMonth" name="expMonth" ngModel required class="form-control" placeholder="MM">
+        </div>
+
+        <div class="form-group">
+            <label for="cvc">CVC</label>
+            <input type="text" id="cvc" name="cvc" ngModel required class="form-control" placeholder="CVC">
+        </div>
+
+        <!-- Customer Information -->
+        <div class="form-group">
+            <label for="customerName">Customer Name</label>
+            <input type="text" id="customerName" name="customerName" ngModel required class="form-control"
+                placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" ngModel required class="form-control"
+                placeholder="Enter your last name">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" ngModel required class="form-control"
+                placeholder="Enter your email">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" ngModel required class="form-control"
+                placeholder="Enter your phone number">
+        </div>
+
+        <div class="form-group">
+            <label for="docNumber">Document Number</label>
+            <input type="text" id="docNumber" name="docNumber" ngModel required class="form-control"
+                placeholder="Enter your document number">
+        </div>
+
+        <!-- Due Information -->
+        <div class="form-group">
+            <label for="dueId">Due ID</label>
+            <input type="text" id="dueId" name="due_id" ngModel required class="form-control"
+                placeholder="Enter due ID">
+        </div>
+
+        <div class="form-group">
+            <label for="idServicio">Service ID</label>
+            <input type="text" id="idServicio" name="id_servicio" ngModel required class="form-control"
+                placeholder="Enter service ID">
+        </div>
+
+        <div class="form-group">
+            <label for="valor">Value</label>
+            <input type="number" id="valor" name="valor" ngModel required class="form-control"
+                placeholder="Enter value">
+        </div>
+
+        <!-- Additional Payment Metadata -->
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" ngModel required class="form-control"
+                placeholder="Enter description">
+        </div>
+
+        <div class="form-group">
+            <label for="tax">Tax</label>
+            <input type="number" id="tax" name="tax" ngModel required class="form-control" placeholder="Enter tax">
+        </div>
+
+        <div class="form-group">
+            <label for="taxBase">Tax Base</label>
+            <input type="number" id="taxBase" name="taxBase" ngModel required class="form-control"
+                placeholder="Enter tax base">
+        </div>
+
+        <div class="form-group">
+            <label for="dues">Dues</label>
+            <input type="number" id="dues" name="dues" ngModel required class="form-control" placeholder="Enter dues">
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="!paymentForm.valid">Pay</button>
+    </form>
+</div>

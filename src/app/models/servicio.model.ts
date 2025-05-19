@@ -12,8 +12,4 @@ export class Servicio {
     estado?: string;
     ubicacion?: string;
     resumen?: string;
-    cuota?: Cuotas[];
-    evidencia?: Evidencia[];
-    combo?: Combo;
-
 }

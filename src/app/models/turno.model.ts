@@ -2,8 +2,7 @@ import { Novedad } from "./novedad.model";
 
 export class Turno {
     id?: number;
-    fecha?: Date;
+    hora?: string;
     operario_id?: number;
     maquina_id?: number;
-    novedades?: Novedad[];
 }
