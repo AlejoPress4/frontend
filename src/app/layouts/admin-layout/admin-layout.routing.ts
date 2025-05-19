@@ -7,12 +7,14 @@ import { UserProfileComponent } from '../../pages/user-profile/user-profile.comp
 import { TablesComponent } from '../../pages/tables/tables.component';
 
 export const AdminLayoutRoutes: Routes = [
+  // Rutas principales
   { path: 'dashboard', component: DashboardComponent },
   { path: 'perfil-usuario', component: UserProfileComponent },
   { path: 'tablas', component: TablesComponent },
   { path: 'iconos', component: IconsComponent },
   { path: 'mapas', component: MapsComponent },
 
+  // Módulos lazy loaded
   { path: 'facturas', loadChildren: () => import('src/app/pages/ms-pages/factura/factura.module').then(m => m.FacturaModule) },
   { path: 'chats', loadChildren: () => import('src/app/pages/ms-pages/chats/chats.module').then(m => m.ChatsModule) },
   { path: 'maquina-combo', loadChildren: () => import('src/app/pages/ms-pages/maquinacombo/maquinacombo.module').then(m => m.MaquinaComboModule) },
@@ -39,5 +41,6 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'turnos', loadChildren: () => import('src/app/pages/ms-pages/turno/turno.module').then(m => m.TurnoModule) },
   { path: 'especialidad-operarios', loadChildren: () => import('src/app/pages/ms-pages/operarioespecialidad/operarioespecialidad.module').then(m => m.OperarioEspecialidadModule) },
   { path: 'especialidades', loadChildren: () => import('src/app/pages/ms-pages/especialidades/especialidades.module').then(m => m.EspecialidadesModule) },
-  { path: 'tiposervicio', loadChildren: () => import('src/app/pages/ms-pages/tiposervicio/tiposervicio.module').then(m => m.TipoServicioModule) }
+  { path: 'tiposervicio', loadChildren: () => import('src/app/pages/ms-pages/tiposervicio/tiposervicio.module').then(m => m.TipoServicioModule) },
+  { path: 'pagos', loadChildren: () => import('src/app/pages/ms-pages/pagos/pagos.module').then(m => m.PagosModule) }
 ];
