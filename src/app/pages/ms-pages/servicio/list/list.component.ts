@@ -42,9 +42,7 @@ export class ListServicioComponent implements OnInit {
         text: 'El ID proporcionado no es válido.'
       });
       return;
-    }
-
-    this.router.navigate(['/servicio/update', id]).then(
+    }    this.router.navigate(['/servicios/update', id]).then(
       success => {
         if (success) {
           Swal.fire({
@@ -95,8 +93,7 @@ export class ListServicioComponent implements OnInit {
         });
       }
     });
-  }
-  view(id: number) {
-    this.router.navigate(['/servicio/list'])
+  }  view(id: number) {
+    this.router.navigate(['/servicios/list'])
   }
 }

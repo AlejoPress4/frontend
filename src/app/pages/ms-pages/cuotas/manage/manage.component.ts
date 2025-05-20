@@ -57,16 +57,26 @@ export class ManageComponent implements OnInit {
       this.cuota.id = this.activateRoute.snapshot.params.id;
       this.getCuota(this.cuota.id);
     }
-  }
-
-  getCuota(id: number) {
-    this.cuotasService.view(id).subscribe({
+  }  getCuota(id: number) {    this.cuotasService.view(id).subscribe({
       next: (cuota) => {
+        // Set the main model
         this.cuota = cuota;
-        console.log('Cuota fetched successfully:', this.cuota);
+        
+        // Synchronize with form model
+        this.paymentData.due = {
+          id: cuota.id?.toString() || '',
+          valor: cuota.valor?.toString() || '',
+          id_servicio: cuota.id_servicio?.toString() || ''
+        };
+        
+        console.log('Cuota fetched and synchronized:', {
+          cuota: this.cuota,
+          formData: this.paymentData.due
+        });
       },
       error: (error) => {
         console.error('Error fetching cuota:', error);
+        Swal.fire('Error', 'No se pudo cargar la información de la cuota.', 'error');
       }
     });
   }
@@ -92,8 +102,31 @@ export class ManageComponent implements OnInit {
       }
     });
   }
-
+  updateCuota(field: string, value: any) {
+    // Actualiza el modelo cuota cuando cambian los valores en el formulario
+    if (field === 'id_servicio') {
+      this.cuota.id_servicio = Number(value);
+    } else if (field === 'valor') {
+      this.cuota.valor = Number(value);
+    }
+  }
   update() {
+    // Validate fields are not empty
+    if (!this.paymentData.due.id_servicio || !this.paymentData.due.valor) {
+      Swal.fire('Error', 'Por favor complete todos los campos requeridos.', 'error');
+      return;
+    }
+
+    // Synchronize form values with model
+    this.cuota.id_servicio = Number(this.paymentData.due.id_servicio);
+    this.cuota.valor = Number(this.paymentData.due.valor);
+
+    // Validate numeric values
+    if (isNaN(this.cuota.id_servicio) || isNaN(this.cuota.valor)) {
+      Swal.fire('Error', 'Los valores numéricos no son válidos.', 'error');
+      return;
+    }
+
     this.cuotasService.update(this.cuota).subscribe({
       next: () => {
         Swal.fire({
@@ -101,9 +134,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success'
         }).then(() => {
-          this.router.navigate(['/cuotas/list']).then(() => {
-            // Emitir un evento o llamar a un servicio compartido para notificar al componente de la lista
-          });
+          this.router.navigate(['/cuotas/list']);
         });
       },
       error: (error) => {

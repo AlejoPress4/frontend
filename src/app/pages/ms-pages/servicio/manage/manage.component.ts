@@ -45,19 +45,17 @@ export class ManageComponent implements OnInit {
         console.error('Error fetching service:', error);
       }
     });
-  }
-  back() {
-    this.router.navigate(['servicios/list'])
+  }  back() {
+    this.router.navigate(['/servicios/list'])
   }
   create() {
     this.someServicio.create(this.servicio).subscribe({
-      next: () => {
-        Swal.fire({
+      next: () => {        Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success'
         }).then(() => {
-          this.router.navigate(['/servicio/list']); // Redirigir a la lista
+          this.router.navigate(['/servicios/list']); // Redirigir a la lista
         });
       },
       error: (error) => {
@@ -68,13 +66,12 @@ export class ManageComponent implements OnInit {
   }
   update() {
     this.someServicio.update(this.servicio).subscribe({
-      next: () => {
-        Swal.fire({
+      next: () => {        Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success'
         }).then(() => {
-          this.router.navigate(['/servicio/list']); // Redirigir a la lista
+          this.router.navigate(['/servicios/list']); // Redirigir a la lista
         });
       },
       error: (error) => {
