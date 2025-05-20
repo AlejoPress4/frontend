@@ -101,6 +101,7 @@
                 class="form-control"
                 [(ngModel)]="poliza.tipo_poliza"
                 [disabled]="mode == 1 || tipoPolizaOptions.length === 0"
+                (change)="onTipoPolizaChange($event)"
               >
                 <option value="" disabled>Seleccione tipo</option>
                 <option *ngFor="let tipo of tipoPolizaOptions" [value]="tipo">

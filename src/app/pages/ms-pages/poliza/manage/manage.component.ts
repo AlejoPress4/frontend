@@ -92,6 +92,14 @@ export class ManageComponent implements OnInit {
     this.theFormGroup.updateValueAndValidity();
   }
 
+  // Sincronizar tipo_poliza del select con el FormGroup
+  onTipoPolizaChange(event: any) {
+    const value = event && event.target ? event.target.value : event;
+    this.poliza.tipo_poliza = value;
+    this.theFormGroup.patchValue({ tipo_poliza: value });
+    this.theFormGroup.updateValueAndValidity();
+  }
+
   getPoliza(id: number) {
     this.somePoliza.view(id).subscribe({
       next: (poliza) => {
@@ -107,14 +115,20 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['polizas/list'])
   }
   create() {
+    // Sincronizar todos los campos del modelo con el FormGroup antes de validar
+    this.theFormGroup.patchValue({
+      seguro_id: this.poliza.seguro_id,
+      maquina_id: this.poliza.maquina_id,
+      operario_id: this.poliza.operario_id,
+      tipo_poliza: this.poliza.tipo_poliza,
+      fechaInicio: this.poliza.fechaInicio,
+      fechaFin: this.poliza.fechaFin
+    });
+    this.theFormGroup.updateValueAndValidity();
     if (this.theFormGroup.invalid) {
       const errors = this.theFormGroup.errors;
       if (errors?.xor) {
         Swal.fire("Error", errors.xor, "error");
-        return;
-      }
-      if (errors?.tipoPoliza) {
-        Swal.fire("Error", errors.tipoPoliza, "error");
         return;
       }
       this.theFormGroup.markAllAsTouched();
@@ -142,14 +156,20 @@ export class ManageComponent implements OnInit {
     });
   }
   update() {
+    // Sincronizar todos los campos del modelo con el FormGroup antes de validar
+    this.theFormGroup.patchValue({
+      seguro_id: this.poliza.seguro_id,
+      maquina_id: this.poliza.maquina_id,
+      operario_id: this.poliza.operario_id,
+      tipo_poliza: this.poliza.tipo_poliza,
+      fechaInicio: this.poliza.fechaInicio,
+      fechaFin: this.poliza.fechaFin
+    });
+    this.theFormGroup.updateValueAndValidity();
     if (this.theFormGroup.invalid) {
       const errors = this.theFormGroup.errors;
       if (errors?.xor) {
         Swal.fire("Error", errors.xor, "error");
-        return;
-      }
-      if (errors?.tipoPoliza) {
-        Swal.fire("Error", errors.tipoPoliza, "error");
         return;
       }
       this.theFormGroup.markAllAsTouched();
@@ -201,14 +221,11 @@ export class ManageComponent implements OnInit {
   }
 }
 
-// Custom validator for XOR and tipo_poliza
+// Custom validator for XOR
 function polizaXorValidator(): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
     const operario_id = group.get('operario_id')?.value;
     const maquina_id = group.get('maquina_id')?.value;
-    let tipo_poliza = group.get('tipo_poliza')?.value;
-    // Forzar a string y limpiar
-    tipo_poliza = (tipo_poliza === undefined || tipo_poliza === null) ? '' : String(tipo_poliza).trim().toUpperCase();
     // XOR
     if (operario_id && maquina_id) {
       return { xor: 'Solo uno de operario_id o maquina_id debe estar presente' };
@@ -216,16 +233,7 @@ function polizaXorValidator(): ValidatorFn {
     if (!operario_id && !maquina_id) {
       return { xor: 'Debes ingresar un Operario o una Maquina' };
     }
-    // Validación de tipo_poliza
-    if (operario_id && !["ARL", "SEGURO_VIDA", "SEGURO_ACCIDENTES"].includes(tipo_poliza)) {
-      return { tipoPoliza: 'Tipo de póliza inválido para la entidad seleccionada' };
-    }
-    if (maquina_id && !["TODO_RIESGO", "RESPONSABILIDAD_CIVIL", "DANOS_TERCEROS"].includes(tipo_poliza)) {
-      return { tipoPoliza: 'Tipo de póliza inválido para la entidad seleccionada' };
-    }
-    if ((operario_id || maquina_id) && !tipo_poliza) {
-      return { tipoPoliza: 'Tipo de póliza inválido para la entidad seleccionada' };
-    }
+    // Ya no se valida tipo_poliza
     return null;
   };
 }
