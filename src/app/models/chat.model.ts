@@ -4,6 +4,4 @@ export class Chat {
     id?: number;
     titulo?: string;
     tipo?: string;
-    creadoEn?: Date;
-    actualizadoEn?: Date;
 }

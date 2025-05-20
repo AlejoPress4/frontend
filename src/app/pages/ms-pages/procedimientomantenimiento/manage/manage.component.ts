@@ -18,7 +18,7 @@ export class ManageComponent implements OnInit {
     private someProcedimientoMantenimiento: ProcedimientoMantenimientoService,
     private router: Router
   ) {
-    this.procedimientomantenimiento = { id: 0 }
+    this.procedimientomantenimiento = { id: 0, procedimiento_id: 0, mantenimiento_id: 0 };
   }
 
   ngOnInit(): void {

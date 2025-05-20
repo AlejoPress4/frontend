@@ -47,26 +47,25 @@ export class ManageComponent implements OnInit {
     }
     if (this.activateRoute.snapshot.params.id) {
       this.maquina.id = this.activateRoute.snapshot.params.id
-      this.getMaquina(this.maquina.id)
-    }
-    // Si es update o view, setea los valores en el form
-    if (this.mode === 1 || this.mode === 3) {
-      this.theFormGroup.patchValue(this.maquina);
+      this.getMaquinaAndPatchForm(this.maquina.id);
     }
   }
-  getMaquina(id: number) {
+
+  getMaquinaAndPatchForm(id: number) {
     this.someMaquina.view(id).subscribe({
       next: (maquina) => {
         this.maquina = maquina;
-        console.log('maquina fetched successfully:', this.maquina);
+        this.theFormGroup.patchValue(this.maquina);
+        console.log('maquina fetched and form patched:', this.maquina);
       },
       error: (error) => {
         console.error('Error fetching maquina:', error);
       }
     });
   }
+
   back() {
-    this.router.navigate(['maquina/list'])
+    this.router.navigate(['maquinas/list'])
   }
   create() {
     if (this.theFormGroup.invalid) {
@@ -84,7 +83,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro creado correctamente.',
           icon: 'success',
         }).then(() => {
-          this.router.navigate(['/maquina/list']);
+          this.router.navigate(['/maquinas/list']);
         });
       },
       error: (error) => {
@@ -110,7 +109,7 @@ export class ManageComponent implements OnInit {
           text: 'Registro actualizado correctamente.',
           icon: 'success',
         }).then(() => {
-          this.router.navigate(['/maquina/list']);
+          this.router.navigate(['/maquinas/list']);
         });
       },
       error: (error) => {

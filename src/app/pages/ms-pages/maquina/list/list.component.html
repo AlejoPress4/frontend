@@ -11,7 +11,11 @@
   </div>
   <div class="wave-container">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+      <path
+        fill="#ffffff"
+        fill-opacity="1"
+        d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
     </svg>
   </div>
 </div>
@@ -38,7 +42,6 @@
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="text-primary">ID</th>
-                  <th scope="col" class="text-primary">Especialidad</th>
                   <th scope="col" class="text-primary">Marca</th>
                   <th scope="col" class="text-primary">Modelo</th>
                   <th scope="col" class="text-primary">Estado</th>
@@ -46,43 +49,56 @@
                   <th scope="col" class="text-primary">Disponibilidad</th>
                   <th scope="col" class="text-primary">Fecha Asignación</th>
                   <th scope="col" class="text-primary">Fecha Retiro</th>
+                  <th scope="col" class="text-primary">Especialidad</th>
                   <th scope="col" class="text-primary">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let machine of maquinas" class="table-row-hover">
                   <td>{{ machine.id }}</td>
-                  <td>{{ machine.especialidad }}</td>
                   <td>{{ machine.marca }}</td>
                   <td>{{ machine.modelo }}</td>
                   <td>
-                    <span class="badge badge-pill" 
-                          [ngClass]="{
-                            'badge-success': machine.estado === 'Activo',
-                            'badge-warning': machine.estado === 'Mantenimiento',
-                            'badge-danger': machine.estado === 'Inactivo'
-                          }">
+                    <span
+                      class="badge badge-pill"
+                      [ngClass]="{
+                        'badge-success': machine.estado === 'Activo',
+                        'badge-warning': machine.estado === 'Mantenimiento',
+                        'badge-danger': machine.estado === 'Inactivo'
+                      }"
+                    >
                       {{ machine.estado }}
                     </span>
                   </td>
                   <td>{{ machine.ubicacion }}</td>
                   <td>
-                    <span class="badge badge-pill" 
-                          [ngClass]="{
-                            'badge-success': machine.disponibilidad === 'Disponible',
-                            'badge-danger': machine.disponibilidad === 'No Disponible'
-                          }">
+                    <span
+                      class="badge badge-pill"
+                      [ngClass]="{
+                        'badge-success':
+                          machine.disponibilidad === 'Disponible',
+                        'badge-danger':
+                          machine.disponibilidad === 'No Disponible'
+                      }"
+                    >
                       {{ machine.disponibilidad }}
                     </span>
                   </td>
                   <td>{{ machine.fecha_asignacion }}</td>
                   <td>{{ machine.fecha_retiro }}</td>
+                  <td>{{ machine.especialidad }}</td>
                   <td>
                     <div class="btn-group">
-                      <button class="btn btn-sm btn-primary" (click)="edit(machine.id)">
+                      <button
+                        class="btn btn-sm btn-primary"
+                        (click)="edit(machine.id)"
+                      >
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button class="btn btn-sm btn-danger" (click)="delete(machine.id)">
+                      <button
+                        class="btn btn-sm btn-danger"
+                        (click)="delete(machine.id)"
+                      >
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>

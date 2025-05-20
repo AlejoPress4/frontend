@@ -60,15 +60,17 @@ export class ManageComponent implements OnInit {
     this.someObra.view(id).subscribe({
       next: (obra) => {
         this.obra = obra;
-        console.log('obra fetched successfully:', this.obra);
+        this.theFormGroup.patchValue(this.obra); // <-- Esto rellena el formulario reactivo
+        console.log('obra fetched and form patched:', this.obra);
       },
       error: (error) => {
         console.error('Error fetching obra:', error);
       }
     });
   }
+
   back() {
-    this.router.navigate(['obra/list'])
+    this.router.navigate(['obras/list'])
   }
 
   
@@ -89,7 +91,7 @@ create() {
           text: 'Registro creado correctamente.',
           icon: 'success',
         })
-        this.router.navigate(['/obra/list']);
+        this.router.navigate(['/obras/list']);
       },
       error: (error) => {
         console.error('Error creating obra:', error);
@@ -110,7 +112,7 @@ create() {
             text: 'Registro actualizado correctamente.',
             icon: 'success',
           })
-          this.router.navigate(['/obra/list']);
+          this.router.navigate(['/obras/list']);
         },
         error: (error) => {
           console.error('Error updating obra:', error);

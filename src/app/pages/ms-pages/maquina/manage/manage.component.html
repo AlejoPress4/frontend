@@ -55,38 +55,6 @@
             </div>
             <div class="form-group row">
               <label class="col-md-3 col-form-label text-md-right"
-                >Especialidad</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="especialidad"
-                  [disabled]="mode == 1"
-                  name="especialidad"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.especialidad.errors &&
-                    (getTheFormGroup.especialidad.dirty ||
-                      getTheFormGroup.especialidad.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.especialidad.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
-                  <strong
-                    *ngIf="getTheFormGroup.especialidad.errors.minlength"
-                    class="msnError"
-                    >Mínimo 3 caracteres</strong
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
                 >Modelo</label
               >
               <div class="col-md-9">
@@ -224,6 +192,38 @@
                     *ngIf="getTheFormGroup.disponibilidad.errors.required"
                     class="msnError"
                     >Campo requerido</strong
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label text-md-right"
+                >Especialidad</label
+              >
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="especialidad"
+                  [disabled]="mode == 1"
+                  name="especialidad"
+                />
+                <div
+                  *ngIf="
+                    getTheFormGroup.especialidad.errors &&
+                    (getTheFormGroup.especialidad.dirty ||
+                      getTheFormGroup.especialidad.touched)
+                  "
+                >
+                  <strong
+                    *ngIf="getTheFormGroup.especialidad.errors.required"
+                    class="msnError"
+                    >Campo requerido</strong
+                  >
+                  <strong
+                    *ngIf="getTheFormGroup.especialidad.errors.minlength"
+                    class="msnError"
+                    >Mínimo 3 caracteres</strong
                   >
                 </div>
               </div>
