@@ -4,10 +4,10 @@ import { Operario } from "./operario.model";
 
 export class Poliza {
     id?: number;
-    maquinaria_id?: number;
+    seguro_id!: number;
+    maquina_id?: number;
     operario_id?: number;
-    seguro_id?: number;
-    fecha_inicio?: Date;
-    fecha_fin?: Date;
-    tipo_poliza?: number;
+    tipo_poliza!: string;
+    fechaInicio!: Date;
+    fechaFin!: Date;
 }

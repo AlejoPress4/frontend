@@ -4,7 +4,7 @@ import { Mantenimiento } from "./mantenimiento.model";
 
 export class ProcedimientoMantenimiento {
     id?: number;
-    procedimiento_id?: Procedimiento;
-    mantenimiento_id?: Mantenimiento;
+    procedimiento_id?: number;
+    mantenimiento_id?: number;
     estado?: string;
 }

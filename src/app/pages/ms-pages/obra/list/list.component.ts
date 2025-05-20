@@ -27,8 +27,11 @@ export class ListObraComponent implements OnInit {
 
   // Methods for edit and delete (adjust ID type based on your Obra model)
   edit(id: number) {
-    this.router.navigate(['obra/update', id])
-    // Implement navigation, e.g: this.router.navigate(['/admin/Obra/edit', id]);
+    this.router.navigate(['obras/update', id]);
+  }
+
+  create() {
+    this.router.navigate(['obras/create']);
   }
 
   delete(id: number) {

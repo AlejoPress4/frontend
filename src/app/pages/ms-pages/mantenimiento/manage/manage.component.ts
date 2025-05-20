@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Mantenimiento } from 'src/app/models/mantenimiento.model';
 import { MantenimientoService } from 'src/app/services/mantenimientoService/mantenimiento.service';
 import Swal from 'sweetalert2';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-manage',
@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 export class ManageComponent implements OnInit {
 
   mode: number = 1; // 1 -> Ver, 2 -> Crear, 3 -> Actualizar
-  mantenimiento: Mantenimiento;
+  mantenimiento: Mantenimiento = { id: 0 };
   theFormGroup: FormGroup;
 
   constructor(
@@ -22,11 +22,10 @@ export class ManageComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder
   ) {
-    this.mantenimiento = { id: 0 };
     this.theFormGroup = this.fb.group({
-      fecha: [null, [Validators.required]],
+      fecha: ['', Validators.required],
       estado: ['', [Validators.required, Validators.minLength(3)]],
-      maquina_id: [null, [Validators.required]],
+      maquina_id: [null, Validators.required],
       responsable: ['', [Validators.required, Validators.minLength(3)]]
     });
   }
@@ -46,22 +45,23 @@ export class ManageComponent implements OnInit {
       this.mantenimiento.id = Number(idParam);
       this.getMantenimiento(this.mantenimiento.id);
     }
-
-    if (this.mode === 1 || this.mode === 3) {
-      this.theFormGroup.patchValue(this.mantenimiento);
-    }
   }
 
   getMantenimiento(id: number): void {
     this.mantenimientoService.view(id).subscribe({
       next: (mantenimientoData) => {
         this.mantenimiento = mantenimientoData;
+        this.theFormGroup.patchValue(this.mantenimiento);
         console.log('Mantenimiento obtenido exitosamente:', this.mantenimiento);
       },
       error: (error) => {
         console.error('Error al obtener el mantenimiento:', error);
       }
     });
+  }
+
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
   }
 
   back(): void {
@@ -71,21 +71,20 @@ export class ManageComponent implements OnInit {
   create(): void {
     if (this.theFormGroup.invalid) {
       this.theFormGroup.markAllAsTouched();
-      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      Swal.fire('Error', 'Por favor llene correctamente los campos', 'error');
       return;
     }
-    const payload = this.theFormGroup.value;
+    const payload = { ...this.mantenimiento, ...this.theFormGroup.value };
     console.log('Payload enviado al backend:', payload); // Log para depuración
     this.mantenimientoService.create(payload).subscribe({
       next: (createdMantenimiento) => {
         console.log('Mantenimiento creado exitosamente:', createdMantenimiento);
         Swal.fire({
-          title: 'Creado!',
+          title: '¡Creado!',
           text: 'Registro creado correctamente.',
-          icon: 'success',
-        }).then(() => {
-          this.router.navigate(['/mantenimientos/list']);
+          icon: 'success'
         });
+        this.router.navigate(['/mantenimientos/list']);
       },
       error: (error) => {
         console.error('Error al crear el mantenimiento:', error);
@@ -96,7 +95,7 @@ export class ManageComponent implements OnInit {
   update(): void {
     if (this.theFormGroup.invalid) {
       this.theFormGroup.markAllAsTouched();
-      Swal.fire("Error", "Por favor llene correctamente los campos", "error");
+      Swal.fire('Error', 'Por favor llene correctamente los campos', 'error');
       return;
     }
     const payload = { ...this.mantenimiento, ...this.theFormGroup.value };
@@ -104,12 +103,11 @@ export class ManageComponent implements OnInit {
       next: (updatedMantenimiento) => {
         console.log('Mantenimiento actualizado exitosamente:', updatedMantenimiento);
         Swal.fire({
-          title: 'Actualizado!',
+          title: '¡Actualizado!',
           text: 'Registro actualizado correctamente.',
-          icon: 'success',
-        }).then(() => {
-          this.router.navigate(['/mantenimientos/list']);
+          icon: 'success'
         });
+        this.router.navigate(['/mantenimientos/list']);
       },
       error: (error) => {
         console.error('Error al actualizar el mantenimiento:', error);
@@ -139,9 +137,5 @@ export class ManageComponent implements OnInit {
         });
       }
     });
-  }
-
-  get getTheFormGroup() {
-    return this.theFormGroup.controls;
   }
 }

@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { ListObraComponent } from './list/list.component';
 import { ManageComponent } from './manage/manage.component';
 
-
 const routes: Routes = [
   { path: 'list', component: ListObraComponent },
   { path: 'create', component: ManageComponent },

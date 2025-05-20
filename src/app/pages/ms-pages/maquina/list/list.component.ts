@@ -34,9 +34,8 @@ export class ListMaquinaComponent implements OnInit {
       });
       return;
     }
-
-    this.router.navigate([`/maquina/update`, id]).then(
-      success => {
+    this.router.navigate([`/maquinas/update`, id]).then(
+      (success) => {
         if (success) {
           Swal.fire({
             icon: 'success',
@@ -51,7 +50,7 @@ export class ListMaquinaComponent implements OnInit {
           });
         }
       },
-      error => {
+      (error) => {
         console.error('Error al navegar:', error);
         Swal.fire({
           icon: 'error',

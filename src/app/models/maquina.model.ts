@@ -12,7 +12,7 @@ export class Maquina {
     modelo?: string;
     estado?: string;
     ubicacion?: string;
-    disponibilidad?: string;
+    disponibilidad?: boolean;
     fecha_asignacion?: Date;
     fecha_retiro?: Date;
 }
