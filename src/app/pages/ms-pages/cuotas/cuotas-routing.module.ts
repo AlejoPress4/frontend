@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: 'create', component: ManageComponent },
   { path: 'update/:id', component: ManageComponent },
   { path: 'view/:id', component: ManageComponent },
-  { path: 'cuotas/:id/pay', component: PayComponent },
+  { path: ':id/pay', component: PayComponent },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

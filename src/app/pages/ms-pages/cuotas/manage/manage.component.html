@@ -32,9 +32,18 @@
         <div class="card-body">
           <form>
             <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">ID Servicio</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="cuota.id_servicio" [disabled]="mode==1" name="id_servicio">
+              <label class="col-md-3 col-form-label text-md-right">ID Servicio</label>              <div class="col-md-9">
+                <input type="text" 
+                       class="form-control" 
+                       [(ngModel)]="paymentData.due.id_servicio" 
+                       [disabled]="mode==1" 
+                       name="id_servicio" 
+                       (ngModelChange)="updateCuota('id_servicio', $event)"
+                       required
+                       #idServicio="ngModel">
+                <div class="invalid-feedback d-block" *ngIf="idServicio.invalid && (idServicio.dirty || idServicio.touched)">
+                  <span *ngIf="idServicio.errors?.['required']">El ID de servicio es requerido</span>
+                </div>
               </div>
             </div>
             
@@ -45,7 +54,19 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text">$</span>
                   </div>
-                  <input type="number" class="form-control" [(ngModel)]="cuota.valor" [disabled]="mode === 1" name="valor">
+                  <input type="number" 
+                         class="form-control" 
+                         [(ngModel)]="paymentData.due.valor" 
+                         [disabled]="mode === 1" 
+                         name="valor" 
+                         (ngModelChange)="updateCuota('valor', $event)"
+                         required
+                         min="0"
+                         #valor="ngModel">
+                </div>
+                <div class="invalid-feedback d-block" *ngIf="valor.invalid && (valor.dirty || valor.touched)">
+                  <span *ngIf="valor.errors?.['required']">El valor es requerido</span>
+                  <span *ngIf="valor.errors?.['min']">El valor debe ser mayor a 0</span>
                 </div>
               </div>
             </div>

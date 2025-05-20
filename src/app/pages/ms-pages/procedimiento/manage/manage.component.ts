@@ -37,20 +37,20 @@ export class ManageComponent implements OnInit {
       this.mode = 2;
     } else if (currentUrl.includes('update')) {
       this.mode = 3;
-    }
-    if (this.activateRoute.snapshot.params.id) {
+    }    if (this.activateRoute.snapshot.params.id) {
       this.procedimiento.id = this.activateRoute.snapshot.params.id  
       this.getProcedimiento(this.procedimiento.id)
     }
-    if (this.mode === 1 || this.mode === 3) {
-      this.theFormGroup.patchValue(this.procedimiento);
-    }
-  }
-  getProcedimiento(id: number) {
+  }  getProcedimiento(id: number) {
     this.someProcedimiento.view(id).subscribe({
       next: (procedimiento) => {
         this.procedimiento = procedimiento;
         console.log('procedimiento fetched successfully:', this.procedimiento);
+        // Actualizar el formulario con los datos del procedimiento
+        this.theFormGroup.patchValue({
+          nombre: this.procedimiento.nombre,
+          descripcion: this.procedimiento.descripcion
+        });
       },
       error: (error) => {
         console.error('Error fetching procedimiento:', error);
