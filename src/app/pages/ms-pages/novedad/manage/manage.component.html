@@ -12,45 +12,91 @@
           <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
         </div>
         <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="novedad.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Tipo</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="novedad.tipo" [disabled]="mode==1">
+          <form [formGroup]="novedadForm">
+            <div class="row mb-3">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input type="number" class="form-control" [ngModel]="novedad.id" disabled>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Descripción</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="novedad.descripcion"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Gravedad</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="novedad.gravedad"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID Turno</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="novedad.turno_id"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Actualizar</button>
+
+            <div class="row mb-3">
+              <div class="col-3">Tipo</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="tipo"
+                  [ngClass]="{'is-invalid': tipoField?.invalid && tipoField?.touched}">
+                <div class="invalid-feedback" *ngIf="tipoField?.touched">
+                  <div *ngIf="tipoField?.errors?.['required']">El tipo es requerido</div>
+                  <div *ngIf="tipoField?.errors?.['minlength']">El tipo debe tener al menos 3 caracteres</div>
+                  <div *ngIf="tipoField?.errors?.['maxlength']">El tipo no debe exceder los 50 caracteres</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-3">Descripción</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="descripcion"
+                  [ngClass]="{'is-invalid': descripcionField?.invalid && descripcionField?.touched}">
+                <div class="invalid-feedback" *ngIf="descripcionField?.touched">
+                  <div *ngIf="descripcionField?.errors?.['required']">La descripción es requerida</div>
+                  <div *ngIf="descripcionField?.errors?.['minlength']">La descripción debe tener al menos 10 caracteres</div>
+                  <div *ngIf="descripcionField?.errors?.['maxlength']">La descripción no debe exceder los 500 caracteres</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-3">Gravedad</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="gravedad"
+                  [ngClass]="{'is-invalid': gravedadField?.invalid && gravedadField?.touched}">
+                  <option value="">Seleccione una gravedad</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Media">Media</option>
+                  <option value="Baja">Baja</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="gravedadField?.touched">
+                  <div *ngIf="gravedadField?.errors?.['required']">La gravedad es requerida</div>
+                  <div *ngIf="gravedadField?.errors?.['pattern']">La gravedad debe ser Alta, Media o Baja</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-3">ID Turno</div>
+              <div class="col-9">
+                <input type="number" class="form-control" formControlName="turno_id"
+                  [ngClass]="{'is-invalid': turnoIdField?.invalid && turnoIdField?.touched}">
+                <div class="invalid-feedback" *ngIf="turnoIdField?.touched">
+                  <div *ngIf="turnoIdField?.errors?.['required']">El ID del turno es requerido</div>
+                  <div *ngIf="turnoIdField?.errors?.['min']">El ID del turno debe ser mayor que 0</div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="row mt-4">
+            <div class="col">
+              <button class="btn btn-outline-danger" (click)="back()">
+                <i class="fas fa-chevron-left"></i> Regresar
+              </button>
+            </div>
+            <div class="col text-right">
+              <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
+                [disabled]="novedadForm.invalid">
+                <i class="fas fa-plus"></i> Crear
+              </button>
+              <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
+                [disabled]="novedadForm.invalid">
+                <i class="fas fa-save"></i> Actualizar
+              </button>
+              <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(novedad.id!)">
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>

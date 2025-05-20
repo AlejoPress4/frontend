@@ -1,115 +1,151 @@
 <!-- manage.component-servicios.html -->
-<div class="header bg-gradient-primary py-6">
-  <div class="container-fluid">
-    <div class="header-body">
-      <div class="row align-items-center">
-        <div class="col">
-          <h1 class="header-title text-white">Gestión de Servicios</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="wave-container">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-    </svg>
-  </div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
 </div>
-
-<div class="container-fluid mt--6">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-soft border-0">
-        <div class="card-header bg-transparent border-0">
-          <div class="row align-items-center">
-            <div class="col">
-              <h3 class="mb-0 text-primary" *ngIf="mode==1">Detalle de Servicio</h3>
-              <h3 class="mb-0 text-primary" *ngIf="mode==2">Creación de Servicio</h3>
-              <h3 class="mb-0 text-primary" *ngIf="mode==3">Actualización de Servicio</h3>
-            </div>
-          </div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0" *ngIf="mode==1">Detalle de Servicio</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Crear Servicio</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualizar Servicio</h3>
         </div>
         <div class="card-body">
-          <form>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">ID</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="servicio.id" name="id">
+          <form [formGroup]="servicioForm">
+            <div class="row mb-3" *ngIf="mode===1">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input type="number" class="form-control" [value]="servicio.id" disabled>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Costo</label>
-              <div class="col-md-9">
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">$</span>
-                  </div>
-                  <input type="number" class="form-control" [(ngModel)]="servicio.costo" [disabled]="mode==1" name="costo">
+
+            <div class="row mb-3">
+              <div class="col-3">Costo</div>
+              <div class="col-9">
+                <input type="number" step="0.01" class="form-control" formControlName="costo"
+                  [ngClass]="{'is-invalid': servicioForm.get('costo')?.invalid && servicioForm.get('costo')?.touched}">
+                <div class="invalid-feedback" *ngIf="servicioForm.get('costo')?.touched">
+                  <div *ngIf="servicioForm.get('costo')?.errors?.['required']">El costo es requerido</div>
+                  <div *ngIf="servicioForm.get('costo')?.errors?.['min']">El costo debe ser mayor o igual a 0</div>
+                  <div *ngIf="servicioForm.get('costo')?.errors?.['pattern']">El costo debe ser un número válido con hasta 2 decimales</div>
                 </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Fecha Inicio</label>
-              <div class="col-md-9">
-                <input type="date" class="form-control" [(ngModel)]="servicio.f_inicio" [disabled]="mode==1" name="f_inicio">
+
+            <div class="row mb-3">
+              <div class="col-3">Fecha de Inicio</div>
+              <div class="col-9">
+                <input type="date" class="form-control" formControlName="f_inicio"
+                  [ngClass]="{'is-invalid': servicioForm.get('f_inicio')?.invalid && servicioForm.get('f_inicio')?.touched}">
+                <div class="invalid-feedback" *ngIf="servicioForm.get('f_inicio')?.touched">
+                  <div *ngIf="servicioForm.get('f_inicio')?.errors?.['required']">La fecha de inicio es requerida</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Fecha Fin</label>
-              <div class="col-md-9">
-                <input type="date" class="form-control" [(ngModel)]="servicio.f_fin" [disabled]="mode==1" name="f_fin">
+
+            <div class="row mb-3">
+              <div class="col-3">Fecha de Fin</div>
+              <div class="col-9">
+                <input type="date" class="form-control" formControlName="f_fin"
+                  [ngClass]="{'is-invalid': servicioForm.get('f_fin')?.invalid && servicioForm.get('f_fin')?.touched}">
+                <div class="invalid-feedback" *ngIf="servicioForm.get('f_fin')?.touched">
+                  <div *ngIf="servicioForm.get('f_fin')?.errors?.['required']">La fecha de fin es requerida</div>
+                  <div *ngIf="servicioForm.get('f_fin')?.errors?.['fechaInvalida']">La fecha de fin debe ser posterior a la fecha de inicio</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Prioridad</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="servicio.prioridad" [disabled]="mode==1" name="prioridad">
+
+            <div class="row mb-3">
+              <div class="col-3">Prioridad</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="prioridad"
+                  [ngClass]="{'is-invalid': servicioForm.get('prioridad')?.invalid && servicioForm.get('prioridad')?.touched}">
+                  <option value="">Seleccione una prioridad</option>
+                  <option *ngFor="let prioridad of prioridadesValidas" [value]="prioridad">{{prioridad}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="servicioForm.get('prioridad')?.touched">
+                  <div *ngIf="servicioForm.get('prioridad')?.errors?.['required']">La prioridad es requerida</div>
+                  <div *ngIf="servicioForm.get('prioridad')?.errors?.['pattern']">Prioridad no válida</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Tipo</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="servicio.tipo" [disabled]="mode==1" name="tipo">
+
+            <div class="row mb-3">
+              <div class="col-3">Tipo</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="tipo"
+                  [ngClass]="{'is-invalid': servicioForm.get('tipo')?.invalid && servicioForm.get('tipo')?.touched}">
+                  <option value="">Seleccione un tipo</option>
+                  <option *ngFor="let tipo of tiposValidos" [value]="tipo">{{tipo}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="servicioForm.get('tipo')?.touched">
+                  <div *ngIf="servicioForm.get('tipo')?.errors?.['required']">El tipo es requerido</div>
+                  <div *ngIf="servicioForm.get('tipo')?.errors?.['pattern']">Tipo no válido</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Estado</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="servicio.estado" [disabled]="mode==1" name="estado">
+
+            <div class="row mb-3">
+              <div class="col-3">Estado</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="estado"
+                  [ngClass]="{'is-invalid': servicioForm.get('estado')?.invalid && servicioForm.get('estado')?.touched}">
+                  <option value="">Seleccione un estado</option>
+                  <option *ngFor="let estado of estadosValidos" [value]="estado">{{estado}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="servicioForm.get('estado')?.touched">
+                  <div *ngIf="servicioForm.get('estado')?.errors?.['required']">El estado es requerido</div>
+                  <div *ngIf="servicioForm.get('estado')?.errors?.['pattern']">Estado no válido</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Ubicación</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="servicio.ubicacion" [disabled]="mode==1" name="ubicacion">
+
+            <div class="row mb-3">
+              <div class="col-3">Ubicación</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="ubicacion"
+                  [ngClass]="{'is-invalid': servicioForm.get('ubicacion')?.invalid && servicioForm.get('ubicacion')?.touched}">
+                <div class="invalid-feedback" *ngIf="servicioForm.get('ubicacion')?.touched">
+                  <div *ngIf="servicioForm.get('ubicacion')?.errors?.['required']">La ubicación es requerida</div>
+                  <div *ngIf="servicioForm.get('ubicacion')?.errors?.['minlength']">La ubicación debe tener al menos 5 caracteres</div>
+                  <div *ngIf="servicioForm.get('ubicacion')?.errors?.['maxlength']">La ubicación no debe exceder 100 caracteres</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Resumen</label>
-              <div class="col-md-9">
-                <textarea class="form-control" [(ngModel)]="servicio.resumen" [disabled]="mode==1" name="resumen" rows="3"></textarea>
+
+            <div class="row mb-3">
+              <div class="col-3">Resumen</div>
+              <div class="col-9">
+                <textarea class="form-control" formControlName="resumen" rows="3"
+                  [ngClass]="{'is-invalid': servicioForm.get('resumen')?.invalid && servicioForm.get('resumen')?.touched}">
+                </textarea>
+                <div class="invalid-feedback" *ngIf="servicioForm.get('resumen')?.touched">
+                  <div *ngIf="servicioForm.get('resumen')?.errors?.['required']">El resumen es requerido</div>
+                  <div *ngIf="servicioForm.get('resumen')?.errors?.['minlength']">El resumen debe tener al menos 10 caracteres</div>
+                  <div *ngIf="servicioForm.get('resumen')?.errors?.['maxlength']">El resumen no debe exceder 500 caracteres</div>
+                </div>
               </div>
             </div>
-            
-            <div class="form-group row">
-              <div class="col-md-3"></div>
-              <div class="col-md-9">
-                <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">
-                  <i class="fas fa-arrow-left mr-2"></i>Volver
+
+            <div class="row mt-4">
+              <div class="col">
+                <button class="btn btn-outline-danger" (click)="back()">
+                  <i class="fas fa-chevron-left"></i> Regresar
                 </button>
-                <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">
-                  <i class="fas fa-save mr-2"></i>Crear
+              </div>
+              <div class="col text-right">
+                <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
+                  [disabled]="servicioForm.invalid">
+                  <i class="fas fa-plus"></i> Crear
                 </button>
-                <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">
-                  <i class="fas fa-sync mr-2"></i>Actualizar
+                <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
+                  [disabled]="servicioForm.invalid">
+                  <i class="fas fa-save"></i> Actualizar
+                </button>
+                <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(servicio.id!)">
+                  <i class="fas fa-trash"></i> Eliminar
                 </button>
               </div>
             </div>

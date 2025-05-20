@@ -1,284 +1,141 @@
 <!-- manage.component-maquinas.html -->
-<div class="header bg-gradient-primary py-6">
-  <div class="container-fluid">
-    <div class="header-body">
-      <div class="row align-items-center">
-        <div class="col">
-          <h1 class="header-title text-white">Gestión de Máquinas</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="wave-container">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-      <path
-        fill="#ffffff"
-        fill-opacity="1"
-        d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-      ></path>
-    </svg>
-  </div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
 </div>
-
-<div class="container-fluid mt--6">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-soft border-0">
-        <div class="card-header bg-transparent border-0">
-          <div class="row align-items-center">
-            <div class="col">
-              <h3 class="mb-0 text-primary" *ngIf="mode == 1">
-                Detalle de Máquina
-              </h3>
-              <h3 class="mb-0 text-primary" *ngIf="mode == 2">
-                Creación de Máquina
-              </h3>
-              <h3 class="mb-0 text-primary" *ngIf="mode == 3">
-                Actualización de Máquina
-              </h3>
-            </div>
-          </div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0" *ngIf="mode==1">Detalle de Máquina</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Crear Máquina</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualizar Máquina</h3>
         </div>
         <div class="card-body">
-          <form [formGroup]="theFormGroup">
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">ID</label>
-              <div class="col-md-9">
-                <input
-                  type="number"
-                  class="form-control"
-                  [value]="maquina.id"
-                  disabled
-                  name="id"
-                />
+          <form [formGroup]="maquinaForm">
+            <div class="row mb-3" *ngIf="mode===1">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input type="number" class="form-control" [value]="maquina.id" disabled>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Modelo</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="modelo"
-                  [disabled]="mode == 1"
-                  name="modelo"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.modelo.errors &&
-                    (getTheFormGroup.modelo.dirty ||
-                      getTheFormGroup.modelo.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.modelo.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
-                  <strong
-                    *ngIf="getTheFormGroup.modelo.errors.minlength"
-                    class="msnError"
-                    >Mínimo 2 caracteres</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Especialidad</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="especialidad"
+                  [ngClass]="{'is-invalid': maquinaForm.get('especialidad')?.invalid && maquinaForm.get('especialidad')?.touched}">
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('especialidad')?.touched">
+                  <div *ngIf="maquinaForm.get('especialidad')?.errors?.['required']">La especialidad es requerida</div>
+                  <div *ngIf="maquinaForm.get('especialidad')?.errors?.['minlength']">La especialidad debe tener al menos 3 caracteres</div>
+                  <div *ngIf="maquinaForm.get('especialidad')?.errors?.['maxlength']">La especialidad no debe exceder 50 caracteres</div>
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">Marca</label>
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="marca"
-                  [disabled]="mode == 1"
-                  name="marca"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.marca.errors &&
-                    (getTheFormGroup.marca.dirty ||
-                      getTheFormGroup.marca.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.marca.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
-                  <strong
-                    *ngIf="getTheFormGroup.marca.errors.minlength"
-                    class="msnError"
-                    >Mínimo 2 caracteres</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Marca</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="marca"
+                  [ngClass]="{'is-invalid': maquinaForm.get('marca')?.invalid && maquinaForm.get('marca')?.touched}">
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('marca')?.touched">
+                  <div *ngIf="maquinaForm.get('marca')?.errors?.['required']">La marca es requerida</div>
+                  <div *ngIf="maquinaForm.get('marca')?.errors?.['minlength']">La marca debe tener al menos 2 caracteres</div>
+                  <div *ngIf="maquinaForm.get('marca')?.errors?.['maxlength']">La marca no debe exceder 30 caracteres</div>
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Estado</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="estado"
-                  [disabled]="mode == 1"
-                  name="estado"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.estado.errors &&
-                    (getTheFormGroup.estado.dirty ||
-                      getTheFormGroup.estado.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.estado.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Modelo</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="modelo"
+                  [ngClass]="{'is-invalid': maquinaForm.get('modelo')?.invalid && maquinaForm.get('modelo')?.touched}">
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('modelo')?.touched">
+                  <div *ngIf="maquinaForm.get('modelo')?.errors?.['required']">El modelo es requerido</div>
+                  <div *ngIf="maquinaForm.get('modelo')?.errors?.['minlength']">El modelo debe tener al menos 2 caracteres</div>
+                  <div *ngIf="maquinaForm.get('modelo')?.errors?.['maxlength']">El modelo no debe exceder 30 caracteres</div>
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Ubicación</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="ubicacion"
-                  [disabled]="mode == 1"
-                  name="ubicacion"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.ubicacion.errors &&
-                    (getTheFormGroup.ubicacion.dirty ||
-                      getTheFormGroup.ubicacion.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.ubicacion.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Estado</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="estado"
+                  [ngClass]="{'is-invalid': maquinaForm.get('estado')?.invalid && maquinaForm.get('estado')?.touched}">
+                  <option value="">Seleccione un estado</option>
+                  <option *ngFor="let estado of estadosValidos" [value]="estado">{{estado}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('estado')?.touched">
+                  <div *ngIf="maquinaForm.get('estado')?.errors?.['required']">El estado es requerido</div>
+                  <div *ngIf="maquinaForm.get('estado')?.errors?.['pattern']">Estado inválido</div>
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Disponibilidad</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="disponibilidad"
-                  [disabled]="mode == 1"
-                  name="disponibilidad"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.disponibilidad.errors &&
-                    (getTheFormGroup.disponibilidad.dirty ||
-                      getTheFormGroup.disponibilidad.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.disponibilidad.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Ubicación</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="ubicacion"
+                  [ngClass]="{'is-invalid': maquinaForm.get('ubicacion')?.invalid && maquinaForm.get('ubicacion')?.touched}">
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('ubicacion')?.touched">
+                  <div *ngIf="maquinaForm.get('ubicacion')?.errors?.['required']">La ubicación es requerida</div>
+                  <div *ngIf="maquinaForm.get('ubicacion')?.errors?.['minlength']">La ubicación debe tener al menos 5 caracteres</div>
+                  <div *ngIf="maquinaForm.get('ubicacion')?.errors?.['maxlength']">La ubicación no debe exceder 100 caracteres</div>
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Especialidad</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="especialidad"
-                  [disabled]="mode == 1"
-                  name="especialidad"
-                />
-                <div
-                  *ngIf="
-                    getTheFormGroup.especialidad.errors &&
-                    (getTheFormGroup.especialidad.dirty ||
-                      getTheFormGroup.especialidad.touched)
-                  "
-                >
-                  <strong
-                    *ngIf="getTheFormGroup.especialidad.errors.required"
-                    class="msnError"
-                    >Campo requerido</strong
-                  >
-                  <strong
-                    *ngIf="getTheFormGroup.especialidad.errors.minlength"
-                    class="msnError"
-                    >Mínimo 3 caracteres</strong
-                  >
+
+            <div class="row mb-3">
+              <div class="col-3">Disponibilidad</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="disponibilidad"
+                  [ngClass]="{'is-invalid': maquinaForm.get('disponibilidad')?.invalid && maquinaForm.get('disponibilidad')?.touched}">
+                  <option *ngFor="let opcion of disponibilidadOpciones" [value]="opcion.value">{{opcion.label}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('disponibilidad')?.touched && maquinaForm.get('disponibilidad')?.errors?.['required']">
+                  La disponibilidad es requerida
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Fecha Asignación</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="fecha_asignacion"
-                  [disabled]="mode == 1"
-                  name="fecha_asignacion"
-                />
+
+            <div class="row mb-3">
+              <div class="col-3">Fecha de Asignación</div>
+              <div class="col-9">
+                <input type="date" class="form-control" formControlName="fecha_asignacion">
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right"
-                >Fecha Retiro</label
-              >
-              <div class="col-md-9">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="fecha_retiro"
-                  [disabled]="mode == 1"
-                  name="fecha_retiro"
-                />
+
+            <div class="row mb-3">
+              <div class="col-3">Fecha de Retiro</div>
+              <div class="col-9">
+                <input type="date" class="form-control" formControlName="fecha_retiro"
+                  [ngClass]="{'is-invalid': maquinaForm.get('fecha_retiro')?.errors?.['fechaInvalida']}">
+                <div class="invalid-feedback" *ngIf="maquinaForm.get('fecha_retiro')?.errors?.['fechaInvalida']">
+                  La fecha de retiro debe ser posterior a la fecha de asignación
+                </div>
               </div>
             </div>
-            <div class="form-group row">
-              <div class="col-md-3"></div>
-              <div class="col-md-9">
-                <button
-                  *ngIf="mode == 1"
-                  class="btn btn-primary btn-block"
-                  (click)="back()"
-                >
-                  <i class="fas fa-arrow-left mr-2"></i>Volver
+
+            <div class="row mt-4">
+              <div class="col">
+                <button class="btn btn-outline-danger" (click)="back()">
+                  <i class="fas fa-chevron-left"></i> Regresar
                 </button>
-                <button
-                  *ngIf="mode == 2"
-                  class="btn btn-primary btn-block"
-                  (click)="create()"
-                >
-                  <i class="fas fa-save mr-2"></i>Crear
+              </div>
+              <div class="col text-right">
+                <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
+                  [disabled]="maquinaForm.invalid">
+                  <i class="fas fa-plus"></i> Crear
                 </button>
-                <button
-                  *ngIf="mode == 3"
-                  class="btn btn-primary btn-block"
-                  (click)="update()"
-                >
-                  <i class="fas fa-sync mr-2"></i>Actualizar
+                <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
+                  [disabled]="maquinaForm.invalid">
+                  <i class="fas fa-save"></i> Actualizar
+                </button>
+                <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(maquina.id!)">
+                  <i class="fas fa-trash"></i> Eliminar
                 </button>
               </div>
             </div>

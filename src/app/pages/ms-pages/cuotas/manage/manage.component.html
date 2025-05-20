@@ -29,20 +29,15 @@
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <form>
+        <div class="card-body">          <form [formGroup]="cuotaForm">
             <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">ID Servicio</label>              <div class="col-md-9">
-                <input type="text" 
+              <label class="col-md-3 col-form-label text-md-right">ID Servicio</label>              
+              <div class="col-md-9">
+                <input type="number" 
                        class="form-control" 
-                       [(ngModel)]="paymentData.due.id_servicio" 
-                       [disabled]="mode==1" 
-                       name="id_servicio" 
-                       (ngModelChange)="updateCuota('id_servicio', $event)"
-                       required
-                       #idServicio="ngModel">
-                <div class="invalid-feedback d-block" *ngIf="idServicio.invalid && (idServicio.dirty || idServicio.touched)">
-                  <span *ngIf="idServicio.errors?.['required']">El ID de servicio es requerido</span>
+                       formControlName="id_servicio">                <div class="text-danger small mt-1" *ngIf="cuotaForm.get('id_servicio')?.invalid && cuotaForm.get('id_servicio')?.touched">
+                  <span *ngIf="cuotaForm.get('id_servicio')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> El ID de servicio es requerido</span>
+                  <span *ngIf="cuotaForm.get('id_servicio')?.errors?.['min']"><i class="fas fa-exclamation-circle"></i> El ID de servicio debe ser mayor a 0</span>
                 </div>
               </div>
             </div>
@@ -56,17 +51,12 @@
                   </div>
                   <input type="number" 
                          class="form-control" 
-                         [(ngModel)]="paymentData.due.valor" 
-                         [disabled]="mode === 1" 
-                         name="valor" 
-                         (ngModelChange)="updateCuota('valor', $event)"
-                         required
-                         min="0"
-                         #valor="ngModel">
-                </div>
-                <div class="invalid-feedback d-block" *ngIf="valor.invalid && (valor.dirty || valor.touched)">
-                  <span *ngIf="valor.errors?.['required']">El valor es requerido</span>
-                  <span *ngIf="valor.errors?.['min']">El valor debe ser mayor a 0</span>
+                         formControlName="valor"
+                         step="0.01">
+                </div>                <div class="text-danger small mt-1" *ngIf="cuotaForm.get('valor')?.invalid && cuotaForm.get('valor')?.touched">
+                  <span *ngIf="cuotaForm.get('valor')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> El valor es requerido</span>
+                  <span *ngIf="cuotaForm.get('valor')?.errors?.['min']"><i class="fas fa-exclamation-circle"></i> El valor debe ser mayor a 0</span>
+                  <span *ngIf="cuotaForm.get('valor')?.errors?.['pattern']"><i class="fas fa-exclamation-circle"></i> El valor debe ser un número válido con hasta 2 decimales</span>
                 </div>
               </div>
             </div>
@@ -74,13 +64,21 @@
             <div class="form-group row">
               <div class="col-md-3"></div>
               <div class="col-md-9">
-                <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">
+                <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()" type="button">
                   <i class="fas fa-arrow-left mr-2"></i>Volver
                 </button>
-                <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">
+                <button *ngIf="mode==2" 
+                        class="btn btn-primary btn-block" 
+                        (click)="create()" 
+                        type="button"
+                        [disabled]="cuotaForm.invalid">
                   <i class="fas fa-save mr-2"></i>Crear
                 </button>
-                <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">
+                <button *ngIf="mode==3" 
+                        class="btn btn-primary btn-block" 
+                        (click)="update()" 
+                        type="button"
+                        [disabled]="cuotaForm.invalid">
                   <i class="fas fa-sync mr-2"></i>Actualizar
                 </button>
               </div>

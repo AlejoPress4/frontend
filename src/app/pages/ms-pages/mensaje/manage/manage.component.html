@@ -6,59 +6,88 @@
   <div class="row">
     <div class="col">
       <div class="card shadow">
-        <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
-
-
+        <div class="card-header border-0">
+          <h3 class="mb-0">Mensaje</h3>
         </div>
-        <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="mensaje.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Contenido</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="mensaje.contenido"
-                [disabled]="mode==1">
+        <div class="card-body">
+          <form [formGroup]="theFormGroup">
+            <div class="row mb-3">
+              <div class="col-3">Contenido</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="contenido"
+                  [ngClass]="{'is-invalid': contenidoField?.invalid && contenidoField?.touched}">
+                <div class="invalid-feedback" *ngIf="contenidoField?.touched">
+                  <div *ngIf="contenidoField?.errors?.['required']">El contenido es requerido</div>
+                  <div *ngIf="contenidoField?.errors?.['minlength']">El contenido debe tener al menos 1 caracter
+                  </div>
+                  <div *ngIf="contenidoField?.errors?.['maxlength']">El contenido no debe exceder los 500 caracteres
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Fecha</div>
-            <div class="col-9"><input type="date" class="form-control" [(ngModel)]="mensaje.fecha" [disabled]="mode==1">
+            <div class="row mb-3">
+              <div class="col-3">Fecha</div>
+              <div class="col-9">
+                <input type="date" class="form-control" formControlName="fecha"
+                  [ngClass]="{'is-invalid': fechaField?.invalid && fechaField?.touched}">
+                <div class="invalid-feedback" *ngIf="fechaField?.touched && fechaField?.errors?.['required']">
+                  La fecha es requerida
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Hora</div>
-            <div class="col-9"><input type="time" class="form-control" [(ngModel)]="mensaje.hora" [disabled]="mode==1">
+            <div class="row mb-3">
+              <div class="col-3">Hora</div>
+              <div class="col-9">
+                <input type="time" class="form-control" formControlName="hora"
+                  [ngClass]="{'is-invalid': horaField?.invalid && horaField?.touched}">
+                <div class="invalid-feedback" *ngIf="horaField?.touched && horaField?.errors?.['required']">
+                  La hora es requerida
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID Chat</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="mensaje.chat_id"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">            <div class="col-3">ID Usuario</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="mensaje.user_id"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
+            <div class="row mb-3">
+              <div class="col-3">ID Chat</div>
+              <div class="col-9">
+                <input type="number" class="form-control" formControlName="chat_id"
+                  [ngClass]="{'is-invalid': chatIdField?.invalid && chatIdField?.touched}">
+                <div class="invalid-feedback" *ngIf="chatIdField?.touched">
+                  <div *ngIf="chatIdField?.errors?.['required']">El ID del chat es requerido</div>
+                  <div *ngIf="chatIdField?.errors?.['min']">El ID del chat debe ser mayor que 0</div>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-3">ID Usuario</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="user_id"
+                  [ngClass]="{'is-invalid': userIdField?.invalid && userIdField?.touched}">
+                <div class="invalid-feedback" *ngIf="userIdField?.touched">
+                  <div *ngIf="userIdField?.errors?.['required']">El ID del usuario es requerido</div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row mt-4">
+            <div class="col">
+              <button class="btn btn-outline-danger" (click)="back()">
+                <i class="fas fa-chevron-left"></i> Regresar
+              </button>
+            </div>
+            <div class="col text-right">
+              <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
+                [disabled]="theFormGroup.invalid">
+                <i class="fas fa-plus"></i> Crear
+              </button>
+              <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
+                [disabled]="theFormGroup.invalid">
+                <i class="fas fa-save"></i> Actualizar
+              </button>
+              <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(mensaje.id!)">
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>

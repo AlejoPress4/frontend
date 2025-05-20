@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Combo } from 'src/app/models/combo.model';
 import { CombosService } from 'src/app/services/comboService/combos.service';
 import Swal from 'sweetalert2';
@@ -10,82 +11,158 @@ import Swal from 'sweetalert2';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-
   mode: number; //1->View, 2->Create, 3-> Update
   combo: Combo;
+  comboForm: FormGroup;
 
-  constructor(private activateRoute: ActivatedRoute,
+  constructor(
+    private fb: FormBuilder,
+    private activateRoute: ActivatedRoute,
     private someCombo: CombosService,
     private router: Router
   ) {
-    this.combo = { id: 0 }
+    this.combo = { id: 0 };
+    this.createForm();
+  }
+
+  private createForm(): void {
+    this.comboForm = this.fb.group({
+      servicio_id: ['', [
+        Validators.required,
+        Validators.min(1)
+      ]]
+    });
   }
 
   ngOnInit(): void {
     const currentUrl = this.activateRoute.snapshot.url.join('/');
     if (currentUrl.includes('view')) {
       this.mode = 1;
+      this.comboForm.disable();
     } else if (currentUrl.includes('create')) {
       this.mode = 2;
     } else if (currentUrl.includes('update')) {
       this.mode = 3;
     }
+
     if (this.activateRoute.snapshot.params.id) {
-      this.combo.id = this.activateRoute.snapshot.params.id
-      this.getCombo(this.combo.id)
+      this.combo.id = this.activateRoute.snapshot.params.id;
+      this.getCombo(this.combo.id);
     }
   }
+
   getCombo(id: number) {
     this.someCombo.view(id).subscribe({
       next: (combo) => {
         this.combo = combo;
+        this.comboForm.patchValue({
+          servicio_id: combo.servicio_id
+        });
         console.log('combo fetched successfully:', this.combo);
       },
       error: (error) => {
         console.error('Error fetching combo:', error);
+        Swal.fire('Error', 'No se pudo cargar el combo', 'error');
       }
     });
   }
-  back() {
-    this.router.navigate(['/combos/list']);
+
+  private showValidationErrors(): void {
+    const errorMessages: string[] = [];
+    const control = this.comboForm.get('servicio_id');
+    
+    if (control?.errors && control.touched) {
+      if (control.errors['required']) {
+        errorMessages.push('El ID del servicio es requerido');
+      }
+      if (control.errors['min']) {
+        errorMessages.push('El ID del servicio debe ser mayor que 0');
+      }
+    }
+    
+    if (errorMessages.length > 0) {
+      Swal.fire({
+        title: 'Error de Validación',
+        html: errorMessages.join('<br>'),
+        icon: 'error'
+      });
+    }
   }
+
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
   create() {
-    this.someCombo.create(this.combo).subscribe({
+    if (this.comboForm.invalid) {
+      this.markFormGroupTouched(this.comboForm);
+      this.showValidationErrors();
+      return;
+    }
+
+    const formValue = this.comboForm.value;
+    this.someCombo.create(formValue).subscribe({
       next: (combo) => {
         console.log('combo created successfully:', combo);
         Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/combos/list']);
+        }).then(() => {
+          this.router.navigate(['/combos/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating combo:', error);
+        Swal.fire('Error', 'No se pudo crear el combo', 'error');
       }
     });
   }
+
   update() {
-    this.someCombo.update(this.combo).subscribe({
+    if (this.comboForm.invalid) {
+      this.markFormGroupTouched(this.comboForm);
+      this.showValidationErrors();
+      return;
+    }
+
+    const formValue = this.comboForm.value;
+    const payload = {
+      ...formValue,
+      id: this.combo.id
+    };
+
+    this.someCombo.update(payload).subscribe({
       next: (combo) => {
-        console.log('cuota updated successfully:', combo);
+        console.log('combo updated successfully:', combo);
         Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/combos/list']);
+        }).then(() => {
+          this.router.navigate(['/combos/list']);
+        });
       },
       error: (error) => {
         console.error('Error updating combo:', error);
+        Swal.fire('Error', 'No se pudo actualizar el combo', 'error');
       }
     });
   }
+
+  back() {
+    this.router.navigate(['/combos/list']);
+  }
+
   delete(id: number) {
-    console.log("Delete combo with id:", id);
     Swal.fire({
       title: 'Eliminar',
-      text: "Está combo que quiere eliminar el registro?",
+      text: "¿Está seguro que quiere eliminar el combo?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -94,16 +171,22 @@ export class ManageComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.someCombo.delete(id).
-          subscribe(data => {
+        this.someCombo.delete(id).subscribe({
+          next: () => {
             Swal.fire(
               'Eliminado!',
               'Registro eliminado correctamente.',
               'success'
-            )
-            this.ngOnInit();
-          });
+            ).then(() => {
+              this.router.navigate(['/combos/list']);
+            });
+          },
+          error: (error) => {
+            console.error('Error deleting combo:', error);
+            Swal.fire('Error', 'No se pudo eliminar el combo', 'error');
+          }
+        });
       }
-    })
+    });
   }
 }
