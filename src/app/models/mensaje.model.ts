@@ -1,4 +1,5 @@
 import { Chat } from "./chat.model";
+import { Usuario } from "./usuario.model";
 
 export class Mensaje {
     id?: number;
@@ -6,5 +7,6 @@ export class Mensaje {
     fecha?: Date;
     hora?: Date;
     chat_id?: number;
-    user_id?: string;
+    user_id?: Usuario[]; //falta 
+    chat?: Chat; // Relación con el modelo Chat
 }

@@ -4,5 +4,5 @@ import { Cuotas } from "./cuotas.model";
 export class Factura {
     id?: number;
     detalle?: string;
-    id_cuota?: number;
+    id_cuota?: Cuotas;;
 }

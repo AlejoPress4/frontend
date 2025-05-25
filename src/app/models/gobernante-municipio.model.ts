@@ -5,6 +5,6 @@ export class GobernanteMunicipio {
     id?: number;
     fecha_inicio?: Date;
     fecha_fin?: Date;
-    gobernante_id?: Gobernante;
-    municipio_id?: Municipio;
+    gobernante_id?: Gobernante[];
+    municipio_id?: Municipio[];
 }

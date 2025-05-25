@@ -1,11 +1,8 @@
-import { Departamento } from "./departamento.model";
-import { Municipio } from "./municipio.model";
+import { Usuario } from "./usuario.model";
 
 export class Gobernante {
     id?: number;
-    id_usuario?: string;
+    id_usuario?: Usuario;
     periodo_inicio?: Date;
     periodo_final?: Date;
-    departamentos?: Departamento[];
-    municipios?: Municipio[];
 }
