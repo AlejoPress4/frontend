@@ -5,4 +5,5 @@ export class Turno {
     hora?: string;
     operario_id?: number;
     maquina_id?: number;
+    fecha?: string;
 }

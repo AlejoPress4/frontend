@@ -38,6 +38,10 @@ export class ManageComponent implements OnInit {
   getTurno(id: number) {
     this.someTurno.view(id).subscribe({
       next: (turno) => {
+        // Format the fecha field to 'yyyy-MM-dd'
+        if (turno.fecha) {
+          turno.fecha = turno.fecha.split('T')[0];
+        }
         this.turno = turno;
         console.log('Turno fetched successfully:', this.turno);
       },

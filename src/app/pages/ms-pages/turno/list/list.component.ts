@@ -29,7 +29,14 @@ export class ListTurnoComponent implements OnInit {
   }
 
   delete(id: number) {
-    this.router.navigate(['/turnos/delete', id]);
-    // Implement call to the delete service method
+    this.TurnoService.delete(id).subscribe({
+      next: () => {
+        this.turnos = this.turnos.filter(turno => turno.id !== id);
+        console.log(`Turno with ID ${id} deleted successfully.`);
+      },
+      error: (err) => {
+        console.error(`Error deleting turno with ID ${id}:`, err);
+      }
+    });
   }
 }

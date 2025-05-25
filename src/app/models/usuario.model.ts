@@ -5,11 +5,11 @@ export class Usuario {
     password?: string;
     token?: string;
 
-    constructor() {
-        this._id = '';
-        this.nombre = '';
-        this.email = '';
-        this.password = '';
-        this.token = '';
-    }
+    // constructor() {
+    //     this._id = '';
+    //     this.nombre = '';
+    //     this.email = '';
+    //     this.password = '';
+    //     this.token = '';
+    // }
 }

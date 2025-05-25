@@ -1,4 +1,7 @@
 import { Component, type OnInit } from "@angular/core"
+import { Usuario } from "src/app/models/usuario.model";
+import { SeguridadService } from "src/app/services/seguridadService/seguridad.service"
+import { Subscription } from "rxjs"
 
 @Component({
   selector: "app-navbar",
@@ -9,10 +12,15 @@ export class NavbarComponent implements OnInit {
   isMenuCollapsed = true
   appTitle = "Gestión de Servicios de Transporte"
   menuItems: any[] = []
+  user: Usuario;
+  subscription: Subscription;
 
-  constructor() {
+  constructor(private seguridadService: SeguridadService) {
     // Aquí puedes inyectar servicios si los necesitas
     // Por ejemplo: private authService: AuthService
+    this.subscription = this.seguridadService.getUsuario().subscribe((user: Usuario) => {
+      this.user = user
+    })
   }
 
   ngOnInit(): void {
