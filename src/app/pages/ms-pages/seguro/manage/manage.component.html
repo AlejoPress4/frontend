@@ -12,32 +12,47 @@
           <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
 
 
-        </div>
-        <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="seguro.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Nombre</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="seguro.nombre" [disabled]="mode==1">
+        </div>        <div class="card-body container">
+          <form [formGroup]="seguroForm">
+            <div class="row mb-3">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="id">
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Descripción</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="seguro.descripcion"
-                [disabled]="mode==1"></div>
-          </div>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
+            
+            <div class="row mb-3">
+              <div class="col-3">Nombre</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="nombre"
+                       [class.is-invalid]="seguroForm.get('nombre')?.invalid && seguroForm.get('nombre')?.touched">
+                <div class="invalid-feedback" *ngIf="getFieldError('nombre')">
+                  {{ getFieldError('nombre') }}
+                </div>
+              </div>
             </div>
-          </div>
+            
+            <div class="row mb-3">
+              <div class="col-3">Descripción</div>
+              <div class="col-9">
+                <input type="text" class="form-control" formControlName="descripcion"
+                       [class.is-invalid]="seguroForm.get('descripcion')?.invalid && seguroForm.get('descripcion')?.touched">
+                <div class="invalid-feedback" *ngIf="getFieldError('descripcion')">
+                  {{ getFieldError('descripcion') }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-3"></div>
+              <div class="col-9">
+                <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
+                <button *ngIf="mode==2" class="btn btn-primary btn-block" [disabled]="seguroForm.invalid" (click)="create()">Crear</button>
+                <button *ngIf="mode==3" class="btn btn-primary btn-block" [disabled]="seguroForm.invalid" (click)="update()">Actualizar</button>
+              </div>
+            </div>
+          </form>
+          
         </div>
 
       </div>

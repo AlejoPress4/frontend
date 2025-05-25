@@ -11,65 +11,77 @@
           <h3 class="mb-0" *ngIf="mode == 3">Actualización</h3>
         </div>
         <div class="card-body container">
-          <div class="row mb-3">
-            <div class="col-3">ID</div>
-            <div class="col-9">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="chat.id"
-                [disabled]="mode !== 2"
-              />
+          <form [formGroup]="chatForm">
+            <div class="row mb-3">
+              <div class="col-3">ID</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="id"
+                />
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-3">Nombre</div>
-            <div class="col-9">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="chat.titulo"
-                [disabled]="mode == 1"
-              />
+
+            <div class="row mb-3">
+              <div class="col-3">Título</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="titulo"
+                  [class.is-invalid]="chatForm.get('titulo')?.invalid && chatForm.get('titulo')?.touched"
+                />
+                <div class="invalid-feedback" *ngIf="getFieldError('titulo')">
+                  {{ getFieldError('titulo') }}
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="row mb-4">
-            <div class="col-3">Tipo</div>
-            <div class="col-9">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="chat.tipo"
-                [disabled]="mode == 1"
-              />
+
+            <div class="row mb-4">
+              <div class="col-3">Tipo</div>
+              <div class="col-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="tipo"
+                  [class.is-invalid]="chatForm.get('tipo')?.invalid && chatForm.get('tipo')?.touched"
+                />
+                <div class="invalid-feedback" *ngIf="getFieldError('tipo')">
+                  {{ getFieldError('tipo') }}
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9 d-flex gap-2">
-              <button
-                *ngIf="mode == 1"
-                class="btn btn-primary btn-block w-100"
-                (click)="back()"
-              >
-                Volver
-              </button>
-              <button
-                *ngIf="mode == 2"
-                class="btn btn-primary btn-block w-100"
-                (click)="create()"
-              >
-                Crear
-              </button>
-              <button
-                *ngIf="mode == 3"
-                class="btn btn-primary btn-block w-100"
-                (click)="update()"
-              >
-                Update
-              </button>
+
+            <div class="row">
+              <div class="col-3"></div>
+              <div class="col-9 d-flex gap-2">
+                <button
+                  *ngIf="mode == 1"
+                  class="btn btn-primary btn-block w-100"
+                  (click)="back()"
+                >
+                  Volver
+                </button>
+                <button
+                  *ngIf="mode == 2"
+                  class="btn btn-primary btn-block w-100"
+                  (click)="create()"
+                  [disabled]="chatForm.invalid"
+                >
+                  Crear
+                </button>
+                <button
+                  *ngIf="mode == 3"
+                  class="btn btn-primary btn-block w-100"
+                  (click)="update()"
+                  [disabled]="chatForm.invalid"
+                >
+                  Actualizar
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

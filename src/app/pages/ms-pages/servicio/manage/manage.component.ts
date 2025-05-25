@@ -11,20 +11,18 @@ import Swal from 'sweetalert2';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-  mode: number; //1->View, 2->Create, 3-> Update
+  mode: number; // 1->View, 2->Create, 3->Update
   servicio: Servicio;
   servicioForm: FormGroup;
-
-  // Opciones válidas para los selectores
+  estadosValidos = ['Pendiente', 'En Proceso', 'Completado', 'Cancelado'];
   prioridadesValidas = ['Alta', 'Media', 'Baja'];
   tiposValidos = ['Mantenimiento', 'Reparación', 'Instalación', 'Otro'];
-  estadosValidos = ['Pendiente', 'En Proceso', 'Completado', 'Cancelado'];
 
   constructor(
-    private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private someServicio: ServicioService,
-    private router: Router
+    private servicioService: ServicioService,
+    private router: Router,
+    private fb: FormBuilder
   ) {
     this.servicio = { id: 0 };
     this.createForm();
@@ -105,7 +103,7 @@ export class ManageComponent implements OnInit {
   }
 
   getService(id: number) {
-    this.someServicio.view(id).subscribe({
+    this.servicioService.view(id).subscribe({
       next: (service) => {
         this.servicio = service;
         this.servicioForm.patchValue({
@@ -133,6 +131,20 @@ export class ManageComponent implements OnInit {
     return d.toISOString().split('T')[0];
   }
 
+  private getFieldLabel(key: string): string {
+    const labels: { [key: string]: string } = {
+      costo: 'Costo',
+      f_inicio: 'Fecha de inicio',
+      f_fin: 'Fecha de fin',
+      prioridad: 'Prioridad',
+      tipo: 'Tipo',
+      estado: 'Estado',
+      ubicacion: 'Ubicación',
+      resumen: 'Resumen'
+    };
+    return labels[key] || key;
+  }
+
   private showValidationErrors(): void {
     const errorMessages: string[] = [];
     const controls = this.servicioForm.controls;
@@ -156,7 +168,7 @@ export class ManageComponent implements OnInit {
         if (control.errors['pattern']) {
           if (key === 'costo') {
             errorMessages.push(`${fieldName} debe ser un número válido con hasta 2 decimales`);
-          } else {
+          } else if (['prioridad', 'tipo', 'estado'].includes(key)) {
             errorMessages.push(`${fieldName} no tiene un valor válido`);
           }
         }
@@ -170,28 +182,16 @@ export class ManageComponent implements OnInit {
       Swal.fire({
         title: 'Error de Validación',
         html: errorMessages.join('<br>'),
-        icon: 'error'
+        icon: 'error',
+        confirmButtonText: 'Entendido'
       });
     }
   }
 
-  private getFieldLabel(fieldName: string): string {
-    const labels: { [key: string]: string } = {
-      costo: 'Costo',
-      f_inicio: 'Fecha de inicio',
-      f_fin: 'Fecha de fin',
-      prioridad: 'Prioridad',
-      tipo: 'Tipo',
-      estado: 'Estado',
-      ubicacion: 'Ubicación',
-      resumen: 'Resumen'
-    };
-    return labels[fieldName] || fieldName;
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup) {
+  private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
+
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
@@ -206,7 +206,7 @@ export class ManageComponent implements OnInit {
     }
 
     const formValue = this.servicioForm.value;
-    this.someServicio.create(formValue).subscribe({
+    this.servicioService.create(formValue).subscribe({
       next: () => {
         Swal.fire({
           title: 'Creado!',
@@ -236,7 +236,7 @@ export class ManageComponent implements OnInit {
       id: this.servicio.id
     };
 
-    this.someServicio.update(payload).subscribe({
+    this.servicioService.update(payload).subscribe({
       next: () => {
         Swal.fire({
           title: 'Actualizado!',
@@ -268,7 +268,7 @@ export class ManageComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.someServicio.delete(id).
+        this.servicioService.delete(id).
           subscribe(data => {
             Swal.fire(
               'Eliminado!',

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Especialidad } from 'src/app/models/especialidad.model';
 import { EspecialidadesService } from 'src/app/services/especialidadesService/especialidades.service';
@@ -10,18 +11,29 @@ import Swal from 'sweetalert2';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-
-  mode: number; //1->View, 2->Create, 3-> Update
+  mode: number; // 1->View, 2->Create, 3->Update
   especialidad: Especialidad;
+  theFormGroup: FormGroup;
 
-  constructor(private activateRoute: ActivatedRoute,
+  constructor(
+    private activateRoute: ActivatedRoute,
     private someEspecialidad: EspecialidadesService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.especialidad = { id: 0 }
+    this.especialidad = { id: 0 };
+    this.createForm();
   }
 
   ngOnInit(): void {
+    this.setupMode();
+    if (this.activateRoute.snapshot.params.id) {
+      this.especialidad.id = this.activateRoute.snapshot.params.id;
+      this.getEspecialidad(this.especialidad.id);
+    }
+  }
+
+  private setupMode(): void {
     const currentUrl = this.activateRoute.snapshot.url.join('/');
     if (currentUrl.includes('view')) {
       this.mode = 1;
@@ -30,50 +42,139 @@ export class ManageComponent implements OnInit {
     } else if (currentUrl.includes('update')) {
       this.mode = 3;
     }
-    if (this.activateRoute.snapshot.params.id) {
-      this.especialidad.id = this.activateRoute.snapshot.params.id
-      this.getEspecialidad(this.especialidad.id)
+  }
+
+  private createForm(): void {
+    this.theFormGroup = this.fb.group({
+      id: [{value: 0, disabled: true}],
+      nombre: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(100),
+        Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-]+$/) // Solo letras, espacios y guiones
+      ]]
+    });
+  }
+
+  // Getter para facilitar el acceso a los controles del formulario en el template
+  get getTheFormGroup() {
+    return this.theFormGroup.controls;
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
+  private showValidationErrors(): void {
+    const fieldLabels = {
+      nombre: 'Nombre'
+    };
+
+    const errorMessages: string[] = [];
+    
+    Object.keys(this.theFormGroup.controls).forEach(key => {
+      const control = this.theFormGroup.get(key);
+      const fieldLabel = fieldLabels[key as keyof typeof fieldLabels];
+      
+      if (control?.errors && (control.dirty || control.touched)) {
+        if (control.errors['required']) {
+          errorMessages.push(`El campo ${fieldLabel} es requerido`);
+        }
+        if (control.errors['minlength']) {
+          errorMessages.push(`${fieldLabel} debe tener al menos ${control.errors['minlength'].requiredLength} caracteres`);
+        }
+        if (control.errors['maxlength']) {
+          errorMessages.push(`${fieldLabel} no debe exceder ${control.errors['maxlength'].requiredLength} caracteres`);
+        }
+        if (control.errors['pattern']) {
+          errorMessages.push(`${fieldLabel} solo puede contener letras, espacios y guiones`);
+        }
+      }
+    });
+    
+    if (errorMessages.length > 0) {
+      Swal.fire({
+        title: 'Error de Validación',
+        html: errorMessages.join('<br>'),
+        icon: 'error',
+        confirmButtonText: 'Entendido'
+      });
     }
   }
+
   getEspecialidad(id: number) {
     this.someEspecialidad.view(id).subscribe({
       next: (especialidad) => {
         this.especialidad = especialidad;
+        this.theFormGroup.patchValue(this.especialidad);
         console.log('especialidad fetched successfully:', this.especialidad);
       },
       error: (error) => {
         console.error('Error fetching especialidad:', error);
+        Swal.fire('Error', 'No se pudo cargar la especialidad.', 'error');
       }
     });
   }
+
   back() {
-    this.router.navigate(['especialidades/list'])
+    this.router.navigate(['especialidades/list']);
   }
+
   create() {
-    this.someEspecialidad.create(this.especialidad).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.markFormGroupTouched(this.theFormGroup);
+      this.showValidationErrors();
+      return;
+    }
+
+    const especialidad: Especialidad = {
+      ...this.theFormGroup.value
+    };
+
+    this.someEspecialidad.create(especialidad).subscribe({
       next: (especialidad) => {
         console.log('especialidad created successfully:', especialidad);
         Swal.fire({
           title: 'Creado!',
           text: 'Registro creado correctamente.',
           icon: 'success',
-        })
-        this.router.navigate(['/especialidades/list']);
+        }).then(() => {
+          this.router.navigate(['/especialidades/list']);
+        });
       },
       error: (error) => {
         console.error('Error creating especialidad:', error);
+        Swal.fire('Error', 'No se pudo crear el registro.', 'error');
       }
     });
   }
+
   update() {
-    this.someEspecialidad.update(this.especialidad).subscribe({
+    if (this.theFormGroup.invalid) {
+      this.markFormGroupTouched(this.theFormGroup);
+      this.showValidationErrors();
+      return;
+    }
+
+    const especialidad: Especialidad = {
+      id: this.especialidad.id,
+      ...this.theFormGroup.value
+    };
+
+    this.someEspecialidad.update(especialidad).subscribe({
       next: () => {
         Swal.fire({
           title: 'Actualizado!',
           text: 'Registro actualizado correctamente.',
           icon: 'success'
         }).then(() => {
-          this.router.navigate(['/especialidades/list']); // Redirigir a la lista
+          this.router.navigate(['/especialidades/list']);
         });
       },
       error: (error) => {
@@ -82,6 +183,7 @@ export class ManageComponent implements OnInit {
       }
     });
   }
+
   delete(id: number) {
     Swal.fire({
       title: 'Eliminar',
@@ -97,7 +199,7 @@ export class ManageComponent implements OnInit {
         this.someEspecialidad.delete(id).subscribe({
           next: () => {
             Swal.fire('Eliminado!', 'Registro eliminado correctamente.', 'success');
-            this.ngOnInit(); // Recargar la lista después de eliminar
+            this.router.navigate(['/especialidades/list']);
           },
           error: (error) => {
             console.error('Error al eliminar la especialidad:', error);

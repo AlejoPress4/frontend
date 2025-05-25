@@ -96,7 +96,8 @@ export class LoginComponent implements OnInit {
         this.attempted_id
       ).subscribe({
         next: (response: any) => {
-          console.log('Respuesta 2FA:', response);
+          console.log (response)
+          console.log('Respuesta 2FA:', response.token);
           
           // Si la respuesta es un string, es el token
           const token = typeof response === 'string' ? response : response?.token;
