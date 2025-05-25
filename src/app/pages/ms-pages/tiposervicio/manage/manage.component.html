@@ -7,41 +7,107 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
-
-
+          <h3 class="mb-0" *ngIf="mode==1">Detalle de Tipo Servicio</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Crear Tipo Servicio</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualizar Tipo Servicio</h3>
         </div>
-        <div class="card-body container">
-          <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="tiposervicio.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Nombre</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="tiposervicio.nombre"
-                [disabled]="mode==1">
+        <div class="card-body">
+          <form [formGroup]="theFormGroup">
+            <!-- ID field - only shown in view mode -->
+            <div class="form-group row" *ngIf="mode===1">
+              <label class="col-md-3 col-form-label text-md-right" for="id">ID</label>
+              <div class="col-md-9">
+                <input type="number" 
+                       id="id"
+                       class="form-control" 
+                       formControlName="id" 
+                       disabled>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Descripción</div>
-            <div class="col-9"><input type="text" class="form-control" [(ngModel)]="tiposervicio.descripcion"
-                [disabled]="mode==1"></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
-            </div>
-          </div>
-        </div>
 
+            <!-- Nombre field -->
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label text-md-right" for="nombre">Nombre</label>
+              <div class="col-md-9">
+                <input type="text" 
+                       id="nombre"
+                       class="form-control" 
+                       formControlName="nombre"
+                       [ngClass]="{'is-invalid': getTheFormGroup['nombre'].invalid && (getTheFormGroup['nombre'].dirty || getTheFormGroup['nombre'].touched)}">
+                <div class="invalid-feedback" *ngIf="getTheFormGroup['nombre'].touched">
+                  <div *ngIf="getTheFormGroup['nombre'].errors?.['required']">
+                    <i class="fas fa-exclamation-circle"></i> El nombre es requerido
+                  </div>
+                  <div *ngIf="getTheFormGroup['nombre'].errors?.['minlength']">
+                    <i class="fas fa-exclamation-circle"></i> El nombre debe tener al menos {{getTheFormGroup['nombre'].errors?.['minlength'].requiredLength}} caracteres
+                  </div>
+                  <div *ngIf="getTheFormGroup['nombre'].errors?.['maxlength']">
+                    <i class="fas fa-exclamation-circle"></i> El nombre no debe exceder {{getTheFormGroup['nombre'].errors?.['maxlength'].requiredLength}} caracteres
+                  </div>
+                  <div *ngIf="getTheFormGroup['nombre'].errors?.['pattern']">
+                    <i class="fas fa-exclamation-circle"></i> El nombre solo puede contener letras, espacios y guiones
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Descripción field -->
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label text-md-right" for="descripcion">Descripción</label>
+              <div class="col-md-9">
+                <textarea id="descripcion"
+                          class="form-control" 
+                          formControlName="descripcion"
+                          rows="3"
+                          [ngClass]="{'is-invalid': getTheFormGroup['descripcion'].invalid && (getTheFormGroup['descripcion'].dirty || getTheFormGroup['descripcion'].touched)}"></textarea>
+                <div class="invalid-feedback" *ngIf="getTheFormGroup['descripcion'].touched">
+                  <div *ngIf="getTheFormGroup['descripcion'].errors?.['required']">
+                    <i class="fas fa-exclamation-circle"></i> La descripción es requerida
+                  </div>
+                  <div *ngIf="getTheFormGroup['descripcion'].errors?.['minlength']">
+                    <i class="fas fa-exclamation-circle"></i> La descripción debe tener al menos {{getTheFormGroup['descripcion'].errors?.['minlength'].requiredLength}} caracteres
+                  </div>
+                  <div *ngIf="getTheFormGroup['descripcion'].errors?.['maxlength']">
+                    <i class="fas fa-exclamation-circle"></i> La descripción no debe exceder {{getTheFormGroup['descripcion'].errors?.['maxlength'].requiredLength}} caracteres
+                  </div>
+                  <div *ngIf="getTheFormGroup['descripcion'].errors?.['pattern']">
+                    <i class="fas fa-exclamation-circle"></i> La descripción solo puede contener letras, números y algunos caracteres especiales
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="form-group row">
+              <div class="col-md-3"></div>
+              <div class="col-md-9">
+                <button *ngIf="mode==1" 
+                        class="btn btn-primary btn-block" 
+                        (click)="back()" 
+                        type="button">
+                  <i class="fas fa-arrow-left mr-2"></i>Volver
+                </button>
+                
+                <button *ngIf="mode==2" 
+                        class="btn btn-primary btn-block" 
+                        [disabled]="theFormGroup.invalid" 
+                        (click)="create()" 
+                        type="button">
+                  <i class="fas fa-save mr-2"></i>Crear
+                </button>
+                
+                <button *ngIf="mode==3" 
+                        class="btn btn-primary btn-block" 
+                        [disabled]="theFormGroup.invalid" 
+                        (click)="update()" 
+                        type="button">
+                  <i class="fas fa-sync mr-2"></i>Actualizar
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
       </div>
     </div>
   </div>

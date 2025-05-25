@@ -44,4 +44,5 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'tiposervicio', loadChildren: () => import('src/app/pages/ms-pages/tiposervicio/tiposervicio.module').then(m => m.TipoServicioModule) },
   { path: 'departamentos', loadChildren: () => import('src/app/pages/ms-pages/departamentos/departamentos.module').then(m => m.DepartamentosModule) },
   { path: 'municipios', loadChildren: () => import('src/app/pages/ms-pages/municipios/municipios.module').then(m => m.MunicipiosModule) }
+
 ];
