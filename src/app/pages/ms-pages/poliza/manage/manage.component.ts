@@ -4,12 +4,6 @@ import { Poliza } from 'src/app/models/poliza.model';
 import { PolizaService } from 'src/app/services/polizaService/poliza.service';
 import Swal from 'sweetalert2';
 import { AbstractControl, ValidationErrors, ValidatorFn, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Operario } from 'src/app/models/operario.model';
-import { Maquina } from 'src/app/models/maquina.model';
-import { Seguro } from 'src/app/models/seguro.model';
-import { OperarioService } from 'src/app/services/operarioService/operario.service';
-import { MaquinaService } from 'src/app/services/maquinaService/maquina.service';
-import { SeguroService } from 'src/app/services/seguroService/seguro.service';
 
 @Component({
   selector: 'app-manage',
@@ -22,18 +16,12 @@ export class ManageComponent implements OnInit {
   poliza: Poliza;
   tipoPolizaOptions: string[] = [];
   theFormGroup: FormGroup;
-  operarios: Operario[] = [];
-  maquinas: Maquina[] = [];
-  seguros: Seguro[] = [];
 
   constructor(
     private activateRoute: ActivatedRoute,
     private somePoliza: PolizaService,
     private router: Router,
-    private fb: FormBuilder,
-    private operarioService: OperarioService,
-    private maquinaService: MaquinaService,
-    private seguroService: SeguroService
+    private fb: FormBuilder
   ) {
     this.poliza = {
       id: 0,
@@ -65,42 +53,6 @@ export class ManageComponent implements OnInit {
       this.poliza.id = this.activateRoute.snapshot.params.id
       this.getPoliza(this.poliza.id)
     }
-    this.loadOperarios();
-    this.loadMaquinas();
-    this.loadSeguros();
-  }
-
-  loadOperarios() {
-    this.operarioService.list().subscribe({
-      next: (operarios) => {
-        this.operarios = operarios;
-      },
-      error: (error) => {
-        console.error('Error loading operarios:', error);
-      }
-    });
-  }
-
-  loadMaquinas() {
-    this.maquinaService.list().subscribe({
-      next: (maquinas) => {
-        this.maquinas = maquinas;
-      },
-      error: (error) => {
-        console.error('Error loading maquinas:', error);
-      }
-    });
-  }
-
-  loadSeguros() {
-    this.seguroService.list().subscribe({
-      next: (seguros) => {
-        this.seguros = seguros;
-      },
-      error: (error) => {
-        console.error('Error loading seguros:', error);
-      }
-    });
   }
 
   onEntidadChange() {
@@ -152,48 +104,7 @@ export class ManageComponent implements OnInit {
     this.somePoliza.view(id).subscribe({
       next: (poliza) => {
         this.poliza = poliza;
-        // Determinar opciones de tipoPoliza según la entidad
-        if (this.poliza.operario_id) {
-          this.tipoPolizaOptions = ["ARL", "SEGURO_VIDA", "SEGURO_ACCIDENTES"];
-        } else if (this.poliza.maquina_id) {
-          this.tipoPolizaOptions = ["TODO_RIESGO", "RESPONSABILIDAD_CIVIL", "DANOS_TERCEROS"];
-        } else {
-          this.tipoPolizaOptions = [];
-        }
-        // Formatear fechas para los inputs tipo date solo si la fecha es válida
-        let fechaInicioStr = '';
-        let fechaFinStr = '';
-        if (this.poliza.fechaInicio) {
-          if (typeof this.poliza.fechaInicio === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(this.poliza.fechaInicio)) {
-            fechaInicioStr = this.poliza.fechaInicio;
-          } else if (!isNaN(new Date(this.poliza.fechaInicio).getTime())) {
-            fechaInicioStr = this.formatDateForInput(this.poliza.fechaInicio);
-          }
-        }
-        if (this.poliza.fechaFin) {
-          if (typeof this.poliza.fechaFin === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(this.poliza.fechaFin)) {
-            fechaFinStr = this.poliza.fechaFin;
-          } else if (!isNaN(new Date(this.poliza.fechaFin).getTime())) {
-            fechaFinStr = this.formatDateForInput(this.poliza.fechaFin);
-          }
-        }
-        this.theFormGroup.patchValue({
-          fechaInicio: fechaInicioStr,
-          fechaFin: fechaFinStr
-        });
-        // También actualizar en el FormGroup para el binding reactivo
-        this.theFormGroup.patchValue({
-          operario_id: this.poliza.operario_id,
-          maquina_id: this.poliza.maquina_id,
-          tipo_poliza: this.poliza.tipo_poliza
-        });
-        setTimeout(() => {
-          this.theFormGroup.patchValue({
-            operario_id: this.poliza.operario_id,
-            maquina_id: this.poliza.maquina_id,
-            tipo_poliza: this.poliza.tipo_poliza
-          });
-        });
+        console.log('poliza fetched successfully:', this.poliza);
       },
       error: (error) => {
         console.error('Error fetching poliza:', error);
@@ -228,6 +139,8 @@ export class ManageComponent implements OnInit {
     const { operario_id, maquina_id, tipo_poliza } = this.theFormGroup.value;
     console.log('VALIDACIÓN POLIZA SUBMIT:', { operario_id, maquina_id, tipo_poliza });
     const payload = this.theFormGroup.value;
+    console.log('Payload enviado al backend:', JSON.stringify(payload, null, 2));
+    alert('Payload enviado al backend: ' + JSON.stringify(payload, null, 2));
     this.somePoliza.create(payload).subscribe({
       next: (poliza) => {
         Swal.fire({
@@ -305,14 +218,6 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-  }
-
-  // Utilidad para formatear fechas a yyyy-MM-dd
-  formatDateForInput(date: string | Date): string {
-    const d = new Date(date);
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${d.getFullYear()}-${month}-${day}`;
   }
 }
 

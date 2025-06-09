@@ -3,8 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Combo } from 'src/app/models/combo.model';
 import { CombosService } from 'src/app/services/comboService/combos.service';
-import { Servicio } from 'src/app/models/servicio.model';
-import { ServicioService } from 'src/app/services/servicioService/servicio.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -16,14 +14,12 @@ export class ManageComponent implements OnInit {
   mode: number; //1->View, 2->Create, 3-> Update
   combo: Combo;
   comboForm: FormGroup;
-  servicios: Servicio[] = [];
 
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private someCombo: CombosService,
-    private router: Router,
-    private servicioService: ServicioService
+    private router: Router
   ) {
     this.combo = { id: 0 };
     this.createForm();
@@ -53,15 +49,6 @@ export class ManageComponent implements OnInit {
       this.combo.id = this.activateRoute.snapshot.params.id;
       this.getCombo(this.combo.id);
     }
-
-    this.loadServicios();
-  }
-
-  loadServicios() {
-    this.servicioService.list().subscribe(
-      (servicios) => { this.servicios = servicios; },
-      (error) => { console.error('Error loading servicios:', error); }
-    );
   }
 
   getCombo(id: number) {

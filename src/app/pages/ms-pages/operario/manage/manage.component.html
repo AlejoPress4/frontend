@@ -1,5 +1,6 @@
 <!-- manage.component-operarios.html -->
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8"></div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+</div>
 <!-- Page content -->
 <div class="container-fluid mt--7">
   <!-- Table -->
@@ -7,51 +8,20 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode == 1">Detalle de Operario</h3>
-          <h3 class="mb-0" *ngIf="mode == 2">Crear Operario</h3>
-          <h3 class="mb-0" *ngIf="mode == 3">Actualizar Operario</h3>
+          <h3 class="mb-0" *ngIf="mode==1">Detalle de Operario</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Crear Operario</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualizar Operario</h3>
         </div>
         <div class="card-body">
           <form [formGroup]="operarioForm">
             <div class="row mb-3">
-              <div class="col-3">ID</div>
-              <div class="col-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  [value]="operario.id"
-                  disabled
-                />
-              </div>
-            </div>
-
-            <div class="row mb-3">
               <div class="col-3">ID Usuario</div>
               <div class="col-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="user_id"
-                  [ngClass]="{
-                    'is-invalid':
-                      operarioForm.get('user_id')?.invalid &&
-                      operarioForm.get('user_id')?.touched
-                  }"
-                />
-                <div
-                  class="invalid-feedback"
-                  *ngIf="operarioForm.get('user_id')?.touched"
-                >
-                  <div
-                    *ngIf="operarioForm.get('user_id')?.errors?.['required']"
-                  >
-                    El ID de usuario es requerido
-                  </div>
-                  <div
-                    *ngIf="operarioForm.get('user_id')?.errors?.['minlength']"
-                  >
-                    El ID de usuario debe tener al menos 1 caracter
-                  </div>
+                <input type="text" class="form-control" formControlName="user_id"
+                  [ngClass]="{'is-invalid': operarioForm.get('user_id')?.invalid && operarioForm.get('user_id')?.touched}">
+                <div class="invalid-feedback" *ngIf="operarioForm.get('user_id')?.touched">
+                  <div *ngIf="operarioForm.get('user_id')?.errors?.['required']">El ID de usuario es requerido</div>
+                  <div *ngIf="operarioForm.get('user_id')?.errors?.['minlength']">El ID de usuario debe tener al menos 1 caracter</div>
                 </div>
               </div>
             </div>
@@ -59,36 +29,13 @@
             <div class="row mb-3">
               <div class="col-3">Experiencia</div>
               <div class="col-9">
-                <textarea
-                  class="form-control"
-                  formControlName="experiencia"
-                  rows="3"
-                  [ngClass]="{
-                    'is-invalid':
-                      operarioForm.get('experiencia')?.invalid &&
-                      operarioForm.get('experiencia')?.touched
-                  }"
-                >
+                <textarea class="form-control" formControlName="experiencia" rows="3"
+                  [ngClass]="{'is-invalid': operarioForm.get('experiencia')?.invalid && operarioForm.get('experiencia')?.touched}">
                 </textarea>
-                <div
-                  class="invalid-feedback"
-                  *ngIf="operarioForm.get('experiencia')?.touched"
-                >
-                  <div
-                    *ngIf="operarioForm.get('experiencia')?.errors?.['required']"
-                  >
-                    La experiencia es requerida
-                  </div>
-                  <div
-                    *ngIf="operarioForm.get('experiencia')?.errors?.['minlength']"
-                  >
-                    La experiencia debe tener al menos 10 caracteres
-                  </div>
-                  <div
-                    *ngIf="operarioForm.get('experiencia')?.errors?.['maxlength']"
-                  >
-                    La experiencia no debe exceder los 500 caracteres
-                  </div>
+                <div class="invalid-feedback" *ngIf="operarioForm.get('experiencia')?.touched">
+                  <div *ngIf="operarioForm.get('experiencia')?.errors?.['required']">La experiencia es requerida</div>
+                  <div *ngIf="operarioForm.get('experiencia')?.errors?.['minlength']">La experiencia debe tener al menos 10 caracteres</div>
+                  <div *ngIf="operarioForm.get('experiencia')?.errors?.['maxlength']">La experiencia no debe exceder los 500 caracteres</div>
                 </div>
               </div>
             </div>
@@ -96,30 +43,11 @@
             <div class="row mb-3">
               <div class="col-3">Fecha de Inicio</div>
               <div class="col-9">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="periodoInit"
-                  [ngClass]="{
-                    'is-invalid':
-                      operarioForm.get('periodoInit')?.invalid &&
-                      operarioForm.get('periodoInit')?.touched
-                  }"
-                />
-                <div
-                  class="invalid-feedback"
-                  *ngIf="operarioForm.get('periodoInit')?.touched"
-                >
-                  <div
-                    *ngIf="operarioForm.get('periodoInit')?.errors?.['required']"
-                  >
-                    La fecha de inicio es requerida
-                  </div>
-                  <div
-                    *ngIf="operarioForm.get('periodoInit')?.errors?.['pattern']"
-                  >
-                    Formato de fecha inválido (YYYY-MM-DD)
-                  </div>
+                <input type="date" class="form-control" formControlName="periodoInit"
+                  [ngClass]="{'is-invalid': operarioForm.get('periodoInit')?.invalid && operarioForm.get('periodoInit')?.touched}">
+                <div class="invalid-feedback" *ngIf="operarioForm.get('periodoInit')?.touched">
+                  <div *ngIf="operarioForm.get('periodoInit')?.errors?.['required']">La fecha de inicio es requerida</div>
+                  <div *ngIf="operarioForm.get('periodoInit')?.errors?.['pattern']">Formato de fecha inválido (YYYY-MM-DD)</div>
                 </div>
               </div>
             </div>
@@ -127,30 +55,11 @@
             <div class="row mb-3">
               <div class="col-3">Fecha de Fin</div>
               <div class="col-9">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="periodoEnd"
-                  [ngClass]="{
-                    'is-invalid':
-                      operarioForm.get('periodoEnd')?.invalid &&
-                      operarioForm.get('periodoEnd')?.touched
-                  }"
-                />
-                <div
-                  class="invalid-feedback"
-                  *ngIf="operarioForm.get('periodoEnd')?.touched"
-                >
-                  <div
-                    *ngIf="operarioForm.get('periodoEnd')?.errors?.['required']"
-                  >
-                    La fecha de fin es requerida
-                  </div>
-                  <div
-                    *ngIf="operarioForm.get('periodoEnd')?.errors?.['pattern']"
-                  >
-                    Formato de fecha inválido (YYYY-MM-DD)
-                  </div>
+                <input type="date" class="form-control" formControlName="periodoEnd"
+                  [ngClass]="{'is-invalid': operarioForm.get('periodoEnd')?.invalid && operarioForm.get('periodoEnd')?.touched}">
+                <div class="invalid-feedback" *ngIf="operarioForm.get('periodoEnd')?.touched">
+                  <div *ngIf="operarioForm.get('periodoEnd')?.errors?.['required']">La fecha de fin es requerida</div>
+                  <div *ngIf="operarioForm.get('periodoEnd')?.errors?.['pattern']">Formato de fecha inválido (YYYY-MM-DD)</div>
                 </div>
               </div>
             </div>
@@ -162,27 +71,15 @@
                 </button>
               </div>
               <div class="col text-right">
-                <button
-                  *ngIf="mode == 2"
-                  class="btn btn-success"
-                  (click)="create()"
-                  [disabled]="operarioForm.invalid"
-                >
+                <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
+                  [disabled]="operarioForm.invalid">
                   <i class="fas fa-plus"></i> Crear
                 </button>
-                <button
-                  *ngIf="mode == 3"
-                  class="btn btn-primary"
-                  (click)="update()"
-                  [disabled]="operarioForm.invalid"
-                >
+                <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
+                  [disabled]="operarioForm.invalid">
                   <i class="fas fa-save"></i> Actualizar
                 </button>
-                <button
-                  *ngIf="mode == 1"
-                  class="btn btn-danger"
-                  (click)="delete(operario.id!)"
-                >
+                <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(operario.id!)">
                   <i class="fas fa-trash"></i> Eliminar
                 </button>
               </div>

@@ -2,10 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Turno } from 'src/app/models/turno.model';
 import { TurnoService } from 'src/app/services/turnoService/turno.service';
-import { Operario } from 'src/app/models/operario.model';
-import { Maquina } from 'src/app/models/maquina.model';
-import { OperarioService } from 'src/app/services/operarioService/operario.service';
-import { MaquinaService } from 'src/app/services/maquinaService/maquina.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,15 +13,10 @@ export class ManageComponent implements OnInit {
 
   mode: number; //1->View, 2->Create, 3-> Update
   turno: Turno;
-  operarios: Operario[] = [];
-  maquinas: Maquina[] = [];
 
-  constructor(
-    private activateRoute: ActivatedRoute,
+  constructor(private activateRoute: ActivatedRoute,
     private someTurno: TurnoService,
-    private router: Router,
-    private operarioService: OperarioService,
-    private maquinaService: MaquinaService
+    private router: Router
   ) {
     this.turno = { id: 0 }
   }
@@ -43,8 +34,6 @@ export class ManageComponent implements OnInit {
       this.turno.id = this.activateRoute.snapshot.params.id
       this.getTurno(this.turno.id)
     }
-    this.loadOperarios();
-    this.loadMaquinas();
   }
   getTurno(id: number) {
     this.someTurno.view(id).subscribe({
@@ -65,10 +54,6 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['turnos/list'])
   }
   create() {
-    // Ensure hora is formatted correctly before sending
-    if (this.turno.hora) {
-      this.turno.hora = String(this.turno.hora);
-    }
     this.someTurno.create(this.turno).subscribe({
       next: (turno) => {
         console.log('turno created successfully:', turno);
@@ -81,23 +66,10 @@ export class ManageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error creating turno:', error);
-        Swal.fire({
-          title: 'Error!',
-          text: 'No se pudo crear el turno. Verifica los datos e inténtalo nuevamente.',
-          icon: 'error',
-        });
       }
     });
   }
   update() {
-    // Ensure fecha and hora are formatted correctly before sending
-    if (this.turno.fecha) {
-      this.turno.fecha = this.turno.fecha.split('T')[0];
-    }
-    if (this.turno.hora) {
-      this.turno.hora = String(this.turno.hora);
-    }
-
     this.someTurno.update(this.turno).subscribe({
       next: (turno) => {
         console.log('turno updated successfully:', turno);
@@ -110,11 +82,6 @@ export class ManageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error updating turno:', error);
-        Swal.fire({
-          title: 'Error!',
-          text: 'No se pudo actualizar el turno. Verifica los datos e inténtalo nuevamente.',
-          icon: 'error',
-        });
       }
     });
   }
@@ -142,27 +109,5 @@ export class ManageComponent implements OnInit {
           });
       }
     })
-  }
-
-  loadOperarios() {
-    this.operarioService.list().subscribe({
-      next: (operarios) => {
-        this.operarios = operarios;
-      },
-      error: (error) => {
-        console.error('Error loading operarios:', error);
-      }
-    });
-  }
-
-  loadMaquinas() {
-    this.maquinaService.list().subscribe({
-      next: (maquinas) => {
-        this.maquinas = maquinas;
-      },
-      error: (error) => {
-        console.error('Error loading maquinas:', error);
-      }
-    });
   }
 }

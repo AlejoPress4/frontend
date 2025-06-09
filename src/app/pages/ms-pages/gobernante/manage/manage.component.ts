@@ -24,47 +24,24 @@ export class ManageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.activateRoute.url.subscribe(() => {
-      const currentUrl = this.activateRoute.snapshot.url.join('/');
-      if (currentUrl.includes('view')) {
-        this.mode = 1;
-      } else if (currentUrl.includes('create')) {
-        this.mode = 2;
-      } else if (currentUrl.includes('update')) {
-        this.mode = 3;
-      }
-      const id = this.activateRoute.snapshot.params.id;
-      if (id) {
-        this.gobernante.id = id;
-        this.getGobernante(this.gobernante.id);
-      }
-    });
+    const currentUrl = this.activateRoute.snapshot.url.join('/');
+    if (currentUrl.includes('view')) {
+      this.mode = 1;
+    } else if (currentUrl.includes('create')) {
+      this.mode = 2;
+    } else if (currentUrl.includes('update')) {
+      this.mode = 3;
+    }
+    if (this.activateRoute.snapshot.params.id) {
+      this.gobernante.id = this.activateRoute.snapshot.params.id
+      this.getGobernante(this.gobernante.id)
+    }
   }
   getGobernante(id: number) {
     this.someGobernante.view(id).subscribe({
-      next: (gobernante: any) => {
-        this.gobernante.id = gobernante.id;
-        this.gobernante.user_id = gobernante.user_id || (gobernante.user && gobernante.user.id) || '';
-        this.gobernante.periodoInit = gobernante.periodoInit || gobernante.periodo_init || '';
-        this.gobernante.periodoEnd = gobernante.periodoEnd || gobernante.periodo_end || '';
-        this.gobernante.tipo = gobernante.tipo || '';
-        // Asignar territorio según el tipo
-        if (gobernante.territorio) {
-          if (gobernante.tipo === 'departamento' && gobernante.territorio.departamento_id) {
-            this.gobernante.departamento_id = gobernante.territorio.departamento_id;
-            this.gobernante.municipio_id = undefined;
-          } else if (gobernante.tipo === 'municipio' && gobernante.territorio.municipio_id) {
-            this.gobernante.municipio_id = gobernante.territorio.municipio_id;
-            this.gobernante.departamento_id = undefined;
-          } else {
-            this.gobernante.departamento_id = undefined;
-            this.gobernante.municipio_id = undefined;
-          }
-        } else {
-          this.gobernante.departamento_id = gobernante.departamento_id;
-          this.gobernante.municipio_id = gobernante.municipio_id;
-        }
-        console.log('gobernante mapped for form:', this.gobernante);
+      next: (gobernante) => {
+        this.gobernante = gobernante;
+        console.log('gobernante fetched successfully:', this.gobernante);
       },
       error: (error) => {
         console.error('Error fetching gobernante:', error);
@@ -75,21 +52,7 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['gobernante/list'])
   }
   create() {
-    // Construir el objeto territorio según el tipo seleccionado
-    let territorio: any = {};
-    if (this.gobernante.tipo === 'departamento') {
-      territorio = { departamento_id: this.gobernante.departamento_id };
-    } else if (this.gobernante.tipo === 'municipio') {
-      territorio = { municipio_id: this.gobernante.municipio_id };
-    }
-    const body: any = {
-      user_id: this.gobernante.user_id,
-      periodoInit: this.gobernante.periodoInit,
-      periodoEnd: this.gobernante.periodoEnd,
-      tipo: this.gobernante.tipo,
-      territorio: territorio
-    };
-    this.someGobernante.create(body).subscribe({
+    this.someGobernante.create(this.gobernante).subscribe({
       next: (gobernante) => {
         console.log('gobernante created successfully:', gobernante);
         Swal.fire({
@@ -105,22 +68,7 @@ export class ManageComponent implements OnInit {
     });
   }
   update() {
-    // Construir el objeto territorio según el tipo seleccionado
-    let territorio: any = {};
-    if (this.gobernante.tipo === 'departamento') {
-      territorio = { departamento_id: this.gobernante.departamento_id };
-    } else if (this.gobernante.tipo === 'municipio') {
-      territorio = { municipio_id: this.gobernante.municipio_id };
-    }
-    const body: any = {
-      id: this.gobernante.id,
-      user_id: this.gobernante.user_id,
-      periodoInit: this.gobernante.periodoInit,
-      periodoEnd: this.gobernante.periodoEnd,
-      tipo: this.gobernante.tipo,
-      territorio: territorio
-    };
-    this.someGobernante.update(body).subscribe({
+    this.someGobernante.update(this.gobernante).subscribe({
       next: (gobernante) => {
         console.log('gobernante updated successfully:', gobernante);
         Swal.fire({
