@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OperarioEspecialidad } from 'src/app/models/operario-especialidad.model';
 import { OperarioEspecialidadService } from 'src/app/services/operarioEspecialidadService/operario-especialidad.service';
+import { OperarioService } from 'src/app/services/operarioService/operario.service';
+import { EspecialidadesService } from 'src/app/services/especialidadesService/especialidades.service';
 import Swal from 'sweetalert2';
+import { Operario } from 'src/app/models/operario.model';
+import { Especialidad } from 'src/app/models/especialidad.model';
 
 @Component({
   selector: 'app-manage',
@@ -13,15 +17,43 @@ export class ManageComponent implements OnInit {
 
   mode: number; //1->View, 2->Create, 3-> Update
   operarioespecialidad: OperarioEspecialidad;
+  operarios:Operario[]
+  especialidades:Especialidad[]
 
   constructor(private activateRoute: ActivatedRoute,
     private someOperarioEspecialidad: OperarioEspecialidadService,
-    private router: Router
+    private router: Router,
+    private operarioService:OperarioService,
+    private especialidadesService:EspecialidadesService
   ) {
-    this.operarioespecialidad = { id: 0 }
+    this.operarios = [];
+    this.especialidades = [];
+    this.operarioespecialidad = { id: 0,
+      operario_id: { id: 0 },
+      especialidad_id: { id: 0 },
+      nivel_experiencia: ''
+     }
+  }
+
+  operariosList() {
+    this.operarioService.list().subscribe(data=>{
+      this.operarios = data;
+      console.log('Operarios fetched successfully:', this.operarios);
+    }
+    )
+  }
+
+  especialidadesList() {
+    this.especialidadesService.list().subscribe(data=>{
+      this.especialidades = data;
+      console.log('Especialidades fetched successfully:', this.especialidades);
+    }
+    )
   }
 
   ngOnInit(): void {
+    this.operariosList();
+    this.especialidadesList();
     const currentUrl = this.activateRoute.snapshot.url.join('/');
     if (currentUrl.includes('view')) {
       this.mode = 1;
