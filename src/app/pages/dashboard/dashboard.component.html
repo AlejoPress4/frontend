@@ -1,6 +1,24 @@
 <div class="dashboard">
   <h1 class="mb-4">Dashboard</h1>
   
+  <!-- 🔍 Debug Info del Usuario (para pruebas) -->
+  <div *ngIf="userDebugInfo" class="alert alert-info mb-4">
+    <h5>🔍 Debug - Información del Usuario</h5>
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Rol Original (Backend):</strong> {{ userDebugInfo.originalRole || 'Sin rol' }}</p>
+        <p><strong>Rol Mapeado (Frontend):</strong> {{ userDebugInfo.mappedRole || 'Sin mapeo' }}</p>
+        <p><strong>Tiene Configuración:</strong> {{ userDebugInfo.hasRoleConfig ? '✅ Sí' : '❌ No' }}</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Es Admin:</strong> {{ userDebugInfo.isAdmin ? '✅ Sí' : '❌ No' }}</p>
+        <p><strong>Es Operario:</strong> {{ userDebugInfo.isOperario ? '✅ Sí' : '❌ No' }}</p>
+        <p><strong>Es Gobernante:</strong> {{ userDebugInfo.isGobernante ? '✅ Sí' : '❌ No' }}</p>
+      </div>
+    </div>
+    <p><strong>Permisos Total:</strong> {{ userDebugInfo.permissions?.length || 0 }} permisos asignados</p>
+  </div>
+  
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
@@ -66,6 +84,60 @@
               </div>
             </div>
             <p class="mt-2 mb-0">{{stats.activeRoutes - 8}} rutas en progreso</p>
+          </div>
+        </div>
+      </div>    </div>
+    
+    <!-- 🧪 Sección de Testing de Directivas -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-warning">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="card-title mb-0">🧪 Testing de Directivas de Permisos</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">              <div class="col-md-4">
+                <h6>Permisos por Rol:</h6>
+                <div *appHasPermissionRole="'admin'" class="alert alert-success">
+                  ✅ Solo visible para Admin
+                </div>
+                <div *appHasPermissionRole="'operario'" class="alert alert-info">
+                  ✅ Solo visible para Operario
+                </div>
+                <div *appHasPermissionRole="'gobernante'" class="alert alert-warning">
+                  ✅ Solo visible para Gobernante
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <h6>Permisos por Recurso:</h6>
+                <div [appHasPermission]="'/users'" [appHasPermissionMethod]="'POST'" class="alert alert-success">
+                  ✅ Puede crear usuarios
+                </div>
+                <div [appHasPermission]="'/operarios'" [appHasPermissionMethod]="'GET'" class="alert alert-info">
+                  ✅ Puede ver operarios
+                </div>
+                <div [appHasPermission]="'/gobernantes'" [appHasPermissionMethod]="'PUT'" class="alert alert-warning">
+                  ✅ Puede editar gobernantes
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <h6>Botones de Acción:</h6>
+                <button [appHasPermission]="'/users'" [appHasPermissionMethod]="'POST'" 
+                        class="btn btn-success btn-sm me-2 mb-2">
+                  <i class="bi bi-plus"></i> Crear Usuario
+                </button>
+                <button [appHasPermission]="'/operarios'" [appHasPermissionMethod]="'DELETE'" 
+                        class="btn btn-danger btn-sm me-2 mb-2">
+                  <i class="bi bi-trash"></i> Eliminar Operario
+                </button>
+                <button *appHasPermissionRole="'admin'" 
+                        class="btn btn-warning btn-sm mb-2">
+                  <i class="bi bi-gear"></i> Admin Panel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

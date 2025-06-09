@@ -1,4 +1,5 @@
 import { Component, type OnInit } from "@angular/core"
+import { AuthorizationService } from "src/app/services/authorizationService/authorization.service"
 
 interface DashboardStats {
   totalVehicles: number
@@ -26,8 +27,9 @@ export class DashboardComponent implements OnInit {
   stats: DashboardStats
   recentServices: ServiceRecord[]
   loading = true
+  userDebugInfo: any // Para debug de roles y permisos
 
-  constructor() {
+  constructor(private authorizationService: AuthorizationService) {
     // Inicializar con valores por defecto
     this.stats = {
       totalVehicles: 0,
@@ -42,6 +44,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Debug: obtener información del usuario
+    this.userDebugInfo = this.authorizationService.debugUserInfo();
+    console.log('🔍 Debug Info del Usuario:', this.userDebugInfo);
+    
     // Simular carga de datos desde un servicio
     setTimeout(() => {
       this.loadDashboardData()
@@ -83,7 +89,6 @@ export class DashboardComponent implements OnInit {
         return "bg-secondary"
     }
   }
-
   getStatusLabel(status: string): string {
     switch (status) {
       case "completed":
@@ -97,5 +102,32 @@ export class DashboardComponent implements OnInit {
       default:
         return status
     }
+  }  // Métodos para demostrar el uso del sistema de autorización
+  get canViewFinancialData(): boolean {
+    return this.authorizationService.hasPermission('/reports', 'GET');
+  }
+
+  get canManageUsers(): boolean {
+    return this.authorizationService.hasPermission('/users', 'POST');
+  }
+
+  get canViewOperationalData(): boolean {
+    return this.authorizationService.hasAnyRole(['admin', 'operario']);
+  }
+  
+  get currentUserRole(): string {
+    return this.authorizationService.getCurrentUserRole() || 'Sin rol';
+  }
+
+  get isAdmin(): boolean {
+    return this.authorizationService.isAdmin();
+  }
+
+  get isOperario(): boolean {
+    return this.authorizationService.isOperario();
+  }
+
+  get isGobernante(): boolean {
+    return this.authorizationService.isGobernante();
   }
 }

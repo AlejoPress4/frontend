@@ -14,6 +14,10 @@ import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
 import { TokenInterceptor } from './interceptores/token.interceptor';
 import { AutenticadoGuard } from './guardianes/autenticado.guard';
+import { AdminGuard } from './guardianes/admin.guard';
+import { OperarioGuard } from './guardianes/operario.guard';
+import { GobernanteGuard } from './guardianes/gobernante.guard';
+import { RoleGuard } from './guardianes/role.guard';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 @NgModule({
@@ -31,15 +35,17 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
     AdminLayoutComponent,
     AuthLayoutComponent,
     ForgotPasswordComponent
-  ],
-  providers: [
+  ],  providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
     },
     AutenticadoGuard,
-    AutenticadoGuard
+    AdminGuard,
+    OperarioGuard,
+    GobernanteGuard,
+    RoleGuard
   ],
   bootstrap: [AppComponent]
 })

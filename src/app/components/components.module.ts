@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { HasPermissionDirective } from '../directives/has-permission.directive';
 
 @NgModule({
   imports: [
@@ -13,16 +14,17 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     RouterModule,
     NgbModule,
     FormsModule
-  ],
-  declarations: [
+  ],  declarations: [
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    HasPermissionDirective
   ],
   exports: [
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    HasPermissionDirective
   ]
 })
 export class ComponentsModule { }

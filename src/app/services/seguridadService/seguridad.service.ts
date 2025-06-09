@@ -11,6 +11,8 @@ interface RespuestaLogin {
     _id: string;
     name?: string;
     email?: string;
+    role?: string;
+    permissions?: string[];
   };
   message?: string;
   error?: any;
@@ -102,22 +104,40 @@ export class SeguridadService {
   getUsuario() {
     return this.usuarioSubject.asObservable();
   }
-
   guardarDatosSesion(datosSesion: RespuestaLogin) {
     try {
       if (!datosSesion.token) {
         throw new Error('No se recibió el token de autenticación');
-      }
-      // Decodificar el token para extraer nombre/email si no vienen en la respuesta
+      }      // Decodificar el token para extraer nombre/email si no vienen en la respuesta
       let nombre = datosSesion.user?.name || '';
       let email = datosSesion.user?.email || '';
       let _id = datosSesion.user?._id || '';
-      if (datosSesion.token) {
-        const payload = JSON.parse(atob(datosSesion.token.split('.')[1]));
+      let role = '';
+      let permissions = datosSesion.user?.permissions || [];
+        // Extraer el rol correctamente - puede ser string u objeto
+      if (datosSesion.user?.role) {
+        if (typeof datosSesion.user.role === 'string') {
+          role = datosSesion.user.role;
+        } else if (datosSesion.user.role && (datosSesion.user.role as any).name) {
+          role = (datosSesion.user.role as any).name; // Extraer role.name del objeto
+        }
+      }
+        if (datosSesion.token) {
+        const payload: any = JSON.parse(atob(datosSesion.token.split('.')[1]));
         if (payload) {
           nombre = nombre || payload.name || payload.sub || '';
           email = email || payload.email || '';
           _id = _id || payload._id || '';
+            // Extraer rol del payload del JWT
+          if (payload.role && !role) {
+            if (typeof payload.role === 'string') {
+              role = payload.role;
+            } else if (payload.role && (payload.role as any).name) {
+              role = (payload.role as any).name; // Extraer role.name del JWT payload
+            }
+          }
+          
+          permissions = permissions.length > 0 ? permissions : (payload.permissions || []);
         }
       }
       const usuarioData = new Usuario();
@@ -125,6 +145,8 @@ export class SeguridadService {
       usuarioData._id = _id;
       usuarioData.email = email;
       usuarioData.nombre = nombre;
+      usuarioData.role = role;
+      usuarioData.permissions = permissions;
       localStorage.setItem('sesion', JSON.stringify(usuarioData));
       this.setUsuario(usuarioData);
     } catch (error) {

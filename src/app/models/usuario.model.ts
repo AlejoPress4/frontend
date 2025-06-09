@@ -5,14 +5,8 @@ export class Usuario {
     password?: string;
     token?: string;
     fotoUrl?: string; // Para foto de perfil
-
-    // constructor() {
-    //     this._id = '';
-    //     this.nombre = '';
-    //     this.email = '';
-    //     this.password = '';
-    //     this.token = '';
-    // }
+    role?: string; // 'Admin', 'Operario', 'Gobernante'
+    permissions?: string[]; // Permisos específicos del usuario
 }
 
 

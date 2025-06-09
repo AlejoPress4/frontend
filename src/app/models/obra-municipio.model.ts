@@ -3,6 +3,6 @@ import { Obra } from "./obra.model";
 
 export class ObraMunicipio {
     id?: number;
-    obra_id?: Obra[];
-    municipio_id?: Municipio[];
+    obra_id?: Obra;
+    municipio_id?: Municipio;
 }

@@ -12,24 +12,25 @@
           <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
 
 
-        </div>
-        <div class="card-body container">
+        </div>        <div class="card-body container">
           <div class="row">
-            <div class="col-3">ID</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="obramunicipio.id" disabled></div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID Obra</div>
-            <div class="col-9"><input type="number" class="form-control" [(ngModel)]="obramunicipio.obra_id"
-                [disabled]="mode==1">
+            <div class="col-3">Obra</div>
+            <div class="col-9">
+              <select class="form-control" [(ngModel)]="obramunicipio.obra_id" [disabled]="mode==1">
+                <option value="">Selecciona una obra</option>
+                <option *ngFor="let obra of obras" [ngValue]="obra">{{obra.nombre}}</option>
+              </select>
             </div>
           </div>
           <br>
           <div class="row">
-            <div class="col-3">ID Municipio</div>
-            <div class="col-9"><input type="string" class="form-control" [(ngModel)]="obramunicipio.municipio_id"
-                [disabled]="mode==1"></div>
+            <div class="col-3">Municipio</div>
+            <div class="col-9">
+              <select class="form-control" [(ngModel)]="obramunicipio.municipio_id" [disabled]="mode==1">
+                <option value="">Selecciona un municipio</option>
+                <option *ngFor="let municipio of municipios" [ngValue]="municipio">{{municipio.nombre}}</option>
+              </select>
+            </div>
           </div>
           <br>
           <div class="row">
