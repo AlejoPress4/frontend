@@ -13,6 +13,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
 import { TokenInterceptor } from './interceptores/token.interceptor';
+import { AutenticadoGuard } from './guardianes/autenticado.guard';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 @NgModule({
   imports: [
@@ -27,14 +29,17 @@ import { TokenInterceptor } from './interceptores/token.interceptor';
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    AuthLayoutComponent
+    AuthLayoutComponent,
+    ForgotPasswordComponent
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    AutenticadoGuard,
+    AutenticadoGuard
   ],
   bootstrap: [AppComponent]
 })

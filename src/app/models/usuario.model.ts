@@ -4,6 +4,7 @@ export class Usuario {
     email?: string;
     password?: string;
     token?: string;
+    fotoUrl?: string; // Para foto de perfil
 
     // constructor() {
     //     this._id = '';
@@ -13,3 +14,5 @@ export class Usuario {
     //     this.token = '';
     // }
 }
+
+
