@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { environment } from 'src/environments/environment';
@@ -14,11 +14,24 @@ export class ForgotPasswordComponent {
   newPassword = '';
   codeSent = false;
   userId = '';
+  captchaToken: string = '';
+  @ViewChild('recaptchaRef') recaptchaRef: any;
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  onCaptchaResolved(token: string) {
+    this.captchaToken = token;
+  }
+
   requestCode() {
-    this.http.post(`${environment.api_url}/api/public/security/resetpassword/email`, this.email, { responseType: 'text' }).subscribe({
+    if (!this.captchaToken) {
+      Swal.fire('Completa el reCAPTCHA', 'Por favor, verifica que no eres un robot.', 'warning');
+      return;
+    }
+    this.http.post(`${environment.api_url}/api/public/security/resetpassword/email`, {
+      email: this.email,
+      captchaToken: this.captchaToken
+    }, { responseType: 'text' }).subscribe({
       next: () => {
         this.codeSent = true;
         Swal.fire('Código enviado', 'Revisa tu correo electrónico', 'success');
