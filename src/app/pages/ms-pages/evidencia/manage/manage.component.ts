@@ -188,8 +188,7 @@ export class ManageComponent implements OnInit {
         }
       });
     }
-  }
-  uploadWithFile(): void {
+  }  uploadWithFile(): void {
     if (!this.selectedFile) {
       Swal.fire('Error', 'Por favor seleccione un archivo.', 'error');
       return;
@@ -198,19 +197,11 @@ export class ManageComponent implements OnInit {
     const formData = new FormData();
     formData.append('imagen', this.selectedFile); // Backend expects 'imagen'
     
-    // Add association based on type (XOR validation)
-    if (this.associationType === 'servicio' && this.evidencia.id_servicio) {
-      // Extract the actual ID from the array structure
-      const servicioId = Array.isArray(this.evidencia.id_servicio) && this.evidencia.id_servicio.length > 0 
-        ? this.evidencia.id_servicio[0].id 
-        : this.evidencia.id_servicio;
-      formData.append('id_servicio', servicioId.toString());
-    } else if (this.associationType === 'novedad' && this.evidencia.novedad_id) {
-      // Extract the actual ID from the array structure
-      const novedadId = Array.isArray(this.evidencia.novedad_id) && this.evidencia.novedad_id.length > 0 
-        ? this.evidencia.novedad_id[0].id 
-        : this.evidencia.novedad_id;
-      formData.append('novedad_id', novedadId.toString());
+    // Add association based on type using helper properties (XOR validation)
+    if (this.associationType === 'servicio' && this.selectedServicioId) {
+      formData.append('id_servicio', this.selectedServicioId.toString());
+    } else if (this.associationType === 'novedad' && this.selectedNovedadId) {
+      formData.append('novedad_id', this.selectedNovedadId.toString());
     } else {
       Swal.fire('Error', 'Debe seleccionar un servicio o una novedad.', 'error');
       return;
@@ -286,14 +277,9 @@ export class ManageComponent implements OnInit {
       }
     });
   }  private validateEvidencia(): boolean {
-    // XOR validation: must have either servicio OR novedad, but not both
-    const hasServicio = this.evidencia.id_servicio !== undefined && 
-                       this.evidencia.id_servicio !== null && 
-                       (!Array.isArray(this.evidencia.id_servicio) || this.evidencia.id_servicio.length > 0);
-    
-    const hasNovedad = this.evidencia.novedad_id !== undefined && 
-                      this.evidencia.novedad_id !== null && 
-                      (!Array.isArray(this.evidencia.novedad_id) || this.evidencia.novedad_id.length > 0);
+    // XOR validation using the helper properties
+    const hasServicio = this.associationType === 'servicio' && this.selectedServicioId !== null;
+    const hasNovedad = this.associationType === 'novedad' && this.selectedNovedadId !== null;
     
     // Must have exactly one association (XOR)
     const isValidAssociation = (hasServicio && !hasNovedad) || (!hasServicio && hasNovedad);
@@ -310,7 +296,7 @@ export class ManageComponent implements OnInit {
     }
 
     return true;
-  }  // Helper methods for template
+  }// Helper methods for template
   getServicioName(servicioArray: Servicio[] | number | null): string {
     if (Array.isArray(servicioArray) && servicioArray.length > 0) {
       return servicioArray[0].resumen || `Servicio ${servicioArray[0].id}`;
