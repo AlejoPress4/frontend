@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Evidencia } from 'src/app/models/evidencia.model';
+import { Servicio } from 'src/app/models/servicio.model';
+import { Novedad } from 'src/app/models/novedad.model';
 import { EvidenciaService } from 'src/app/services/evidenciaService/evidencia.service';
 import Swal from 'sweetalert2';
 
@@ -10,9 +12,22 @@ import Swal from 'sweetalert2';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-
   mode: number; //1->View, 2->Create, 3-> Update
   evidencia: Evidencia;
+  servicios: Servicio[] = [];
+  novedades: Novedad[] = [];
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;  currentImageUrl: string | null = null; // For displaying existing images
+  associationType: 'servicio' | 'novedad' = 'servicio';
+  isUploading: boolean = false;
+  
+  // Form helper properties for selectors (since model uses arrays but form needs IDs)
+  selectedServicioId: number | null = null;
+  selectedNovedadId: number | null = null;
+
+  // Validation properties
+  readonly maxFileSize = 5 * 1024 * 1024; // 5MB
+  readonly allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
   constructor(private activateRoute: ActivatedRoute,
     private evidenciaService: EvidenciaService,
@@ -20,7 +35,6 @@ export class ManageComponent implements OnInit {
   ) {
     this.evidencia = { id: 0 };
   }
-
   ngOnInit(): void {
     const currentUrl = this.activateRoute.snapshot.url.join('/');
     if (currentUrl.includes('view')) {
@@ -30,16 +44,45 @@ export class ManageComponent implements OnInit {
     } else if (currentUrl.includes('update')) {
       this.mode = 3;
     }
+    
+    // Load dropdown data
+    this.loadServicios();
+    this.loadNovedades();
+    
     if (this.activateRoute.snapshot.params.id) {
       this.evidencia.id = this.activateRoute.snapshot.params.id;
       this.getEvidencia(this.evidencia.id);
     }
   }
 
-  getEvidencia(id: number) {
+  loadServicios(): void {
+    this.evidenciaService.getServicios().subscribe({
+      next: (servicios) => {
+        this.servicios = servicios;
+      },
+      error: (error) => {
+        console.error('Error loading servicios:', error);
+      }
+    });
+  }
+
+  loadNovedades(): void {
+    this.evidenciaService.getNovedades().subscribe({
+      next: (novedades) => {
+        this.novedades = novedades;
+      },
+      error: (error) => {
+        console.error('Error loading novedades:', error);
+      }
+    });
+  }  getEvidencia(id: number) {
     this.evidenciaService.view(id).subscribe({
       next: (evidencia) => {
         this.evidencia = evidencia;
+        // Set image URL for display
+        if (this.evidencia.id) {
+          this.currentImageUrl = this.evidenciaService.getPhotoUrl(this.evidencia.id);
+        }
         console.log('Evidencia fetched successfully:', this.evidencia);
       },
       error: (error) => {
@@ -47,32 +90,149 @@ export class ManageComponent implements OnInit {
         Swal.fire('Error', 'No se pudo obtener la evidencia.', 'error');
       }
     });
+  }// File handling methods
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (!this.validateFile(file)) {
+        return;
+      }
+      
+      this.selectedFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  validateFile(file: File): boolean {
+    // Check file type
+    if (!this.allowedTypes.includes(file.type)) {
+      Swal.fire('Error', 'Tipo de archivo no permitido. Solo se permiten: JPG, JPEG, PNG, GIF, WEBP', 'error');
+      return false;
+    }
+
+    // Check file size
+    if (file.size > this.maxFileSize) {
+      Swal.fire('Error', 'El archivo es demasiado grande. Tamaño máximo: 5MB', 'error');
+      return false;
+    }
+
+    return true;
+  }  onAssociationTypeChange(): void {
+    // XOR enforcement: Clear the other association when switching types
+    if (this.associationType === 'servicio') {
+      this.evidencia.novedad_id = undefined; // Clear novedad selection
+      this.selectedNovedadId = null;
+    } else if (this.associationType === 'novedad') {
+      this.evidencia.id_servicio = undefined; // Clear servicio selection
+      this.selectedServicioId = null;
+    }
+  }
+
+  onServicioChange(): void {
+    if (this.selectedServicioId) {
+      const servicio = this.servicios.find(s => s.id === this.selectedServicioId);
+      this.evidencia.id_servicio = servicio ? [servicio] : undefined;
+    } else {
+      this.evidencia.id_servicio = undefined;
+    }
+  }
+
+  onNovedadChange(): void {
+    if (this.selectedNovedadId) {
+      const novedad = this.novedades.find(n => n.id === this.selectedNovedadId);
+      this.evidencia.novedad_id = novedad ? [novedad] : undefined;
+    } else {
+      this.evidencia.novedad_id = undefined;
+    }
+  }
+
+  removeImage(): void {
+    this.selectedFile = null;
+    this.imagePreview = null;
   }
 
   back() {
     this.router.navigate(['evidencias/list']);
   }
-
   create() {
     if (!this.validateEvidencia()) {
       Swal.fire('Error', 'Por favor, complete todos los campos obligatorios.', 'error');
       return;
     }
 
-    this.evidenciaService.create(this.evidencia).subscribe({
+    if (this.mode === 2 && this.selectedFile) {
+      // Upload with file
+      this.uploadWithFile();
+    } else {
+      // Regular create without file
+      this.evidenciaService.create(this.evidencia).subscribe({
+        next: (evidencia) => {
+          console.log('Evidencia created successfully:', evidencia);
+          Swal.fire({
+            title: 'Creado!',
+            text: 'Registro creado correctamente.',
+            icon: 'success',
+          }).then(() => {
+            this.router.navigate(['/evidencias/list']);
+          });
+        },
+        error: (error) => {
+          console.error('Error creating evidencia:', error);
+          Swal.fire('Error', 'No se pudo crear el registro.', 'error');
+        }
+      });
+    }
+  }
+  uploadWithFile(): void {
+    if (!this.selectedFile) {
+      Swal.fire('Error', 'Por favor seleccione un archivo.', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('imagen', this.selectedFile); // Backend expects 'imagen'
+    
+    // Add association based on type (XOR validation)
+    if (this.associationType === 'servicio' && this.evidencia.id_servicio) {
+      // Extract the actual ID from the array structure
+      const servicioId = Array.isArray(this.evidencia.id_servicio) && this.evidencia.id_servicio.length > 0 
+        ? this.evidencia.id_servicio[0].id 
+        : this.evidencia.id_servicio;
+      formData.append('id_servicio', servicioId.toString());
+    } else if (this.associationType === 'novedad' && this.evidencia.novedad_id) {
+      // Extract the actual ID from the array structure
+      const novedadId = Array.isArray(this.evidencia.novedad_id) && this.evidencia.novedad_id.length > 0 
+        ? this.evidencia.novedad_id[0].id 
+        : this.evidencia.novedad_id;
+      formData.append('novedad_id', novedadId.toString());
+    } else {
+      Swal.fire('Error', 'Debe seleccionar un servicio o una novedad.', 'error');
+      return;
+    }
+
+    this.isUploading = true;
+    this.evidenciaService.upload(formData).subscribe({
       next: (evidencia) => {
-        console.log('Evidencia created successfully:', evidencia);
+        this.isUploading = false;
+        console.log('Evidencia uploaded successfully:', evidencia);
         Swal.fire({
-          title: 'Creado!',
-          text: 'Registro creado correctamente.',
+          title: 'Subido!',
+          text: 'Imagen subida correctamente.',
           icon: 'success',
         }).then(() => {
           this.router.navigate(['/evidencias/list']);
         });
       },
       error: (error) => {
-        console.error('Error creating evidencia:', error);
-        Swal.fire('Error', 'No se pudo crear el registro.', 'error');
+        this.isUploading = false;
+        console.error('Error uploading evidencia:', error);
+        Swal.fire('Error', 'No se pudo subir la imagen.', 'error');
       }
     });
   }
@@ -125,8 +285,49 @@ export class ManageComponent implements OnInit {
         });
       }
     });
+  }  private validateEvidencia(): boolean {
+    // XOR validation: must have either servicio OR novedad, but not both
+    const hasServicio = this.evidencia.id_servicio !== undefined && 
+                       this.evidencia.id_servicio !== null && 
+                       (!Array.isArray(this.evidencia.id_servicio) || this.evidencia.id_servicio.length > 0);
+    
+    const hasNovedad = this.evidencia.novedad_id !== undefined && 
+                      this.evidencia.novedad_id !== null && 
+                      (!Array.isArray(this.evidencia.novedad_id) || this.evidencia.novedad_id.length > 0);
+    
+    // Must have exactly one association (XOR)
+    const isValidAssociation = (hasServicio && !hasNovedad) || (!hasServicio && hasNovedad);
+    
+    if (!isValidAssociation) {
+      Swal.fire('Error', 'Una evidencia debe estar asociada a UN servicio O a UNA novedad (no ambos ni ninguno).', 'error');
+      return false;
+    }
+    
+    // For upload mode, also need file
+    if (this.mode === 2 && !this.selectedFile) {
+      Swal.fire('Error', 'Debe seleccionar un archivo de imagen.', 'error');
+      return false;
+    }
+
+    return true;
+  }  // Helper methods for template
+  getServicioName(servicioArray: Servicio[] | number | null): string {
+    if (Array.isArray(servicioArray) && servicioArray.length > 0) {
+      return servicioArray[0].resumen || `Servicio ${servicioArray[0].id}`;
+    } else if (typeof servicioArray === 'number') {
+      const servicio = this.servicios.find(s => s.id === servicioArray);
+      return servicio?.resumen || `Servicio ${servicioArray}`;
+    }
+    return 'No asignado';
   }
-  private validateEvidencia(): boolean {
-    return !!this.evidencia.tipo_de_archivo && !!this.evidencia.contenido_archivo && !!this.evidencia.fecha_de_carga && !!this.evidencia.id_servicio;
+
+  getNovedadName(novedadArray: Novedad[] | number | null): string {
+    if (Array.isArray(novedadArray) && novedadArray.length > 0) {
+      return novedadArray[0].descripcion || `Novedad ${novedadArray[0].id}`;
+    } else if (typeof novedadArray === 'number') {
+      const novedad = this.novedades.find(n => n.id === novedadArray);
+      return novedad?.descripcion || `Novedad ${novedadArray}`;
+    }
+    return 'No asignado';
   }
 }

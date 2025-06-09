@@ -1,5 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Evidencia } from 'src/app/models/evidencia.model';
+import { Servicio } from 'src/app/models/servicio.model';
+import { Novedad } from 'src/app/models/novedad.model';
 import { EvidenciaService } from 'src/app/services/evidenciaService/evidencia.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -12,20 +14,49 @@ import Swal from 'sweetalert2';
 export class ListEvidenciaComponent implements OnInit {
 
   evidencias: Evidencia[] = [];
+  servicios: Servicio[] = [];
+  novedades: Novedad[] = [];
 
   constructor(private evidenciaService: EvidenciaService, private router: Router, private cdr: ChangeDetectorRef) { }
-
   ngOnInit(): void {
-    this.evidenciaService.list().subscribe(
-      data => {
-        this.evidencias = data;
+    this.loadData();
+  }
+
+  loadData(): void {
+    // Load all data
+    this.evidenciaService.list().subscribe({
+      next: (data) => {
+        this.evidencias = data.map(evidencia => ({
+          ...evidencia,
+          foto_url: evidencia.id ? this.evidenciaService.getPhotoUrl(evidencia.id) : undefined
+        }));
         this.cdr.detectChanges();
       },
-      error => {
+      error: (error) => {
         console.error('Error al obtener las evidencias:', error);
         Swal.fire('Error', 'No se pudieron cargar las evidencias.', 'error');
       }
-    );
+    });
+
+    // Load servicios for reference
+    this.evidenciaService.getServicios().subscribe({
+      next: (servicios) => {
+        this.servicios = servicios;
+      },
+      error: (error) => {
+        console.error('Error loading servicios:', error);
+      }
+    });
+
+    // Load novedades for reference
+    this.evidenciaService.getNovedades().subscribe({
+      next: (novedades) => {
+        this.novedades = novedades;
+      },
+      error: (error) => {
+        console.error('Error loading novedades:', error);
+      }
+    });
   }
 
   edit(id: number) {
@@ -122,5 +153,40 @@ export class ListEvidenciaComponent implements OnInit {
         });
       }
     );
+  }
+  // Helper methods for display
+  getServicioName(servicioId: any): string {
+    if (Array.isArray(servicioId) && servicioId.length > 0) {
+      const servicio = this.servicios.find(s => s.id === servicioId[0].id);
+      return servicio?.resumen || `Servicio ${servicioId[0].id}`;
+    }
+    return 'No asignado';
+  }
+
+  getNovedadName(novedadId: any): string {
+    if (Array.isArray(novedadId) && novedadId.length > 0) {
+      const novedad = this.novedades.find(n => n.id === novedadId[0].id);
+      return novedad?.descripcion || `Novedad ${novedadId[0].id}`;
+    }
+    return 'No asignado';
+  }
+
+  getPhotoUrl(evidenciaId: number | undefined): string | null {
+    return evidenciaId ? this.evidenciaService.getPhotoUrl(evidenciaId) : null;
+  }
+
+  // Show image in modal
+  showImageModal(imageUrl: string): void {
+    Swal.fire({
+      imageUrl: imageUrl,
+      imageWidth: 600,
+      imageHeight: 400,
+      imageAlt: 'Evidencia',
+      showCloseButton: true,
+      showConfirmButton: false,
+      customClass: {
+        image: 'img-fluid'
+      }
+    });
   }
 }

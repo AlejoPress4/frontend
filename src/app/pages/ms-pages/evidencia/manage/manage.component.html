@@ -7,70 +7,172 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Creación</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualización</h3>
-
-
+          <h3 class="mb-0" *ngIf="mode==1">Detalle de Evidencia</h3>
+          <h3 class="mb-0" *ngIf="mode==2">Subir Nueva Evidencia</h3>
+          <h3 class="mb-0" *ngIf="mode==3">Actualizar Evidencia</h3>
         </div>
         <div class="card-body container">
-          <div class="row">
+          
+          <!-- ID Field -->
+          <div class="row" *ngIf="mode != 2">
             <div class="col-3">ID</div>
             <div class="col-9">
               <input type="text" class="form-control" [(ngModel)]="evidencia.id" disabled>
             </div>
           </div>
-          <br>
-          <div class="row">
+          <br *ngIf="mode != 2">
+
+          <!-- File Upload Section (only for create mode) -->
+          <div *ngIf="mode == 2">
+            <div class="row">
+              <div class="col-3">Seleccionar Imagen</div>
+              <div class="col-9">
+                <input type="file" class="form-control" (change)="onFileSelected($event)" 
+                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" required>
+                <small class="form-text text-muted">
+                  Tipos permitidos: JPG, JPEG, PNG, GIF, WEBP. Tamaño máximo: 5MB
+                </small>
+              </div>
+            </div>
+            <br>
+
+            <!-- Image Preview -->
+            <div class="row" *ngIf="imagePreview">
+              <div class="col-3">Vista Previa</div>
+              <div class="col-9">
+                <div class="position-relative d-inline-block">
+                  <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-width: 300px; max-height: 200px;">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute" 
+                          style="top: 5px; right: 5px;" (click)="removeImage()">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <br *ngIf="imagePreview">            <!-- Association Type Selection -->
+            <div class="row">
+              <div class="col-3">Tipo de Asociación *</div>
+              <div class="col-9">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="associationType" 
+                         value="servicio" [(ngModel)]="associationType" (change)="onAssociationTypeChange()">
+                  <label class="form-check-label">Servicio</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="associationType" 
+                         value="novedad" [(ngModel)]="associationType" (change)="onAssociationTypeChange()">
+                  <label class="form-check-label">Novedad</label>
+                </div>
+                <small class="form-text text-muted">
+                  Una evidencia debe estar asociada solo a UN servicio O a UNA novedad (no ambos).
+                </small>
+              </div>
+            </div>
+            <br>            <!-- Servicio Selection -->
+            <div class="row" *ngIf="associationType === 'servicio'">
+              <div class="col-3">Servicio *</div>
+              <div class="col-9">
+                <select class="form-control" [(ngModel)]="selectedServicioId" (change)="onServicioChange()" required>
+                  <option [value]="null">Seleccione un servicio</option>
+                  <option [value]="servicio.id" *ngFor="let servicio of servicios">
+                    {{servicio.resumen || 'Servicio ' + servicio.id}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Novedad Selection -->
+            <div class="row" *ngIf="associationType === 'novedad'">
+              <div class="col-3">Novedad *</div>
+              <div class="col-9">
+                <select class="form-control" [(ngModel)]="selectedNovedadId" (change)="onNovedadChange()" required>
+                  <option [value]="null">Seleccione una novedad</option>
+                  <option [value]="novedad.id" *ngFor="let novedad of novedades">
+                    {{novedad.descripcion || 'Novedad ' + novedad.id}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <br>
+          </div>
+
+          <!-- Display existing image (for view/update modes) -->
+          <div class="row" *ngIf="mode != 2 && currentImageUrl">
+            <div class="col-3">Imagen</div>
+            <div class="col-9">
+              <img [src]="currentImageUrl" alt="Evidencia" class="img-thumbnail" 
+                   style="max-width: 300px; max-height: 200px;" 
+                   onerror="this.style.display='none';">
+            </div>
+          </div>
+          <br *ngIf="mode != 2 && currentImageUrl">          <!-- File Type (display only) -->
+          <div class="row" *ngIf="selectedFile || imagePreview">
             <div class="col-3">Tipo de Archivo</div>
             <div class="col-9">
-              <input type="text" class="form-control" [(ngModel)]="evidencia.tipo_de_archivo" [disabled]="mode==1"
-                required>
+              <input type="text" class="form-control" [value]="selectedFile?.type || 'N/A'" 
+                     disabled readonly>
             </div>
           </div>
-          <br>
-          <div class="row">
-            <div class="col-3">Contenido del Archivo</div>
-            <div class="col-9">
-              <textarea class="form-control" [(ngModel)]="evidencia.contenido_archivo" [disabled]="mode==1"
-                required></textarea>
-            </div>
-          </div>
-          <br>
-          <div class="row">
+          <br *ngIf="selectedFile || imagePreview">
+
+          <!-- Upload Date (auto-populated) -->
+          <div class="row" *ngIf="mode != 2">
             <div class="col-3">Fecha de Carga</div>
             <div class="col-9">
               <input type="datetime-local" class="form-control" [(ngModel)]="evidencia.fecha_de_carga"
-                [disabled]="mode==1" required>
+                     disabled readonly>
             </div>
           </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID del Servicio</div>
+          <br *ngIf="mode != 2">
+
+          <!-- Ruta Archivo (for view mode) -->
+          <div class="row" *ngIf="mode != 2 && evidencia.ruta_archivo">
+            <div class="col-3">Ruta del Archivo</div>
             <div class="col-9">
-              <input type="number" class="form-control" [(ngModel)]="evidencia.id_servicio" [disabled]="mode==1"
-                required>
+              <input type="text" class="form-control" [(ngModel)]="evidencia.ruta_archivo" 
+                     disabled readonly>
             </div>
           </div>
-          <br>
-          <div class="row">
-            <div class="col-3">ID de la Novedad</div>
+          <br *ngIf="mode != 2 && evidencia.ruta_archivo">
+
+          <!-- Associated Service/Novedad (for view/update modes) -->
+          <div class="row" *ngIf="mode != 2 && evidencia.id_servicio">
+            <div class="col-3">Servicio Asociado</div>
             <div class="col-9">
-              <input type="number" class="form-control" [(ngModel)]="evidencia.novedad_id" [disabled]="mode==1"
-                required>
+              <input type="text" class="form-control" [value]="getServicioName(evidencia.id_servicio)" 
+                     disabled readonly>
             </div>
           </div>
-          <br>
+
+          <div class="row" *ngIf="mode != 2 && evidencia.novedad_id">
+            <div class="col-3">Novedad Asociada</div>
+            <div class="col-9">
+              <input type="text" class="form-control" [value]="getNovedadName(evidencia.novedad_id)" 
+                     disabled readonly>
+            </div>
+          </div>
+          <br *ngIf="mode != 2 && (evidencia.id_servicio || evidencia.novedad_id)">
+
+          <!-- Action Buttons -->
           <div class="row">
             <div class="col-3"></div>
             <div class="col-9">
-              <button *ngIf="mode==1" class="btn btn-primary btn-block" (click)="back()">Volver</button>
-              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()">Crear</button>
-              <button *ngIf="mode==3" class="btn btn-primary btn-block" (click)="update()">Update</button>
+              <button *ngIf="mode==1" class="btn btn-secondary btn-block" (click)="back()">
+                <i class="fas fa-arrow-left"></i> Volver
+              </button>
+              <button *ngIf="mode==2" class="btn btn-primary btn-block" (click)="create()" 
+                      [disabled]="isUploading">
+                <i class="fas fa-upload" *ngIf="!isUploading"></i>
+                <i class="fas fa-spinner fa-spin" *ngIf="isUploading"></i>
+                {{ isUploading ? 'Subiendo...' : 'Subir Evidencia' }}
+              </button>
+              <button *ngIf="mode==3" class="btn btn-success btn-block" (click)="update()">
+                <i class="fas fa-save"></i> Actualizar
+              </button>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   </div>

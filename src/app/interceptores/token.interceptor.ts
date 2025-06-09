@@ -20,13 +20,16 @@ export class TokenInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const usuario = this.seguridadService.usuarioSesionActiva;
+
     // No interceptar las rutas de autenticación
     if (this.isAuthRoute(request.url)) {
+      console.log("No se aplica token - ruta de autenticación");
       return next.handle(request);
     }
 
-    const usuario = this.seguridadService.usuarioSesionActiva;
     if (usuario && usuario.token) {
+      console.log("Aplicando token:", usuario.token);
       request = request.clone({
         setHeaders: {
           'Authorization': `Bearer ${usuario.token}`
@@ -37,15 +40,20 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          // Token inválido o expirado
-          this.seguridadService.logout();
           Swal.fire({
-            title: 'Sesión expirada',
+            title: 'No está autorizado para esta operación',
             text: 'Su sesión ha expirado, por favor inicie sesión nuevamente.',
-            icon: 'warning',
-            confirmButtonText: 'Aceptar'
+            icon: 'error',
+            timer: 5000
           }).then(() => {
+            this.seguridadService.logout();
             this.router.navigate(['/login']);
+          });
+        } else if (error.status === 400) {
+          Swal.fire({
+            title: 'Existe un error, contacte al administrador',
+            icon: 'error',
+            timer: 5000
           });
         }
         return throwError(() => error);
@@ -58,7 +66,9 @@ export class TokenInterceptor implements HttpInterceptor {
     const authRoutes = [
       '/api/public/security/login',
       '/api/public/security/login/2FA/',
-      '/api/public/security/register'
+      '/api/public/security/register',
+      '/login',
+      '/token-validation'
     ];
     // Verificar si la URL coincide con alguna ruta de autenticación
     return authRoutes.some(route => url.toLowerCase().includes(route.toLowerCase()));

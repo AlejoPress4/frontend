@@ -5,37 +5,93 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0">Evidencias</h3>
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Evidencias</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-primary btn-sm" (click)="navigateToCreate()">
+                <i class="fas fa-plus"></i> Subir Nueva Evidencia
+              </button>
+            </div>
+          </div>
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table align-items-center table-flush">
-              <thead class="thead-light">
+            <table class="table align-items-center table-flush">              <thead class="thead-light">
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">Tipo de Archivo</th>
-                  <th scope="col">Contenido Archivo</th>
+                  <th scope="col">Imagen</th>
+                  <th scope="col">Ruta Archivo</th>
                   <th scope="col">Fecha de Carga</th>
-                  <th scope="col">ID Servicio</th>
-                  <th scope="col">ID Novedad</th>
+                  <th scope="col">Asociado a</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let evidencia of evidencias">
                   <td>{{ evidencia.id }}</td>
-                  <td>{{ evidencia.tipo_de_archivo }}</td>
-                  <td>{{ evidencia.contenido_archivo }}</td>
-                  <td>{{ evidencia.fecha_de_carga | date:'yyyy-MM-dd HH:mm' }}</td>
-                  <td>{{ evidencia.id_servicio }}</td>
-                  <td>{{ evidencia.novedad_id }}</td>
                   <td>
-                    <button class="btn btn-sm btn-primary" (click)="edit(evidencia.id)">Editar</button>
-                    <button class="btn btn-sm btn-danger" (click)="delete(evidencia.id)">Eliminar</button>
+                    <div *ngIf="getPhotoUrl(evidencia.id)" class="image-container">                      <img [src]="getPhotoUrl(evidencia.id)" 
+                           alt="Evidencia {{ evidencia.id }}" 
+                           class="img-thumbnail cursor-pointer" 
+                           style="width: 60px; height: 60px; object-fit: cover;"
+                           (click)="showImageModal(getPhotoUrl(evidencia.id))"
+                           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                      <div class="text-muted text-center" style="display: none; width: 60px; height: 60px; border: 1px solid #dee2e6; border-radius: 4px; line-height: 60px;">
+                        <i class="fas fa-image"></i>
+                      </div>
+                    </div>
+                    <div *ngIf="!getPhotoUrl(evidencia.id)" class="text-muted">
+                      <i class="fas fa-image"></i> Sin imagen
+                    </div>
+                  </td>                  <td>
+                    <div class="text-truncate" style="max-width: 200px;" 
+                         [title]="evidencia.ruta_archivo">
+                      {{ evidencia.ruta_archivo || 'Sin ruta' }}
+                    </div>
                   </td>
-                </tr>
-                <tr *ngIf="evidencias.length === 0">
-                  <td colspan="8" class="text-center">No hay evidencias disponibles.</td>
+                  <td>{{ evidencia.fecha_de_carga | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <div *ngIf="evidencia.id_servicio">
+                      <span class="badge badge-info">Servicio</span><br>
+                      <small>{{ getServicioName(evidencia.id_servicio) }}</small>
+                    </div>
+                    <div *ngIf="evidencia.novedad_id">
+                      <span class="badge badge-warning">Novedad</span><br>
+                      <small>{{ getNovedadName(evidencia.novedad_id) }}</small>
+                    </div>
+                    <div *ngIf="!evidencia.id_servicio && !evidencia.novedad_id">
+                      <span class="text-muted">Sin asociar</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-sm btn-info" (click)="view(evidencia.id)" 
+                              title="Ver detalles">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="btn btn-sm btn-warning" (click)="edit(evidencia.id)" 
+                              title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="delete(evidencia.id)" 
+                              title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>                <tr *ngIf="evidencias.length === 0">
+                  <td colspan="6" class="text-center py-4">
+                    <div class="text-muted">
+                      <i class="fas fa-camera fa-3x mb-3"></i>
+                      <h5>No hay evidencias disponibles</h5>
+                      <p>Comience subiendo su primera evidencia</p>
+                      <button class="btn btn-primary" (click)="navigateToCreate()">
+                        <i class="fas fa-plus"></i> Subir Primera Evidencia
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -45,3 +101,39 @@
     </div>
   </div>
 </div>
+
+<style>
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container:hover::after {
+  content: '\f065'; /* Font Awesome expand icon */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

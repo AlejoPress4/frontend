@@ -2,6 +2,8 @@ import { Component, type OnInit } from "@angular/core"
 import { Usuario } from "src/app/models/usuario.model";
 import { SeguridadService } from "src/app/services/seguridadService/seguridad.service"
 import { Subscription } from "rxjs"
+import {WebSocketService} from "src/app/services/Web-Socket/web-socket.service"
+
 
 @Component({
   selector: "app-navbar",
@@ -11,11 +13,12 @@ import { Subscription } from "rxjs"
 export class NavbarComponent implements OnInit {
   isMenuCollapsed = true
   appTitle = "Gestión de Servicios de Transporte"
+  
   menuItems: any[] = []
   user: Usuario;
   subscription: Subscription;
-
-  constructor(private seguridadService: SeguridadService) {
+  constructor(private seguridadService: SeguridadService, 
+    private webSocketService: WebSocketService,) {
     // Aquí puedes inyectar servicios si los necesitas
     // Por ejemplo: private authService: AuthService
     this.subscription = this.seguridadService.getUsuario().subscribe((user: Usuario) => {
@@ -26,6 +29,12 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     // Inicializar datos al cargar el componente
     this.loadMenuItems()
+    this.webSocketService.setNameEvent("newNotification")
+    this.webSocketService.callback.subscribe((data: any) => {
+      console.log("Nueva notificación recibida:", data)
+      // Aquí puedes manejar la notificación recibida
+      // Por ejemplo, mostrar un mensaje o actualizar el estado del componente
+    })
   }
 
   toggleMenu(): void {
