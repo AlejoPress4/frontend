@@ -6,14 +6,20 @@
         <div class="row justify-content-center">
           <div class="col-lg-5 col-md-6">
             <h1 class="text-white display-4 fw-bold">¡Bienvenido!</h1>
-            <p class="text-white opacity-8 lead">Inicie sesión para acceder al sistema.</p>
+            <p class="text-white opacity-8 lead">
+              Inicie sesión para acceder al sistema.
+            </p>
           </div>
         </div>
       </div>
     </div>
     <div class="wave-container">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        <path
+          fill="#ffffff"
+          fill-opacity="1"
+          d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        ></path>
       </svg>
     </div>
   </div>
@@ -28,13 +34,17 @@
               <i class="fas fa-user-shield"></i>
             </div>
             <h4 class="card-title fw-bold">
-              {{ !showTwoFactorInput ? 'Iniciar Sesión' : 'Verificación 2FA' }}
+              {{ !showTwoFactorInput ? "Iniciar Sesión" : "Verificación 2FA" }}
             </h4>
             <p class="text-muted small">
-              {{ !showTwoFactorInput ? 'Ingrese sus credenciales para continuar' : 'Ingrese el código enviado a su email' }}
+              {{
+                !showTwoFactorInput
+                  ? "Ingrese sus credenciales para continuar"
+                  : "Ingrese el código enviado a su email"
+              }}
             </p>
           </div>
-          
+
           <div class="card-body px-lg-5 py-lg-4">
             <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
               <!-- Campos de login normal -->
@@ -45,64 +55,110 @@
                     <span class="input-group-text bg-light border-end-0">
                       <i class="far fa-envelope text-primary"></i>
                     </span>
-                    <input 
-                      type="email" 
-                      class="form-control ps-2 border-start-0" 
-                      placeholder="nombre@ejemplo.com" 
+                    <input
+                      type="email"
+                      class="form-control ps-2 border-start-0"
+                      placeholder="nombre@ejemplo.com"
                       formControlName="email"
-                    >
+                    />
                   </div>
-                  <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger small mt-1">
-                    <div *ngIf="loginForm.get('email')?.errors?.['required']">El email es requerido</div>
-                    <div *ngIf="loginForm.get('email')?.errors?.['email']">Ingrese un email válido</div>
+                  <div
+                    *ngIf="
+                      loginForm.get('email')?.invalid &&
+                      loginForm.get('email')?.touched
+                    "
+                    class="text-danger small mt-1"
+                  >
+                    <div *ngIf="loginForm.get('email')?.errors?.['required']">
+                      El email es requerido
+                    </div>
+                    <div *ngIf="loginForm.get('email')?.errors?.['email']">
+                      Ingrese un email válido
+                    </div>
                   </div>
                 </div>
-                
+
                 <div class="form-group mb-4">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <label class="form-label text-muted small">Contraseña</label>
-                    <a routerLink="/forgot-password" class="text-primary small">¿Olvidó su contraseña?</a>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <label class="form-label text-muted small"
+                      >Contraseña</label
+                    >
+                    <a routerLink="/forgot-password" class="text-primary small"
+                      >¿Olvidó su contraseña?</a
+                    >
                   </div>
                   <div class="input-group input-group-merge">
                     <span class="input-group-text bg-light border-end-0">
                       <i class="fas fa-lock text-primary"></i>
                     </span>
-                    <input 
-                      type="password" 
-                      class="form-control ps-2 border-start-0" 
-                      placeholder="••••••••" 
+                    <input
+                      type="password"
+                      class="form-control ps-2 border-start-0"
+                      placeholder="••••••••"
                       formControlName="password"
-                    >
+                    />
                   </div>
-                  <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger small mt-1">
-                    <div *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida</div>
+                  <div
+                    *ngIf="
+                      loginForm.get('password')?.invalid &&
+                      loginForm.get('password')?.touched
+                    "
+                    class="text-danger small mt-1"
+                  >
+                    <div
+                      *ngIf="loginForm.get('password')?.errors?.['required']"
+                    >
+                      La contraseña es requerida
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- Campo de código 2FA -->
               <div class="form-group mb-4" *ngIf="showTwoFactorInput">
-                <label class="form-label text-muted small">Código de verificación</label>
+                <label class="form-label text-muted small"
+                  >Código de verificación</label
+                >
                 <div class="input-group input-group-merge">
                   <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-key text-primary"></i>
                   </span>
-                  <input 
-                    type="text" 
-                    class="form-control ps-2 border-start-0" 
-                    placeholder="Ingrese el código de 6 dígitos" 
+                  <input
+                    type="text"
+                    class="form-control ps-2 border-start-0"
+                    placeholder="Ingrese el código de 6 dígitos"
                     formControlName="code2FA"
-                  >
+                  />
                 </div>
-                <div *ngIf="loginForm.get('code2FA')?.invalid && loginForm.get('code2FA')?.touched" class="text-danger small mt-1">
-                  <div *ngIf="loginForm.get('code2FA')?.errors?.['required']">El código de verificación es requerido</div>
+                <div
+                  *ngIf="
+                    loginForm.get('code2FA')?.invalid &&
+                    loginForm.get('code2FA')?.touched
+                  "
+                  class="text-danger small mt-1"
+                >
+                  <div *ngIf="loginForm.get('code2FA')?.errors?.['required']">
+                    El código de verificación es requerido
+                  </div>
                 </div>
               </div>
 
+              <!-- Google reCAPTCHA -->
+              <div class="form-group mb-3" *ngIf="!showTwoFactorInput">
+                <re-captcha
+                  #recaptchaRef
+                  siteKey="6LfEX1orAAAAAHfMXq9DJnRY9jXdC7huCcmrYOV8"
+                  (resolved)="onCaptchaResolved($event)"
+                >
+                </re-captcha>
+              </div>
+
               <div class="d-grid gap-2 mt-4">
-                <button 
-                  type="submit" 
-                  class="btn btn-primary btn-lg" 
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
                   [disabled]="loginForm.invalid"
                 >
                   <span *ngIf="!showTwoFactorInput">Iniciar sesión</span>
@@ -112,11 +168,13 @@
             </form>
           </div>
         </div>
-        
+
         <div class="text-center mt-4" *ngIf="!showTwoFactorInput">
           <p class="text-muted">
-            ¿No tiene una cuenta? 
-            <a routerLink="/register" class="text-primary fw-bold">Crear cuenta</a>
+            ¿No tiene una cuenta?
+            <a routerLink="/register" class="text-primary fw-bold"
+              >Crear cuenta</a
+            >
           </p>
         </div>
       </div>

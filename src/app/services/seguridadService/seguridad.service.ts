@@ -28,11 +28,12 @@ export class SeguridadService {
     this.verificarSesionActual();
   }
 
-  // Primera fase de login con email y password
-  login(email: string, password: string): Observable<RespuestaLogin> {
+  // Primera fase de login con email y password y reCAPTCHA
+  login(email: string, password: string, captchaToken?: string): Observable<RespuestaLogin> {
     return this.http.post<any>(`${environment.api_url}/api/public/security/login`, {
       email,
-      password
+      password,
+      captchaToken
     }).pipe(
       map(response => {
         console.log('Respuesta del login:', response);

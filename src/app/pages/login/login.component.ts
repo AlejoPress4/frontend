@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SeguridadService } from 'src/app/services/seguridadService/seguridad.service';
@@ -15,6 +15,9 @@ export class LoginComponent implements OnInit {
   attemptedEmail: string = '';
   attemptedPassword: string = '';
   attempted_id: string = '';
+  captchaToken: string = '';
+
+  @ViewChild('recaptchaRef') recaptchaRef: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -34,8 +37,20 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  onCaptchaResolved(token: string) {
+    this.captchaToken = token;
+  }
+
   onLogin(): void {
     if (this.loginForm.invalid) {
+      return;
+    }
+    if (!this.showTwoFactorInput && !this.captchaToken) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Completa el reCAPTCHA',
+        text: 'Por favor, verifica que no eres un robot.'
+      });
       return;
     }
 
@@ -45,8 +60,8 @@ export class LoginComponent implements OnInit {
       // Primera fase del login
       this.attemptedEmail = email;
       this.attemptedPassword = password;
-      
-      this.seguridadService.login(email, password).subscribe({
+      // Enviar captchaToken al backend junto con email y password
+      this.seguridadService.login(email, password, this.captchaToken).subscribe({
         next: (response: any) => {
           console.log('Respuesta completa:', response);
           if (response && response.user && response.user._id) {
