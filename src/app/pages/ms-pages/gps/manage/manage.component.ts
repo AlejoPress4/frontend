@@ -1,30 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { GPS } from 'src/app/models/gps.model';
+import { Maquina } from 'src/app/models/maquina.model';
 import { GPSService } from 'src/app/services/gpsService/gps.service';
+import { MaquinaService } from 'src/app/services/maquinaService/maquina.service';
+import { GoogleMapsLoaderService } from 'src/app/services/google-maps-loader.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-manage-gps',
+  selector: 'app-manage',
   templateUrl: './manage.component.html',
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-  mode: number = 1; // 1 -> Ver, 2 -> Crear, 3 -> Actualizar
-  gps: GPS = { id: 0 };
+  // Forms
   gpsForm: FormGroup;
+  
+  // Data
+  gps: GPS = new GPS();
+  maquinasDisponibles: Maquina[] = [];
+  
+  // Map configuration using @angular/google-maps - usando tipos genéricos para evitar "google is not defined"
+  mapCenter: { lat: number, lng: number } = { lat: 4.6097, lng: -74.0817 }; // Bogotá, Colombia
+  mapZoom = 10;
+  mapOptions: any = {}; // Se configurará después de cargar Google Maps
+  
+  markerPosition: { lat: number, lng: number } | null = null;
+  markerOptions: any = {}; // Se configurará después de cargar Google Maps
+  
+  // Mode management (1=view, 2=create, 3=update)
+  mode = 2; // Default to create mode
 
   constructor(
     private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
+    private router: Router,
     private gpsService: GPSService,
-    private router: Router
+    private maquinaService: MaquinaService,
+    private googleMapsLoader: GoogleMapsLoaderService
   ) {
-    this.createForm();
+    this.initializeForm();
   }
 
-  private createForm(): void {
+  ngOnInit(): void {
+    this.loadGoogleMaps();
+    this.loadMaquinasDisponibles();
+    this.checkRouteMode();
+  }
+
+  private initializeForm(): void {
     this.gpsForm = this.fb.group({
       latitud: ['', [
         Validators.required,
@@ -43,173 +69,273 @@ export class ManageComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    const currentUrl = this.activatedRoute.snapshot.url.join('/');
-    if (currentUrl.includes('view')) {
-      this.mode = 1;
-      this.gpsForm.disable();
-    } else if (currentUrl.includes('create')) {
-      this.mode = 2;
-    } else if (currentUrl.includes('update')) {
-      this.mode = 3;
-    }
-
-    const idParam = this.activatedRoute.snapshot.params['id'];
-    if (idParam) {
-      this.gps.id = Number(idParam);
-      this.getGPS(this.gps.id);
-    }
-  }
-
-  getGPS(id: number): void {
-    this.gpsService.view(id).subscribe({
-      next: (gpsData) => {
-        this.gps = gpsData;
-        this.gpsForm.patchValue({
-          latitud: gpsData.latitud,
-          longitud: gpsData.longitud,
-          maquina_id: gpsData.maquina_id
-        });
-        console.log('GPS obtenido exitosamente:', this.gps);
-      },
-      error: (error) => {
-        console.error('Error al obtener el GPS:', error);
-        Swal.fire('Error', 'No se pudo cargar el GPS', 'error');
-      }
-    });
-  }
-
-  private showValidationErrors(): void {
-    const fieldLabels = {
-      latitud: 'Latitud',
-      longitud: 'Longitud',
-      maquina_id: 'ID de Máquina'
+  private loadGoogleMaps(): void {
+    // Solución temporal: configurar opciones sin cargar dinámicamente
+    console.log('Configurando mapa sin carga dinámica');
+    
+    this.mapOptions = {
+      mapTypeId: 'roadmap',
+      disableDoubleClickZoom: false,
+      maxZoom: 18,
+      minZoom: 3
     };
-
-    const errorMessages: string[] = [];
     
-    Object.keys(this.gpsForm.controls).forEach(key => {
-      const control = this.gpsForm.get(key);
-      const fieldLabel = fieldLabels[key as keyof typeof fieldLabels];
-      
-      if (control?.errors && control.touched) {
-        if (control.errors['required']) {
-          errorMessages.push(`El campo ${fieldLabel} es requerido`);
-        }
-        if (control.errors['min']) {
-          errorMessages.push(`${fieldLabel} debe ser mayor o igual a ${control.errors['min'].min}`);
-        }
-        if (control.errors['max']) {
-          errorMessages.push(`${fieldLabel} debe ser menor o igual a ${control.errors['max'].max}`);
-        }
+    this.markerOptions = {
+      draggable: true,
+      title: 'Ubicación GPS'
+    };
+    
+    // El módulo GoogleMapsModule ya debe manejar la carga de la API
+    console.log('Configuración del mapa establecida');
+  }
+
+  private loadMaquinasDisponibles(): void {
+    this.maquinaService.list().subscribe({
+      next: (maquinas: Maquina[]) => {
+        this.maquinasDisponibles = maquinas || [];
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error loading machines:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las máquinas disponibles'
+        });
       }
     });
+  }
+
+  private checkRouteMode(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.mode = this.route.snapshot.url[this.route.snapshot.url.length - 1].path === 'view' ? 1 : 3;
+      this.loadGps(parseInt(id));
+    } else {
+      this.mode = 2; // Create mode
+    }
+  }
+
+  private loadGps(id: number): void {
+    this.gpsService.view(id).subscribe({
+      next: (gps: GPS) => {
+        this.gps = gps;
+        this.populateForm();
+        this.updateMapFromGps();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error loading GPS:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos del GPS'
+        });
+      }
+    });
+  }
+
+  private populateForm(): void {
+    this.gpsForm.patchValue({
+      latitud: this.gps.latitud,
+      longitud: this.gps.longitud,
+      maquina_id: Array.isArray(this.gps.maquina_id) ? this.gps.maquina_id[0]?.id : this.gps.maquina_id
+    });
+  }
+
+  private updateMapFromGps(): void {
+    if (this.gps.latitud && this.gps.longitud) {
+      const lat = parseFloat(this.gps.latitud);
+      const lng = parseFloat(this.gps.longitud);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.mapCenter = { lat, lng };
+        this.markerPosition = { lat, lng };
+        this.mapZoom = 15;
+      }
+    }
+  }
+
+  // Map event handlers
+  onMapClick(event: any): void {
+    if (this.mode === 1) return; // No interaction in view mode
     
-    if (errorMessages.length > 0) {
-      const message = errorMessages.join('\n');
-      Swal.fire({
-        title: 'Error de Validación',
-        html: message.replace(/\n/g, '<br>'),
-        icon: 'error'
+    if (event.latLng) {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      
+      this.markerPosition = { lat, lng };
+      this.gpsForm.patchValue({
+        latitud: lat.toFixed(6),
+        longitud: lng.toFixed(6)
       });
     }
   }
 
-  private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
-    });
+  onMarkerDragEnd(event: any): void {
+    if (this.mode === 1) return; // No interaction in view mode
+    
+    if (event.latLng) {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      
+      this.gpsForm.patchValue({
+        latitud: lat.toFixed(6),
+        longitud: lng.toFixed(6)
+      });
+    }
   }
 
+  centerMapOnCoordinates(): void {
+    const latValue = this.gpsForm.get('latitud')?.value;
+    const lngValue = this.gpsForm.get('longitud')?.value;
+
+    if (latValue && lngValue) {
+      const lat = parseFloat(latValue);
+      const lng = parseFloat(lngValue);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.mapCenter = { lat, lng };
+        this.markerPosition = { lat, lng };
+        this.mapZoom = 15;
+      }
+    }
+  }
+
+  // CRUD operations
   create(): void {
     if (this.gpsForm.invalid) {
-      this.markFormGroupTouched(this.gpsForm);
-      this.showValidationErrors();
+      this.markFormGroupTouched();
       return;
     }
 
-    const formValue = this.gpsForm.value;
-    const payload = {
-      latitud: formValue.latitud,
-      longitud: formValue.longitud,
-      maquina_id: formValue.maquina_id
+    const formData = this.gpsForm.value;
+    console.log('Form data:', formData);
+    
+    // Crear el objeto a enviar al backend (maquina_id como número)
+    const gpsData = {
+      latitud: formData.latitud.toString(),
+      longitud: formData.longitud.toString(),
+      maquina_id: parseInt(formData.maquina_id)
     };
+    
+    console.log('GPS data to send:', gpsData);
 
-    this.gpsService.create(payload).subscribe({
-      next: (createdGPS) => {
-        console.log('GPS creado exitosamente:', createdGPS);
+    this.gpsService.create(gpsData as any).subscribe({
+      next: (response) => {
         Swal.fire({
-          title: '¡Creado!',
-          text: 'Registro creado correctamente.',
-          icon: 'success'
-        }).then(() => this.router.navigate(['/gps/list']));
+          icon: 'success',
+          title: 'Éxito',
+          text: 'GPS creado exitosamente'
+        }).then(() => {
+          this.router.navigate(['/pages/gps/list']);
+        });
       },
-      error: (error) => {
-        console.error('Error al crear el GPS:', error);
-        Swal.fire('Error', 'No se pudo crear el GPS', 'error');
+      error: (error: HttpErrorResponse) => {
+        console.error('Error creating GPS:', error);
+        console.error('Error details:', error.error);
+        console.error('Error status:', error.status);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = 'Error al crear el GPS';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.error && error.error.errors) {
+          // Si es un error de validación de Adonis.js
+          const errors = error.error.errors;
+          errorMessage = Object.keys(errors).map(key => `${key}: ${errors[key]}`).join(', ');
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMessage
+        });
       }
     });
   }
 
   update(): void {
     if (this.gpsForm.invalid) {
-      this.markFormGroupTouched(this.gpsForm);
-      this.showValidationErrors();
+      this.markFormGroupTouched();
       return;
     }
 
-    const formValue = this.gpsForm.value;
-    const payload = {
+    const formData = this.gpsForm.value;
+    console.log('Update form data:', formData);
+    
+    // Crear el objeto a enviar al backend (maquina_id como número)
+    const gpsData = {
       id: this.gps.id,
-      latitud: formValue.latitud,
-      longitud: formValue.longitud,
-      maquina_id: formValue.maquina_id
+      latitud: formData.latitud.toString(),
+      longitud: formData.longitud.toString(),
+      maquina_id: parseInt(formData.maquina_id)
     };
+    
+    console.log('GPS data to update:', gpsData);
 
-    this.gpsService.update(payload).subscribe({
-      next: (updatedGPS) => {
-        console.log('GPS actualizado exitosamente:', updatedGPS);
+    this.gpsService.update(gpsData as any).subscribe({
+      next: (response) => {
         Swal.fire({
-          title: '¡Actualizado!',
-          text: 'Registro actualizado correctamente.',
-          icon: 'success'
-        }).then(() => this.router.navigate(['/gps/list']));
+          icon: 'success',
+          title: 'Éxito',
+          text: 'GPS actualizado exitosamente'
+        }).then(() => {
+          this.router.navigate(['/pages/gps/list']);
+        });
       },
-      error: (error) => {
-        console.error('Error al actualizar el GPS:', error);
-        Swal.fire('Error', 'No se pudo actualizar el GPS', 'error');
+      error: (error: HttpErrorResponse) => {
+        console.error('Error updating GPS:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.error?.message || 'Error al actualizar el GPS'
+        });
+      }
+    });
+  }
+
+  delete(id: number): void {
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.gpsService.delete(id).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Eliminado',
+              text: 'GPS eliminado exitosamente'
+            }).then(() => {
+              this.router.navigate(['/pages/gps/list']);
+            });
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('Error deleting GPS:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error.error?.message || 'Error al eliminar el GPS'
+            });
+          }
+        });
       }
     });
   }
 
   back(): void {
-    this.router.navigate(['/gps/list']);
+    this.router.navigate(['/pages/gps/list']);
   }
 
-  delete(id: number): void {
-    Swal.fire({
-      title: 'Eliminar',
-      text: "¿Está seguro que quiere eliminar el registro?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.gpsService.delete(id).subscribe(() => {
-          Swal.fire(
-            '¡Eliminado!',
-            'Registro eliminado correctamente.',
-            'success'
-          );
-          this.router.navigate(['/gps/list']);
-        });
-      }
+  private markFormGroupTouched(): void {
+    Object.keys(this.gpsForm.controls).forEach(key => {
+      const control = this.gpsForm.get(key);
+      control?.markAsTouched();
     });
   }
 }
