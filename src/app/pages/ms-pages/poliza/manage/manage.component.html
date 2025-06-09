@@ -24,15 +24,40 @@
           </div>
           <br />
           <div class="row">
-            <div class="col-3">ID Maquina</div>
+            <div class="col-3">Operario</div>
             <div class="col-9">
-              <input
-                type="number"
+              <select
+                class="form-control"
+                [(ngModel)]="poliza.operario_id"
+                (change)="onEntidadChange()"
+                [disabled]="mode == 1 || poliza.maquina_id"
+              >
+                <option [ngValue]="null">Seleccione un operario</option>
+                <option
+                  *ngFor="let operario of operarios"
+                  [ngValue]="operario.id"
+                >
+                  {{ operario.name }} ({{ operario.email }})
+                </option>
+              </select>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-3">Maquina</div>
+            <div class="col-9">
+              <select
                 class="form-control"
                 [(ngModel)]="poliza.maquina_id"
-                (input)="onEntidadChange()"
+                (change)="onEntidadChange()"
                 [disabled]="mode == 1 || poliza.operario_id"
-              />
+              >
+                <option [ngValue]="null">Seleccione una máquina</option>
+                <option *ngFor="let maquina of maquinas" [ngValue]="maquina.id">
+                  {{ maquina.marca }} {{ maquina.modelo }} (ID:
+                  {{ maquina.id }})
+                </option>
+              </select>
             </div>
           </div>
           <div
@@ -46,27 +71,19 @@
           </div>
           <br />
           <div class="row">
-            <div class="col-3">ID Operario</div>
+            <div class="col-3">Seguro</div>
             <div class="col-9">
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="poliza.operario_id"
-                (input)="onEntidadChange()"
-                [disabled]="mode == 1 || poliza.maquina_id"
-              />
-            </div>
-          </div>
-          <br />
-          <div class="row">
-            <div class="col-3">ID Seguro</div>
-            <div class="col-9">
-              <input
-                type="number"
+              <select
                 class="form-control"
                 [(ngModel)]="poliza.seguro_id"
                 [disabled]="mode == 1"
-              />
+                required
+              >
+                <option [ngValue]="null">Seleccione un seguro</option>
+                <option *ngFor="let seguro of seguros" [ngValue]="seguro.id">
+                  {{ seguro.nombre }}
+                </option>
+              </select>
             </div>
           </div>
           <br />

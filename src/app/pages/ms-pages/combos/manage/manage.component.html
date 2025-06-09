@@ -1,5 +1,4 @@
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
-</div>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-8"></div>
 <!-- Page content -->
 <div class="container-fluid mt--7">
   <!-- Table -->
@@ -7,29 +6,53 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header bg-transparent">
-          <h3 class="mb-0" *ngIf="mode==1">Detalle de Combo</h3>
-          <h3 class="mb-0" *ngIf="mode==2">Crear Combo</h3>
-          <h3 class="mb-0" *ngIf="mode==3">Actualizar Combo</h3>
+          <h3 class="mb-0" *ngIf="mode == 1">Detalle de Combo</h3>
+          <h3 class="mb-0" *ngIf="mode == 2">Crear Combo</h3>
+          <h3 class="mb-0" *ngIf="mode == 3">Actualizar Combo</h3>
         </div>
         <div class="card-body">
           <form [formGroup]="comboForm">
-            <div class="row mb-3" *ngIf="mode===1">
+            <div class="row mb-3" *ngIf="mode === 1">
               <div class="col-3">ID</div>
               <div class="col-9">
-                <input type="number" class="form-control" [value]="combo.id" disabled>
+                <input
+                  type="number"
+                  class="form-control"
+                  [value]="combo.id"
+                  disabled
+                />
               </div>
             </div>
 
             <div class="row mb-3">
-              <div class="col-3">ID Servicio</div>
+              <div class="col-3">Servicio</div>
               <div class="col-9">
-                <input type="number" class="form-control" formControlName="servicio_id"
-                  [ngClass]="{'is-invalid': comboForm.get('servicio_id')?.invalid && comboForm.get('servicio_id')?.touched}">
-                <div class="invalid-feedback" *ngIf="comboForm.get('servicio_id')?.touched">
-                  <div *ngIf="comboForm.get('servicio_id')?.errors?.['required']">El ID del servicio es requerido
+                <select
+                  class="form-control"
+                  formControlName="servicio_id"
+                  [disabled]="mode == 1"
+                >
+                  <option [ngValue]="null">Seleccione un servicio</option>
+                  <option
+                    *ngFor="let servicio of servicios"
+                    [ngValue]="servicio.id"
+                  >
+                    {{ servicio.tipo }} - {{ servicio.estado }} (ID:
+                    {{ servicio.id }})
+                  </option>
+                </select>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="comboForm.get('servicio_id')?.touched"
+                >
+                  <div
+                    *ngIf="comboForm.get('servicio_id')?.errors?.['required']"
+                  >
+                    El servicio es requerido
                   </div>
-                  <div *ngIf="comboForm.get('servicio_id')?.errors?.['min']">El ID del servicio debe ser mayor que
-                    0</div>
+                  <div *ngIf="comboForm.get('servicio_id')?.errors?.['min']">
+                    Debe seleccionar un servicio válido
+                  </div>
                 </div>
               </div>
             </div>
@@ -41,15 +64,27 @@
                 </button>
               </div>
               <div class="col text-right">
-                <button *ngIf="mode==2" class="btn btn-success" (click)="create()"
-                  [disabled]="comboForm.invalid">
+                <button
+                  *ngIf="mode == 2"
+                  class="btn btn-success"
+                  (click)="create()"
+                  [disabled]="comboForm.invalid"
+                >
                   <i class="fas fa-plus"></i> Crear
                 </button>
-                <button *ngIf="mode==3" class="btn btn-primary" (click)="update()"
-                  [disabled]="comboForm.invalid">
+                <button
+                  *ngIf="mode == 3"
+                  class="btn btn-primary"
+                  (click)="update()"
+                  [disabled]="comboForm.invalid"
+                >
                   <i class="fas fa-save"></i> Actualizar
                 </button>
-                <button *ngIf="mode==1" class="btn btn-danger" (click)="delete(combo.id!)">
+                <button
+                  *ngIf="mode == 1"
+                  class="btn btn-danger"
+                  (click)="delete(combo.id!)"
+                >
                   <i class="fas fa-trash"></i> Eliminar
                 </button>
               </div>

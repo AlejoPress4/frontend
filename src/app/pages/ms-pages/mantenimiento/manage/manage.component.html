@@ -80,14 +80,22 @@
             </div>
             <br />
             <div class="row">
-              <div class="col-3">ID Maquina</div>
+              <div class="col-3">Maquina</div>
               <div class="col-9">
-                <input
-                  type="number"
+                <select
                   class="form-control"
                   formControlName="maquina_id"
                   [disabled]="mode == 1"
-                />
+                >
+                  <option [ngValue]="null">Seleccione una máquina</option>
+                  <option
+                    *ngFor="let maquina of maquinas"
+                    [ngValue]="maquina.id"
+                  >
+                    {{ maquina.marca }} {{ maquina.modelo }} (ID:
+                    {{ maquina.id }})
+                  </option>
+                </select>
                 <div
                   *ngIf="
                     getTheFormGroup.maquina_id.errors &&

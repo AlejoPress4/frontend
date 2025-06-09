@@ -4,6 +4,8 @@ import { Mantenimiento } from 'src/app/models/mantenimiento.model';
 import { MantenimientoService } from 'src/app/services/mantenimientoService/mantenimiento.service';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Maquina } from 'src/app/models/maquina.model';
+import { MaquinaService } from 'src/app/services/maquinaService/maquina.service';
 
 @Component({
   selector: 'app-manage',
@@ -15,12 +17,14 @@ export class ManageComponent implements OnInit {
   mode: number = 1; // 1 -> Ver, 2 -> Crear, 3 -> Actualizar
   mantenimiento: Mantenimiento = { id: 0 };
   theFormGroup: FormGroup;
+  maquinas: Maquina[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private mantenimientoService: MantenimientoService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private maquinaService: MaquinaService
   ) {
     this.theFormGroup = this.fb.group({
       fecha: ['', Validators.required],
@@ -45,6 +49,7 @@ export class ManageComponent implements OnInit {
       this.mantenimiento.id = Number(idParam);
       this.getMantenimiento(this.mantenimiento.id);
     }
+    this.loadMaquinas();
   }
 
   getMantenimiento(id: number): void {
@@ -58,6 +63,13 @@ export class ManageComponent implements OnInit {
         console.error('Error al obtener el mantenimiento:', error);
       }
     });
+  }
+
+  loadMaquinas() {
+    this.maquinaService.list().subscribe(
+      (maquinas) => { this.maquinas = maquinas; },
+      (error) => { console.error('Error loading maquinas:', error); }
+    );
   }
 
   get getTheFormGroup() {
