@@ -49,26 +49,38 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-3">Operario ID</div>
+            <div class="col-3">Operario</div>
             <div class="col-9">
-              <input
-                type="number"
+              <select
                 class="form-control"
                 [(ngModel)]="turno.operario_id"
                 [disabled]="mode == 1"
-              />
+              >
+                <option [ngValue]="null">Seleccione un operario</option>
+                <option
+                  *ngFor="let operario of operarios"
+                  [ngValue]="operario.id"
+                >
+                  {{ operario.name }} ({{ operario.email }})
+                </option>
+              </select>
             </div>
           </div>
           <br />
           <div class="row">
-            <div class="col-3">Maquina ID</div>
+            <div class="col-3">Maquina</div>
             <div class="col-9">
-              <input
-                type="number"
+              <select
                 class="form-control"
                 [(ngModel)]="turno.maquina_id"
                 [disabled]="mode == 1"
-              />
+              >
+                <option [ngValue]="null">Seleccione una máquina</option>
+                <option *ngFor="let maquina of maquinas" [ngValue]="maquina.id">
+                  {{ maquina.marca }} {{ maquina.modelo }} (ID:
+                  {{ maquina.id }})
+                </option>
+              </select>
             </div>
           </div>
           <div class="row">
