@@ -93,7 +93,7 @@ export class ManageComponent implements OnInit {
       next: (cuota) => {
         this.cuota = cuota;
         this.cuotaForm.patchValue({
-          id_servicio: cuota.id_servicio,
+          id_servicio: Array.isArray(cuota.id_servicio) && cuota.id_servicio.length > 0 ? cuota.id_servicio[0].id : cuota.id_servicio,
           valor: cuota.valor
         });
       },
@@ -106,13 +106,11 @@ export class ManageComponent implements OnInit {
 
   private createForm(): void {
     this.cuotaForm = this.fb.group({
-      id_servicio: [[], [
-        Validators.required,
-      ]],
+      id_servicio: [null, [Validators.required]],
       valor: ['', [
         Validators.required,
         Validators.min(0),
-        Validators.pattern(/^[0-9]+([.][0-9]{0,2})?$/) 
+        Validators.pattern(/^[0-9]+([.][0-9]{0,2})?$/)
       ]]
     });
   }
@@ -124,10 +122,12 @@ export class ManageComponent implements OnInit {
   create(): void {
     if (this.cuotaForm.valid) {
       const formValue = this.cuotaForm.value;
-      this.cuotasService.create({
+      const payload = {
         ...this.cuota,
-        ...formValue,
-      }).subscribe({
+        id_servicio: formValue.id_servicio,
+        valor: formValue.valor
+      };
+      this.cuotasService.create(payload).subscribe({
         next: () => {
           Swal.fire('Éxito', 'Cuota creada correctamente', 'success');
           this.router.navigate(['/cuotas/list']);
@@ -150,10 +150,12 @@ export class ManageComponent implements OnInit {
   update(): void {
     if (this.cuotaForm.valid) {
       const formValue = this.cuotaForm.value;
-      this.cuotasService.update({
+      const payload = {
         ...this.cuota,
-        ...formValue,
-      }).subscribe({
+        id_servicio: formValue.id_servicio,
+        valor: formValue.valor
+      };
+      this.cuotasService.update(payload).subscribe({
         next: () => {
           Swal.fire('Éxito', 'Cuota actualizada correctamente', 'success');
           this.router.navigate(['/cuotas/list']);
