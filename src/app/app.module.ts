@@ -14,6 +14,7 @@ import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
 import { TokenInterceptor } from './interceptores/token.interceptor';
 import { AutenticadoGuard } from './guardianes/autenticado.guard';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import { AutenticadoGuard } from './guardianes/autenticado.guard';
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    AuthLayoutComponent
+    AuthLayoutComponent,
+    ForgotPasswordComponent
   ],
   providers: [
     {

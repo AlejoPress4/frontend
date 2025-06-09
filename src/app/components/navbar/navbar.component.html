@@ -31,26 +31,46 @@
         </li>
       </ul>
       <div class="d-flex">
-        <div class="dropdown">
-          <button
-            class="btn btn-outline-light dropdown-toggle"
-            type="button"
-            id="userDropdown"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+        <div class="dropdown" [ngClass]="{ show: showDropdown }">
+          <ng-container
+            *ngIf="user && (user.nombre || user.email); else loginBtn"
           >
-            <i class="bi bi-person-circle me-1"></i>
-            {{ user ? user.nombre : "" }}
-          </button>
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="userDropdown"
-          >
-            <li><a class="dropdown-item" href="#">Perfil</a></li>
-            <li><a class="dropdown-item" href="#">Configuración</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-          </ul>
+            <button
+              class="btn btn-outline-light dropdown-toggle"
+              type="button"
+              id="userDropdown"
+              (click)="showDropdown = !showDropdown"
+              aria-expanded="showDropdown"
+            >
+              <img
+                *ngIf="user?.fotoUrl"
+                [src]="user.fotoUrl"
+                class="rounded-circle me-2"
+                width="32"
+                height="32"
+                alt="Foto de perfil"
+              />
+              <i *ngIf="!user?.fotoUrl" class="bi bi-person-circle me-1"></i>
+              {{ user?.nombre || user?.email || "Usuario" }}
+            </button>
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              [class.show]="showDropdown"
+              aria-labelledby="userDropdown"
+            >
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configuración</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" (click)="logout()">Cerrar sesión</a>
+              </li>
+            </ul>
+          </ng-container>
+          <ng-template #loginBtn>
+            <a class="btn btn-outline-light" routerLink="/login">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+            </a>
+          </ng-template>
         </div>
       </div>
     </div>

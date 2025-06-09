@@ -108,14 +108,23 @@ export class SeguridadService {
       if (!datosSesion.token) {
         throw new Error('No se recibió el token de autenticación');
       }
-      
-      // Crear un nuevo objeto Usuario con los datos de la sesión
+      // Decodificar el token para extraer nombre/email si no vienen en la respuesta
+      let nombre = datosSesion.user?.name || '';
+      let email = datosSesion.user?.email || '';
+      let _id = datosSesion.user?._id || '';
+      if (datosSesion.token) {
+        const payload = JSON.parse(atob(datosSesion.token.split('.')[1]));
+        if (payload) {
+          nombre = nombre || payload.name || payload.sub || '';
+          email = email || payload.email || '';
+          _id = _id || payload._id || '';
+        }
+      }
       const usuarioData = new Usuario();
       usuarioData.token = datosSesion.token;
-      usuarioData._id = datosSesion.user?._id || '';
-      usuarioData.email = datosSesion.user?.email || '';
-      usuarioData.nombre = datosSesion.user?.name || '';
-
+      usuarioData._id = _id;
+      usuarioData.email = email;
+      usuarioData.nombre = nombre;
       localStorage.setItem('sesion', JSON.stringify(usuarioData));
       this.setUsuario(usuarioData);
     } catch (error) {

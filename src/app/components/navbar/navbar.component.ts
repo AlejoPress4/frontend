@@ -17,6 +17,7 @@ export class NavbarComponent implements OnInit {
   menuItems: any[] = []
   user: Usuario;
   subscription: Subscription;
+  showDropdown = false;
   constructor(private seguridadService: SeguridadService, 
     private webSocketService: WebSocketService,) {
     // Aquí puedes inyectar servicios si los necesitas
@@ -28,13 +29,29 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     // Inicializar datos al cargar el componente
-    this.loadMenuItems()
-    this.webSocketService.setNameEvent("newNotification")
+    this.loadMenuItems();
+    this.webSocketService.setNameEvent("newNotification");
     this.webSocketService.callback.subscribe((data: any) => {
-      console.log("Nueva notificación recibida:", data)
+      console.log("Nueva notificación recibida:", data);
       // Aquí puedes manejar la notificación recibida
-      // Por ejemplo, mostrar un mensaje o actualizar el estado del componente
-    })
+    });
+    // Forzar actualización del usuario al recargar
+    const sesion = localStorage.getItem('sesion');
+    if (sesion) {
+      try {
+        const datosUsuario = JSON.parse(sesion);
+        // Aseguramos que user sea una instancia de Usuario
+        if (datosUsuario && (datosUsuario.nombre || datosUsuario.email)) {
+          this.user = Object.assign(new Usuario(), datosUsuario);
+        } else {
+          this.user = undefined;
+        }
+      } catch (e) {
+        this.user = undefined;
+      }
+    } else {
+      this.user = undefined;
+    }
   }
 
   toggleMenu(): void {
@@ -48,5 +65,10 @@ export class NavbarComponent implements OnInit {
       { title: "Mantenimientos", route: "/mantenimientos", icon: "bi bi-wrench" },
       { title: "Reportes", route: "/evidencias", icon: "bi bi-file-text" },
     ]
+  }
+
+  logout() {
+    this.seguridadService.logout();
+    window.location.href = '/login';
   }
 }
