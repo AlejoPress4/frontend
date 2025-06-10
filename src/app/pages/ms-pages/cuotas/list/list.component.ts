@@ -93,6 +93,19 @@ export class ListCuotaComponent implements OnInit {
     });
   }
 
+  pagarCuota(id: number) {
+    if (isNaN(id)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID proporcionado no es válido.'
+      });
+      return;
+    }
+
+    this.router.navigate(['/cuotas', id, 'pay']);
+  }
+
   update(cuota: Cuotas) {
     this.cuotasService.update(cuota).subscribe(
       () => {

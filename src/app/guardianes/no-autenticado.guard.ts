@@ -8,11 +8,13 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class NoAutenticadoGuard implements CanActivate {
-  router: Router;
-  constructor(private seguridadService: SeguridadService) {}
+  
+  constructor(private seguridadService: SeguridadService, private router: Router) {}
+  
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
     if (this.seguridadService.sesionExiste()) {
       this.router.navigate(['/dashboard']);
       return false;

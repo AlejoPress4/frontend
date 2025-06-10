@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary" 
+     [ngClass]="{ 'user-logged-in': isUserLoggedIn, 'user-logged-out': !isUserLoggedIn }">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
       <i class="bi bi-truck me-2"></i>
@@ -18,29 +19,60 @@
       class="collapse navbar-collapse"
       [ngClass]="{ show: !isMenuCollapsed }"
       id="navbarNav"
-    >
-      <ul class="navbar-nav me-auto">
+    >      <ul class="navbar-nav me-auto">
         <li class="nav-item" *ngFor="let item of menuItems">
           <a
             class="nav-link"
             [routerLink]="item.route"
             routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           >
             <i [class]="item.icon + ' me-1'"></i>{{ item.title }}
           </a>
         </li>
+          <!-- Elementos adicionales solo para usuarios logueados -->
+        <li class="nav-item dropdown admin-dropdown" *ngIf="isUserLoggedIn">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-gear me-1"></i>Administración
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" routerLink="/usuarios">
+              <i class="bi bi-people me-2"></i>Usuarios
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/reportes">
+              <i class="bi bi-bar-chart me-2"></i>Reportes
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" routerLink="/configuracion">
+              <i class="bi bi-sliders me-2"></i>Configuración
+            </a></li>
+          </ul>
+        </li>
       </ul>
-      <div class="d-flex">
+      <div class="d-flex align-items-center">
+        <!-- Indicador de notificaciones (solo para usuarios logueados) -->
+        <div class="me-3" *ngIf="isUserLoggedIn">
+          <!-- <button class="btn btn-outline-light position-relative notification-btn" type="button"
+                  (click)="clearNotifications()" title="Ver notificaciones">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  *ngIf="notificationCount > 0">
+              {{ notificationCount }}
+              <span class="visually-hidden">notificaciones no leídas</span>
+            </span>
+          </button> -->
+        </div>
+
+        <!-- Dropdown del usuario -->
         <div class="dropdown" [ngClass]="{ show: showDropdown }">
-          <ng-container
-            *ngIf="user && (user.nombre || user.email); else loginBtn"
-          >
+          <ng-container *ngIf="isUserLoggedIn; else loginBtn">
             <button
               class="btn btn-outline-light dropdown-toggle"
               type="button"
               id="userDropdown"
-              (click)="showDropdown = !showDropdown"
-              aria-expanded="showDropdown"
+              (click)="toggleUserDropdown()"
+              [attr.aria-expanded]="showDropdown"
             >
               <img
                 *ngIf="user?.fotoUrl"
@@ -52,24 +84,47 @@
               />
               <i *ngIf="!user?.fotoUrl" class="bi bi-person-circle me-1"></i>
               {{ user?.nombre || user?.email || "Usuario" }}
-            </button>
-            <ul
+            </button>            <ul
               class="dropdown-menu dropdown-menu-end"
               [class.show]="showDropdown"
               aria-labelledby="userDropdown"
             >
-              <li><a class="dropdown-item" href="#">Perfil</a></li>
-              <li><a class="dropdown-item" href="#">Configuración</a></li>
+              <li>
+                <h6 class="dropdown-header">
+                  <i class="bi bi-person-circle me-2"></i>
+                  {{ user?.nombre || user?.email || "Usuario" }}
+                </h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" href="#" routerLink="/perfil">
+                <i class="bi bi-person me-2"></i>Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="#" routerLink="/mis-cuotas">
+                <i class="bi bi-credit-card me-2"></i>Mis Cuotas
+              </a></li>
+              <li><a class="dropdown-item" href="#" routerLink="/historial">
+                <i class="bi bi-clock-history me-2"></i>Historial
+              </a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" href="#" routerLink="/configuracion">
+                <i class="bi bi-gear me-2"></i>Configuración
+              </a></li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" (click)="logout()">Cerrar sesión</a>
+                <a class="dropdown-item text-danger" (click)="logout()" style="cursor: pointer;">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                </a>
               </li>
             </ul>
-          </ng-container>
-          <ng-template #loginBtn>
-            <a class="btn btn-outline-light" routerLink="/login">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
-            </a>
+          </ng-container>          <ng-template #loginBtn>
+            <div class="d-flex gap-2">
+              <a class="btn btn-outline-light" routerLink="/login">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar sesión
+              </a>
+              <a class="btn btn-light text-primary" routerLink="/register">
+                <i class="bi bi-person-plus me-1"></i>Registrarse
+              </a>
+            </div>
           </ng-template>
         </div>
       </div>

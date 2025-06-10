@@ -30,9 +30,8 @@ export class CuotasService {
   delete(id: number) {
     return this.http.delete<Cuotas>(`${environment.url_ms_cinema}/cuotas/${id}`);
   }
-
-  pay(paymentData: any): Observable<any> {
-    const url = `${environment.url_ms_cinema}/cuotas/${paymentData.due.id}/pay`;
+  pay(cuotaId: string, paymentData: any): Observable<any> {
+    const url = `${environment.url_ms_cinema}/cuotas/${cuotaId}/pay`;
     console.log('URL:', url);
     console.log('Datos enviados:', paymentData);
     return this.http.post<any>(url, paymentData);
