@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Gobernante } from 'src/app/models/gobernante.model';
 import { GobernanteService } from 'src/app/services/gobernanteService/gobernante.service';
+import { Usuario } from 'src/app/models/usuario.model';
+import { UsuarioService } from 'src/app/services/usuarioService/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,15 +17,26 @@ export class ManageComponent implements OnInit {
   mode: number; //1->View, 2->Create, 3-> Update
   gobernante: Gobernante;
   gobernantedepartamentos: any; // Agregué la propiedad para evitar errores en el template
+  usuarios: Usuario[] = []; // Arreglo para almacenar los usuarios
 
-  constructor(private activateRoute: ActivatedRoute,
+  constructor(
+    private activateRoute: ActivatedRoute,
     private someGobernante: GobernanteService,
+    private usuarioService: UsuarioService,
     private router: Router
   ) {
     this.gobernante = { id: 0 }
   }
 
   ngOnInit(): void {
+    this.usuarioService.list().subscribe({
+      next: (usuarios) => {
+        this.usuarios = usuarios;
+      },
+      error: (err) => {
+        console.error('Error al cargar usuarios', err);
+      }
+    });
     this.activateRoute.url.subscribe(() => {
       const currentUrl = this.activateRoute.snapshot.url.join('/');
       if (currentUrl.includes('view')) {
@@ -40,6 +53,7 @@ export class ManageComponent implements OnInit {
       }
     });
   }
+
   getGobernante(id: number) {
     this.someGobernante.view(id).subscribe({
       next: (gobernante: any) => {

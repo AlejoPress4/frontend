@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Operario } from 'src/app/models/operario.model';
 import { OperarioService } from 'src/app/services/operarioService/operario.service';
+import { Usuario } from 'src/app/models/usuario.model';
+import { UsuarioService } from 'src/app/services/usuarioService/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,12 +16,14 @@ export class ManageComponent implements OnInit {
   mode: number; //1->View, 2->Create, 3-> Update
   operario: Operario;
   operarioForm: FormGroup;
+  usuarios: Usuario[] = []; // Arreglo para almacenar los usuarios
 
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private someOperario: OperarioService,
-    private router: Router
+    private router: Router,
+    private usuarioService: UsuarioService
   ) {
     this.operario = { id: 0 };
     this.createForm();
@@ -48,6 +52,14 @@ export class ManageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.usuarioService.list().subscribe({
+      next: (usuarios) => {
+        this.usuarios = usuarios;
+      },
+      error: (err) => {
+        console.error('Error al cargar usuarios', err);
+      }
+    });
     this.setupMode();
   }
 
