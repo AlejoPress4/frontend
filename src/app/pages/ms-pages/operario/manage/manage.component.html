@@ -26,10 +26,9 @@
             </div>
 
             <div class="row mb-3">
-              <div class="col-3">ID Usuario</div>
+              <div class="col-3">Usuario</div>
               <div class="col-9">
-                <input
-                  type="text"
+                <select
                   class="form-control"
                   formControlName="user_id"
                   [ngClass]="{
@@ -37,7 +36,15 @@
                       operarioForm.get('user_id')?.invalid &&
                       operarioForm.get('user_id')?.touched
                   }"
-                />
+                >
+                  <option value="">Seleccione un usuario</option>
+                  <option
+                    *ngFor="let usuario of usuarios"
+                    [value]="usuario._id"
+                  >
+                    {{ usuario.nombre || usuario.email }}
+                  </option>
+                </select>
                 <div
                   class="invalid-feedback"
                   *ngIf="operarioForm.get('user_id')?.touched"
@@ -45,12 +52,12 @@
                   <div
                     *ngIf="operarioForm.get('user_id')?.errors?.['required']"
                   >
-                    El ID de usuario es requerido
+                    El usuario es requerido
                   </div>
                   <div
                     *ngIf="operarioForm.get('user_id')?.errors?.['minlength']"
                   >
-                    El ID de usuario debe tener al menos 1 caracter
+                    Debe seleccionar un usuario válido
                   </div>
                 </div>
               </div>
