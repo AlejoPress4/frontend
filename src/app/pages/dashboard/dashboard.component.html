@@ -124,264 +124,332 @@
       </div>
     </div>
   </div>
-
-  <!-- Vista para usuarios logueados (existente) -->
-  <div *ngIf="isUserLoggedIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- Vista para usuarios logueados -->
+  <div *ngIf="isUserLoggedIn">    <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="mb-0">Dashboard - Gestión de Servicios de Transporte</h1>
       <div class="d-flex gap-2">
-        <button class="btn btn-primary" routerLink="/servicios/create">
+        <a class="btn btn-primary" [routerLink]="getEntityRoute('servicios', 'create')">
           <i class="bi bi-plus-circle me-2"></i>Nuevo Servicio
-        </button>
-        <button class="btn btn-outline-secondary" routerLink="/mantenimientos/create">
+        </a>
+        <a class="btn btn-outline-secondary" [routerLink]="getEntityRoute('mantenimientos', 'create')">
           <i class="bi bi-wrench me-2"></i>Nuevo Mantenimiento
-        </button>
-      </div>
-    </div>
-  
-  <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Cargando...</span>
-    </div>
-    <p class="mt-2">Cargando datos del dashboard...</p>
-  </div>
-  
-  <ng-container *ngIf="!loading">
-    <!-- Primera fila de estadísticas -->
-    <div class="row mb-4">
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-primary h-100">
-          <div class="card-header bg-primary text-white">
-            <h6 class="card-title mb-0">
-              <i class="bi bi-truck me-2"></i>Máquinas
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h3 class="mb-0 text-primary">{{stats.totalMaquinas}}</h3>
-                <p class="text-muted mb-0">Total</p>
-              </div>
-            </div>
-            <hr>
-            <small class="text-success">
-              <i class="bi bi-check-circle me-1"></i>
-              {{stats.maquinasActivas}} activas
-            </small>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-success h-100">
-          <div class="card-header bg-success text-white">
-            <h6 class="card-title mb-0">
-              <i class="bi bi-person-gear me-2"></i>Operarios
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h3 class="mb-0 text-success">{{stats.totalOperarios}}</h3>
-                <p class="text-muted mb-0">Total</p>
-              </div>
-            </div>
-            <hr>
-            <small class="text-info">
-              <i class="bi bi-person-check me-1"></i>
-              {{stats.operariosDisponibles}} disponibles
-            </small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-warning h-100">
-          <div class="card-header bg-warning text-dark">
-            <h6 class="card-title mb-0">
-              <i class="bi bi-tools me-2"></i>Servicios
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h3 class="mb-0 text-warning">{{stats.serviciosPendientes}}</h3>
-                <p class="text-muted mb-0">Pendientes</p>
-              </div>
-            </div>
-            <hr>
-            <small class="text-success">
-              <i class="bi bi-check-circle me-1"></i>
-              {{stats.serviciosCompletados}} completados
-            </small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-info h-100">
-          <div class="card-header bg-info text-white">
-            <h6 class="card-title mb-0">
-              <i class="bi bi-building me-2"></i>Obras
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h3 class="mb-0 text-info">{{stats.totalObras}}</h3>
-                <p class="text-muted mb-0">Total</p>
-              </div>
-            </div>
-            <hr>
-            <small class="text-success">
-              <i class="bi bi-play-circle me-1"></i>
-              {{stats.obrasActivas}} activas
-            </small>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Segunda fila de estadísticas detalladas -->
-    <div class="row mb-4">
-      <div class="col-lg-6 mb-3">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">
-              <i class="bi bi-wrench me-2"></i>Estado de Mantenimientos
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-6">
-                <div class="text-center">
-                  <h4 class="text-warning">{{stats.mantenimientosPendientes}}</h4>
-                  <p class="text-muted">Pendientes</p>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="text-center">
-                  <h4 class="text-success">{{stats.mantenimientosRealizados}}</h4>
-                  <p class="text-muted">Realizados</p>
-                </div>
-              </div>
-            </div>
-            <div class="progress" style="height: 8px;">
-              <div class="progress-bar bg-success" 
-                   [style.width]="(stats.mantenimientosRealizados / (stats.mantenimientosRealizados + stats.mantenimientosPendientes)) * 100 + '%'">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6 mb-3">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">
-              <i class="bi bi-graph-up me-2"></i>Resumen de Productividad
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-4 text-center">
-                <h6 class="text-primary">Eficiencia</h6>
-                <h4 class="text-primary">{{((stats.maquinasActivas / stats.totalMaquinas) * 100).toFixed(0)}}%</h4>
-              </div>
-              <div class="col-4 text-center">
-                <h6 class="text-success">Disponibilidad</h6>
-                <h4 class="text-success">{{((stats.operariosDisponibles / stats.totalOperarios) * 100).toFixed(0)}}%</h4>
-              </div>
-              <div class="col-4 text-center">
-                <h6 class="text-info">Utilización</h6>
-                <h4 class="text-info">{{((stats.obrasActivas / stats.totalObras) * 100).toFixed(0)}}%</h4>
-              </div>
-            </div>
-          </div>
-        </div>
+        </a>
       </div>
     </div>
     
-    <!-- Tercera fila - Tablas de datos recientes -->
-    <div class="row">
-      <div class="col-lg-8 mb-4">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-              <i class="bi bi-list-ul me-2"></i>Servicios Recientes
-            </h5>
-            <a routerLink="/servicios" class="btn btn-sm btn-outline-primary">Ver todos</a>
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando datos del dashboard...</p>
+    </div>
+    
+    <ng-container *ngIf="!loading">
+      <!-- Sección de Gestión Principal con Toggles -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-gear me-2"></i>Gestión Principal
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 mb-3" *ngFor="let entity of entityCards">
+                  <div class="entity-card h-100" [ngClass]="'border-' + entity.color">
+                    <div class="entity-card-header" 
+                         [ngClass]="'bg-' + entity.color + (entity.color === 'warning' ? ' text-dark' : ' text-white')"
+                         (click)="toggleEntityCard(entity.id)"
+                         role="button">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <i [ngClass]="entity.icon + ' me-2'" style="font-size: 1.2rem;"></i>
+                          <span class="fw-bold">{{entity.name}}</span>
+                        </div>                        <div class="d-flex align-items-center">
+                          <span class="badge me-2" 
+                                [ngClass]="entity.color === 'warning' || entity.color === 'purple' ? 'bg-light text-dark' : 'bg-light text-dark'">
+                            {{entity.count}}
+                          </span>
+                          <i class="bi" [ngClass]="entity.isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="entity-card-body" [ngClass]="{'show': entity.isOpen}">                      <div class="d-grid gap-2 p-3">
+                        <a class="btn" 
+                           [ngClass]="entity.color === 'purple' ? 'btn-outline-purple' : 'btn-outline-' + entity.color" 
+                           [routerLink]="entity.routes.create">
+                          <i class="bi bi-plus-circle me-2"></i>Crear {{entity.name}}
+                        </a>
+                        <a class="btn" 
+                           [ngClass]="entity.color === 'purple' ? 'btn-purple' : 'btn-' + entity.color" 
+                           [routerLink]="entity.routes.list">
+                          <i class="bi bi-list-ul me-2"></i>Listar {{entity.name}}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Tipo de Servicio</th>
-                    <th>Operario</th>
-                    <th>Máquina</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let service of recentServices">
-                    <td><strong>{{service.id}}</strong></td>
-                    <td>{{service.cliente}}</td>
-                    <td>{{service.tipoServicio}}</td>
-                    <td>{{service.operario}}</td>
-                    <td>{{service.maquina}}</td>
-                    <td>
-                      <span class="badge" [ngClass]="getStatusBadgeClass(service.estado)">
-                        {{getStatusLabel(service.estado)}}
-                      </span>
-                    </td>
-                    <td>{{service.fechaInicio | date:'short'}}</td>
-                  </tr>
-                </tbody>
-              </table>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-graph-up me-2"></i>Estadísticas Generales
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-3 col-md-6 mb-3">
+                  <div class="stat-card text-center p-3 border border-primary rounded">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-truck text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="text-primary mb-1">{{stats.totalMaquinas}}</h4>
+                    <p class="text-muted mb-1">Total Máquinas</p>
+                    <small class="text-success">
+                      <i class="bi bi-check-circle me-1"></i>
+                      {{stats.maquinasActivas}} activas
+                    </small>
+                  </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                  <div class="stat-card text-center p-3 border border-success rounded">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-person-gear text-success" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="text-success mb-1">{{stats.totalOperarios}}</h4>
+                    <p class="text-muted mb-1">Total Operarios</p>
+                    <small class="text-info">
+                      <i class="bi bi-person-check me-1"></i>
+                      {{stats.operariosDisponibles}} disponibles
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                  <div class="stat-card text-center p-3 border border-warning rounded">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-tools text-warning" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="text-warning mb-1">{{stats.serviciosPendientes}}</h4>
+                    <p class="text-muted mb-1">Servicios Pendientes</p>
+                    <small class="text-success">
+                      <i class="bi bi-check-circle me-1"></i>
+                      {{stats.serviciosCompletados}} completados
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                  <div class="stat-card text-center p-3 border border-info rounded">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-building text-info" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="text-info mb-1">{{stats.totalObras}}</h4>
+                    <p class="text-muted mb-1">Total Obras</p>
+                    <small class="text-success">
+                      <i class="bi bi-play-circle me-1"></i>
+                      {{stats.obrasActivas}} activas
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Productividad y Mantenimientos -->
+      <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-wrench me-2"></i>Estado de Mantenimientos
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  <div class="text-center">
+                    <h4 class="text-warning">{{stats.mantenimientosPendientes}}</h4>
+                    <p class="text-muted">Pendientes</p>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="text-center">
+                    <h4 class="text-success">{{stats.mantenimientosRealizados}}</h4>
+                    <p class="text-muted">Realizados</p>
+                  </div>
+                </div>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success" 
+                     [style.width]="(stats.mantenimientosRealizados / (stats.mantenimientosRealizados + stats.mantenimientosPendientes)) * 100 + '%'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-graph-up me-2"></i>Resumen de Productividad
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-4 text-center">
+                  <h6 class="text-primary">Eficiencia</h6>
+                  <h4 class="text-primary">{{((stats.maquinasActivas / stats.totalMaquinas) * 100).toFixed(0)}}%</h4>
+                </div>
+                <div class="col-4 text-center">
+                  <h6 class="text-success">Disponibilidad</h6>
+                  <h4 class="text-success">{{((stats.operariosDisponibles / stats.totalOperarios) * 100).toFixed(0)}}%</h4>
+                </div>
+                <div class="col-4 text-center">
+                  <h6 class="text-info">Utilización</h6>
+                  <h4 class="text-info">{{((stats.obrasActivas / stats.totalObras) * 100).toFixed(0)}}%</h4>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
-      <div class="col-lg-4 mb-4">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-              <i class="bi bi-wrench me-2"></i>Mantenimientos Próximos
-            </h5>
-            <a routerLink="/mantenimientos" class="btn btn-sm btn-outline-secondary">Ver todos</a>
-          </div>
-          <div class="card-body">
-            <div *ngFor="let maintenance of recentMaintenances" class="border-bottom pb-3 mb-3">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="mb-1">{{maintenance.maquina}}</h6>
-                  <p class="mb-1 text-muted small">{{maintenance.tipoMantenimiento}}</p>
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-person me-1"></i>{{maintenance.responsable}}
-                  </p>
+      <!-- Tablas de datos recientes -->
+      <div class="row">        <div class="col-lg-8 mb-4">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-credit-card me-2"></i>Realizar tu pago
+              </h5>
+              <a routerLink="/cuotas/list" class="btn btn-sm btn-outline-primary">Ver todas las cuotas</a>
+            </div>
+            <div class="card-body">
+              <div *ngIf="cuotas.length === 0" class="text-center py-4">
+                <div class="empty-state">
+                  <i class="bi bi-wallet2 text-muted mb-3" style="font-size: 3rem;"></i>
+                  <h6 class="text-muted mb-2">No hay cuotas pendientes</h6>
+                  <p class="text-muted small">Todas tus cuotas están al día</p>
+                </div>
+              </div>
+              
+              <div *ngIf="cuotas.length > 0" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Servicio</th>
+                      <th>Valor</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let cuota of cuotas.slice(0, 5)" class="table-row-hover">
+                      <td><strong>#{{cuota.id}}</strong></td>
+                      <td>
+                        <span *ngIf="cuota.id_servicio && cuota.id_servicio.length > 0">
+                          Servicio ID: {{cuota.id_servicio[0]?.id || 'N/A'}}
+                        </span>
+                        <span *ngIf="!cuota.id_servicio || cuota.id_servicio.length === 0" class="text-muted">
+                          Sin servicio asignado
+                        </span>
+                      </td>
+                      <td>
+                        <span class="fw-bold text-success">{{cuota.valor | currency}}</span>
+                      </td>
+                      <td>
+                        <span class="badge bg-warning text-dark">
+                          <i class="bi bi-clock me-1"></i>Pendiente
+                        </span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-success" 
+                                  (click)="pagarCuota(cuota.id!)"
+                                  title="Pagar Cuota">
+                            <i class="bi bi-credit-card me-1"></i>Pagar
+                          </button>
+                          <button class="btn btn-sm btn-outline-primary" 
+                                  routerLink="/cuotas/view/{{cuota.id}}"
+                                  title="Ver Detalles">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div *ngIf="cuotas.length > 0" class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-info-circle text-info me-2"></i>
                   <small class="text-muted">
-                    <i class="bi bi-calendar me-1"></i>{{maintenance.fechaProgramada | date:'short'}}
+                    Mostrando {{cuotas.slice(0, 5).length}} de {{cuotas.length}} cuotas
                   </small>
                 </div>
-                <span class="badge" [ngClass]="getStatusBadgeClass(maintenance.estado)">
-                  {{getStatusLabel(maintenance.estado)}}
-                </span>
+                <div class="d-grid gap-2 d-md-flex">
+                  <a class="btn btn-outline-success" routerLink="/cuotas/create">
+                    <i class="bi bi-plus-circle me-2"></i>Nueva Cuota
+                  </a>
+                  <a class="btn btn-primary" routerLink="/cuotas/list">
+                    <i class="bi bi-list-ul me-2"></i>Ver Todas
+                  </a>
+                </div>
               </div>
-            </div>
-            
-            <div class="d-grid gap-2 mt-3">
-              <button class="btn btn-outline-primary" routerLink="/mantenimientos/create">
-                <i class="bi bi-plus-circle me-2"></i>Programar Mantenimiento
-              </button>
             </div>
           </div>
         </div>
-      </div>    </div>
-  </ng-container>
+        
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">              <h5 class="card-title mb-0">
+                <i class="bi bi-wrench me-2"></i>Mantenimientos Próximos
+              </h5>
+              <a [routerLink]="getEntityRoute('mantenimientos', 'list')" class="btn btn-sm btn-outline-secondary">Ver todos</a>
+            </div>
+            <div class="card-body">
+              <div *ngFor="let maintenance of recentMaintenances" class="border-bottom pb-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">{{maintenance.maquina}}</h6>
+                    <p class="mb-1 text-muted small">{{maintenance.tipoMantenimiento}}</p>
+                    <p class="mb-1 text-muted small">
+                      <i class="bi bi-person me-1"></i>{{maintenance.responsable}}
+                    </p>
+                    <small class="text-muted">
+                      <i class="bi bi-calendar me-1"></i>{{maintenance.fechaProgramada | date:'short'}}
+                    </small>
+                  </div>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(maintenance.estado)">
+                    {{getStatusLabel(maintenance.estado)}}
+                  </span>
+                </div>
+              </div>
+                <div class="d-grid gap-2 mt-3">
+                <a class="btn btn-outline-primary" [routerLink]="getEntityRoute('mantenimientos', 'create')">
+                  <i class="bi bi-plus-circle me-2"></i>Programar Mantenimiento
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
   </div> <!-- Cierre de la vista para usuarios logueados -->
 </div>

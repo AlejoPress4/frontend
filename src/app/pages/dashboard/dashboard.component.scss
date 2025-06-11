@@ -842,3 +842,171 @@ a {
   margin-top: -2rem;
   padding-top: 2rem;
 }
+
+// Estilos para las entity cards con toggle
+.entity-card {
+  border-radius: 12px;
+  overflow: hidden;
+  @include smooth-transition(0.3s);
+  background: $white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .entity-card-header {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    @include smooth-transition(0.2s);
+    
+    &:hover {
+      filter: brightness(1.05);
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  .entity-card-body {
+    max-height: 0;
+    overflow: hidden;
+    @include smooth-transition(0.4s, ease-in-out);
+    background: rgba(255, 255, 255, 0.95);
+    
+    &.show {
+      max-height: 200px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  // Colores específicos para cada entidad
+  &.border-primary {
+    border: 2px solid $primary;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+    }
+    
+    .btn-outline-primary:hover {
+      background: $primary;
+      border-color: $primary;
+    }
+  }
+  
+  &.border-success {
+    border: 2px solid $success;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, $success 0%, $success-light 100%);
+    }
+  }
+  
+  &.border-warning {
+    border: 2px solid $warning;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, $warning 0%, $warning-light 100%);
+    }
+  }
+  
+  &.border-info {
+    border: 2px solid $info;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, $info 0%, $info-light 100%);
+    }
+  }
+  
+  &.border-danger {
+    border: 2px solid $danger;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, $danger 0%, $danger-light 100%);
+    }
+  }
+  
+  // Color púrpura personalizado para GPS
+  &.border-purple {
+    border: 2px solid #6f42c1;
+    
+    .entity-card-header {
+      background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+      color: white;
+    }
+    
+    .btn-purple {
+      background: #6f42c1;
+      border-color: #6f42c1;
+      color: white;
+      
+      &:hover {
+        background: #5a32a3;
+        border-color: #5a32a3;
+      }
+    }
+    
+    .btn-outline-purple {
+      border-color: #6f42c1;
+      color: #6f42c1;
+      
+      &:hover {
+        background: #6f42c1;
+        border-color: #6f42c1;
+        color: white;
+      }
+    }
+  }
+}
+
+// Estilos para las tarjetas de estadísticas
+.stat-card {
+  @include smooth-transition(0.3s);
+  background: $white;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-icon {
+    @include smooth-transition(0.3s);
+  }
+  
+  &:hover .stat-icon {
+    transform: scale(1.1);
+  }
+}
+
+// Animaciones adicionales
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entity-card-body.show {
+  animation: slideDown 0.3s ease-out;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .entity-card {
+    margin-bottom: 1rem;
+  }
+  
+  .entity-card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .entity-card-body {
+    padding: 0.75rem 1rem;
+  }
+}

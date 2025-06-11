@@ -1,6 +1,17 @@
 import { Component, type OnInit } from "@angular/core"
+import { Router } from "@angular/router"
 import { SeguridadService } from "src/app/services/seguridadService/seguridad.service"
 import { Usuario } from "src/app/models/usuario.model"
+import { MaquinaService } from "src/app/services/maquinaService/maquina.service"
+import { OperarioService } from "src/app/services/operarioService/operario.service"
+import { ServicioService } from "src/app/services/servicioService/servicio.service"
+import { ObraService } from "src/app/services/obraService/obra.service"
+import { GPSService } from "src/app/services/gpsService/gps.service"
+import { EvidenciaService } from "src/app/services/evidenciaService/evidencia.service"
+import { MantenimientoService } from "src/app/services/mantenimientoService/mantenimiento.service"
+import { CuotasService } from "src/app/services/cuotasService/cuotas.service"
+import { forkJoin } from "rxjs"
+import { Cuotas } from "src/app/models/cuotas.model"
 
 interface DashboardStats {
   totalMaquinas: number
@@ -13,6 +24,9 @@ interface DashboardStats {
   mantenimientosRealizados: number
   totalObras: number
   obrasActivas: number
+  totalGps: number
+  gpsActivos: number
+  totalEvidencias: number
 }
 
 interface ServiceRecord {
@@ -34,19 +48,44 @@ interface MaintenanceRecord {
   fechaProgramada: string
 }
 
+interface EntityCard {
+  id: string
+  name: string
+  icon: string
+  color: string
+  count: number
+  isOpen: boolean
+  routes: {
+    create: string
+    list: string
+  }
+}
+
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
 })
-export class DashboardComponent implements OnInit {
-  stats: DashboardStats
+export class DashboardComponent implements OnInit {  stats: DashboardStats
   recentServices: ServiceRecord[]
   recentMaintenances: MaintenanceRecord[]
+  entityCards: EntityCard[]
+  cuotas: Cuotas[] = []
   loading = true
   user: Usuario | undefined
 
-  constructor(private seguridadService: SeguridadService) {
+  constructor(
+    private seguridadService: SeguridadService,
+    private router: Router,
+    private maquinaService: MaquinaService,
+    private operarioService: OperarioService,
+    private servicioService: ServicioService,
+    private obraService: ObraService,
+    private gpsService: GPSService,
+    private evidenciaService: EvidenciaService,
+    private mantenimientoService: MantenimientoService,
+    private cuotasService: CuotasService
+  ) {
     // Inicializar con valores por defecto
     this.stats = {
       totalMaquinas: 0,
@@ -59,23 +98,25 @@ export class DashboardComponent implements OnInit {
       mantenimientosRealizados: 0,
       totalObras: 0,
       obrasActivas: 0,
+      totalGps: 0,
+      gpsActivos: 0,
+      totalEvidencias: 0,
     }
 
     this.recentServices = []
     this.recentMaintenances = []
+    this.entityCards = []
   }
+
   ngOnInit(): void {
     this.loadUserFromSession();
+    this.initializeEntityCards();
     
     // Solo cargar datos si el usuario está logueado
     if (this.isUserLoggedIn) {
-      // Simular carga de datos desde un servicio
-      setTimeout(() => {
-        this.loadDashboardData()
-        this.loading = false
-      }, 1000)
+      this.loadDashboardData();
     } else {
-      this.loading = false
+      this.loading = false;
     }
   }
 
@@ -101,88 +142,181 @@ export class DashboardComponent implements OnInit {
   // Getter para verificar si el usuario está logueado
   get isUserLoggedIn(): boolean {
     return !!(this.user && (this.user.nombre || this.user.email));
+  }  private initializeEntityCards(): void {
+    this.entityCards = [
+      {
+        id: 'maquinas',
+        name: 'Máquinas',
+        icon: 'bi-truck',
+        color: 'primary',
+        count: this.stats.totalMaquinas,
+        isOpen: false,
+        routes: {
+          create: '/maquinas/create',
+          list: '/maquinas/list'
+        }
+      },
+      {
+        id: 'obras',
+        name: 'Obras',
+        icon: 'bi-building',
+        color: 'success',
+        count: this.stats.totalObras,
+        isOpen: false,
+        routes: {
+          create: '/obras/create',
+          list: '/obras/list'
+        }
+      },
+      {
+        id: 'operarios',
+        name: 'Operarios',
+        icon: 'bi-person-gear',
+        color: 'warning',
+        count: this.stats.totalOperarios,
+        isOpen: false,
+        routes: {
+          create: '/operario/create',
+          list: '/operario/list'
+        }
+      },
+      {
+        id: 'servicios',
+        name: 'Servicios',
+        icon: 'bi-tools',
+        color: 'info',
+        count: this.stats.serviciosPendientes + this.stats.serviciosCompletados,
+        isOpen: false,
+        routes: {
+          create: '/servicios/create',
+          list: '/servicios/list'
+        }
+      },
+      {
+        id: 'gps',
+        name: 'GPS',
+        icon: 'bi-geo-alt',
+        color: 'purple',
+        count: this.stats.totalGps,
+        isOpen: false,
+        routes: {
+          create: '/gps/create',
+          list: '/gps/list'
+        }
+      },
+      {
+        id: 'evidencias',
+        name: 'Evidencias',
+        icon: 'bi-camera',
+        color: 'danger',
+        count: this.stats.totalEvidencias,
+        isOpen: false,
+        routes: {
+          create: '/evidencias/create',
+          list: '/evidencias/list'
+        }
+      }
+    ];
+  }  private loadDashboardData(): void {
+    // Cargar datos reales desde el backend usando forkJoin para hacer todas las llamadas en paralelo
+    const requests = forkJoin({
+      maquinas: this.maquinaService.list(),
+      operarios: this.operarioService.list(),
+      servicios: this.servicioService.list(),
+      obras: this.obraService.list(),
+      gps: this.gpsService.list(),
+      evidencias: this.evidenciaService.list(),
+      mantenimientos: this.mantenimientoService.list(),
+      cuotas: this.cuotasService.list()
+    });
+
+    requests.subscribe({
+      next: (data) => {
+        // Procesar datos reales del backend
+        this.processBackendData(data);
+        this.updateEntityCardsCount();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error cargando datos del dashboard:', error);
+        this.loading = false;
+      }
+    });
   }
 
-  private loadDashboardData(): void {
-    // En un caso real, estos datos vendrían de servicios backend
+  private processBackendData(data: any): void {
+    // Procesar máquinas
+    const maquinas = data.maquinas || [];
+    const maquinasActivas = maquinas.filter((m: any) => m.estado === 'activo' || m.activo === true);
+
+    // Procesar operarios
+    const operarios = data.operarios || [];
+    const operariosDisponibles = operarios.filter((o: any) => o.disponible === true || o.estado === 'disponible');
+
+    // Procesar servicios
+    const servicios = data.servicios || [];
+    const serviciosPendientes = servicios.filter((s: any) => s.estado === 'pendiente' || s.estado === 'programado');
+    const serviciosCompletados = servicios.filter((s: any) => s.estado === 'completado');
+
+    // Procesar obras
+    const obras = data.obras || [];
+    const obrasActivas = obras.filter((o: any) => o.estado === 'activo' || o.activo === true);
+
+    // Procesar GPS
+    const gps = data.gps || [];
+    const gpsActivos = gps.filter((g: any) => g.activo === true || g.estado === 'activo');    // Procesar evidencias
+    const evidencias = data.evidencias || [];
+
+    // Procesar mantenimientos
+    const mantenimientos = data.mantenimientos || [];
+    const mantenimientosPendientes = mantenimientos.filter((m: any) => m.estado === 'pendiente' || m.estado === 'programado');
+    const mantenimientosRealizados = mantenimientos.filter((m: any) => m.estado === 'completado');
+
+    // Procesar cuotas
+    const cuotas = data.cuotas || [];
+    this.cuotas = cuotas;
+
+    // Actualizar estadísticas con datos reales
     this.stats = {
-      totalMaquinas: 45,
-      maquinasActivas: 32,
-      totalOperarios: 50,
-      operariosDisponibles: 35,
-      serviciosPendientes: 12,
-      serviciosCompletados: 145,
-      mantenimientosPendientes: 8,
-      mantenimientosRealizados: 78,
-      totalObras: 15,
-      obrasActivas: 8,
-    }
+      totalMaquinas: maquinas.length,
+      maquinasActivas: maquinasActivas.length,
+      totalOperarios: operarios.length,
+      operariosDisponibles: operariosDisponibles.length,
+      serviciosPendientes: serviciosPendientes.length,
+      serviciosCompletados: serviciosCompletados.length,
+      mantenimientosPendientes: mantenimientosPendientes.length,
+      mantenimientosRealizados: mantenimientosRealizados.length,
+      totalObras: obras.length,
+      obrasActivas: obrasActivas.length,
+      totalGps: gps.length,
+      gpsActivos: gpsActivos.length,
+      totalEvidencias: evidencias.length,
+    };
 
-    this.recentServices = [
-      { 
-        id: "#SRV-001", 
-        cliente: "Municipio de Bogotá", 
-        tipoServicio: "Transporte de Materiales", 
-        operario: "Juan Pérez", 
-        maquina: "Camión CAT-001",
-        estado: "completado",
-        fechaInicio: "2024-01-15"
-      },
-      { 
-        id: "#SRV-002", 
-        cliente: "Constructora ABC", 
-        tipoServicio: "Excavación", 
-        operario: "María López", 
-        maquina: "Excavadora EXC-002",
-        estado: "en-progreso",
-        fechaInicio: "2024-01-16"
-      },
-      { 
-        id: "#SRV-003", 
-        cliente: "Vías y Obras SA", 
-        tipoServicio: "Nivelación", 
-        operario: "Carlos Gómez", 
-        maquina: "Motoniveladora MOT-003",
-        estado: "programado",
-        fechaInicio: "2024-01-18"
-      },
-      { 
-        id: "#SRV-004", 
-        cliente: "Alcaldía Municipal", 
-        tipoServicio: "Limpieza Vial", 
-        operario: "Ana Martínez", 
-        maquina: "Barredora BAR-001",
-        estado: "cancelado",
-        fechaInicio: "2024-01-17"
-      },
-    ]
+    // Procesar servicios recientes (últimos 5)
+    this.recentServices = servicios
+      .slice(0, 5)
+      .map((service: any) => ({
+        id: service.id || service._id,
+        cliente: service.cliente || service.nombreCliente || 'N/A',
+        tipoServicio: service.tipoServicio || service.tipo || 'N/A',
+        operario: service.operario?.nombre || service.nombreOperario || 'N/A',
+        maquina: service.maquina?.nombre || service.nombreMaquina || 'N/A',
+        estado: service.estado || 'programado',
+        fechaInicio: service.fechaInicio || service.fecha || new Date().toISOString()
+      }));
 
-    this.recentMaintenances = [
-      {
-        id: "#MNT-001",
-        maquina: "Camión CAT-001", 
-        tipoMantenimiento: "Mantenimiento Preventivo",
-        responsable: "Taller Central",
-        estado: "completado",
-        fechaProgramada: "2024-01-10"
-      },
-      {
-        id: "#MNT-002",
-        maquina: "Excavadora EXC-002", 
-        tipoMantenimiento: "Cambio de Aceite",
-        responsable: "Mecánico Principal",
-        estado: "en-progreso",
-        fechaProgramada: "2024-01-16"
-      },
-      {
-        id: "#MNT-003",
-        maquina: "Motoniveladora MOT-003", 
-        tipoMantenimiento: "Revisión General",
-        responsable: "Taller Especializado",
-        estado: "programado",
-        fechaProgramada: "2024-01-20"
-      }
-    ]
+    // Procesar mantenimientos recientes (últimos 5)
+    this.recentMaintenances = mantenimientos
+      .slice(0, 5)
+      .map((maintenance: any) => ({
+        id: maintenance.id || maintenance._id,
+        maquina: maintenance.maquina?.nombre || maintenance.nombreMaquina || 'N/A',
+        tipoMantenimiento: maintenance.tipo || maintenance.tipoMantenimiento || 'N/A',
+        responsable: maintenance.responsable?.nombre || maintenance.nombreResponsable || 'N/A',
+        estado: maintenance.estado || 'programado',
+        fechaProgramada: maintenance.fechaProgramada || maintenance.fecha || new Date().toISOString()
+      }));
   }
 
   getStatusBadgeClass(estado: string): string {
@@ -213,5 +347,57 @@ export class DashboardComponent implements OnInit {
       default:
         return estado
     }
+  }  // Métodos para manejar las tarjetas de entidades
+  toggleEntityCard(entityId: string): void {
+    const card = this.entityCards.find(c => c.id === entityId);
+    if (card) {
+      // Cerrar todas las demás tarjetas
+      this.entityCards.forEach(c => {
+        if (c.id !== entityId) {
+          c.isOpen = false;
+        }
+      });
+      // Toggle la tarjeta actual
+      card.isOpen = !card.isOpen;
+    }
+  }
+
+  getEntityRoute(entityId: string, action: 'create' | 'list'): string {
+    const card = this.entityCards.find(c => c.id === entityId);
+    if (card) {
+      return card.routes[action];
+    }
+    // Fallback para entidades que no están en entityCards (como mantenimientos)
+    if (entityId === 'mantenimientos') {
+      return action === 'create' ? '/mantenimientos/create' : '/mantenimientos/list';
+    }
+    return '/';
+  }
+  private updateEntityCardsCount(): void {
+    this.entityCards.forEach(card => {
+      switch (card.id) {
+        case 'maquinas':
+          card.count = this.stats.totalMaquinas;
+          break;
+        case 'obras':
+          card.count = this.stats.totalObras;
+          break;
+        case 'operarios':
+          card.count = this.stats.totalOperarios;
+          break;
+        case 'servicios':
+          card.count = this.stats.serviciosPendientes + this.stats.serviciosCompletados;
+          break;
+        case 'gps':
+          card.count = this.stats.totalGps;
+          break;
+        case 'evidencias':
+          card.count = this.stats.totalEvidencias;
+          break;
+      }
+    });
+  }
+  pagarCuota(cuotaId: number): void {
+    this.router.navigate(['/cuotas', cuotaId, 'pay']);
   }
 }

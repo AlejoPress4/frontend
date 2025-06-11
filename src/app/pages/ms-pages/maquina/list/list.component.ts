@@ -61,6 +61,31 @@ export class ListMaquinaComponent implements OnInit {
     );
   }
 
+    // Métodos para editar y eliminar (ajusta el tipo de ID según tu modelo Maquina)
+  create() {
+    this.router.navigate(['/maquinas/create']).then(
+      (success) => {
+        if (success) {
+          console.log('Navegación exitosa al formulario de creación de máquinas');
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo navegar al formulario de creación.'
+          });
+        }
+      },
+      (error) => {
+        console.error('Error al navegar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al intentar navegar al formulario de creación.'
+        });
+      }
+    );
+  }
+
   delete(id: number) {
     Swal.fire({
       title: 'Eliminar',
